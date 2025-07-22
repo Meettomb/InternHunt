@@ -33,9 +33,20 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+
+    packagingOptions {
+        resources {
+            excludes += "/META-INF/NOTICE.md"
+            excludes += "/META-INF/LICENSE.md"
+        }
+    }
+
+
 }
 
 dependencies {
+    implementation("org.eclipse.angus:jakarta.mail:2.0.3")
+    implementation("jakarta.activation:jakarta.activation-api:2.0.1")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
