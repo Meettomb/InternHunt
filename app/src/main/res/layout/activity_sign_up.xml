@@ -17,11 +17,11 @@
         <!-- Scrollable form -->
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_constraintTop_toTopOf="parent"
+            android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintTop_toTopOf="parent">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -41,223 +41,308 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
                     android:gravity="center"
                     android:text="Sign Up"
                     android:textColor="#000000"
                     android:textSize="48sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="16dp" />
+                    android:textStyle="bold" />
 
                 <!-- Username -->
                 <EditText
                     android:id="@+id/Username"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Enter Your Username"
+                    android:layout_marginBottom="10dp"
                     android:background="@drawable/border_all_sides"
                     android:drawableEnd="@drawable/ic_user"
+                    android:hint="Enter Your Username"
                     android:padding="15dp"
                     android:textColor="#000000"
-                    android:textSize="18sp"
-                    android:layout_marginBottom="10dp"
-                    android:textColorHint="#C43C3C3C"/>
+                    android:textColorHint="#C43C3C3C"
+                    android:textSize="18sp" />
+
                 <TextView
                     android:id="@+id/UsernameError"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:text="This field is required"
                     android:textColor="#FF0000"
                     android:textSize="14sp"
-                    android:visibility="gone"
-                    android:text="This field is required" />
+                    android:visibility="gone" />
 
                 <!-- Email -->
                 <EditText
                     android:id="@+id/Email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Enter Your Email"
+                    android:layout_marginBottom="10dp"
                     android:background="@drawable/border_all_sides"
                     android:drawableEnd="@drawable/ic_email"
+                    android:hint="Enter Your Email"
+                    android:inputType="textWebEmailAddress"
                     android:padding="15dp"
                     android:textColor="#000000"
-                    android:textSize="18sp"
-                    android:inputType="textWebEmailAddress"
-                    android:layout_marginBottom="10dp"
-                    android:textColorHint="#C43C3C3C"/>
+                    android:textColorHint="#C43C3C3C"
+                    android:textSize="18sp" />
+
                 <TextView
                     android:id="@+id/EmailError"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:text="This field is required"
                     android:textColor="#FF0000"
                     android:textSize="14sp"
-                    android:visibility="gone"
-                    android:text="This field is required" />
+                    android:visibility="gone" />
 
                 <!-- Phone -->
                 <EditText
                     android:id="@+id/Phone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Enter Your Phone Number"
+                    android:layout_marginBottom="10dp"
                     android:background="@drawable/border_all_sides"
                     android:drawableEnd="@drawable/ic_phone"
+                    android:hint="Enter Your Phone Number"
+                    android:inputType="phone"
                     android:padding="15dp"
                     android:textColor="#000000"
-                    android:textSize="18sp"
-                    android:inputType="phone"
-                    android:layout_marginBottom="10dp"
-                android:textColorHint="#C43C3C3C"/>
+                    android:textColorHint="#C43C3C3C"
+                    android:textSize="18sp" />
+
                 <TextView
                     android:id="@+id/PhoneError"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:text="This field is required"
                     android:textColor="#FF0000"
                     android:textSize="14sp"
-                    android:visibility="gone"
-                    android:text="This field is required" />
+                    android:visibility="gone" />
 
                 <!-- Date of Birth -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
                     android:text="Date of Birth"
                     android:textColor="#C43C3C3C"
+                    android:textColorHint="#C43C3C3C"
                     android:textSize="18sp"
-                    android:layout_marginBottom="5dp"
-                    android:textColorHint="#C43C3C3C"/>
+                    android:textStyle="bold" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="10dp">
+                    android:layout_marginBottom="10dp"
+                    android:orientation="horizontal">
 
                     <EditText
                         android:id="@+id/BirthDate"
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:hint="30"
+                        android:layout_marginEnd="5dp"
+                        android:layout_weight="1"
                         android:background="@drawable/border_all_sides"
+                        android:hint="30"
                         android:inputType="number"
                         android:padding="15dp"
                         android:textColor="#000000"
-                        android:textSize="18sp"
-                        android:layout_marginEnd="5dp"
-                        android:textColorHint="#C43C3C3C"/>
+                        android:textColorHint="#C43C3C3C"
+                        android:textSize="18sp" />
 
                     <EditText
                         android:id="@+id/BirthMonth"
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:hint="12"
+                        android:layout_marginEnd="5dp"
+                        android:layout_weight="1"
                         android:background="@drawable/border_all_sides"
+                        android:hint="12"
                         android:inputType="number"
                         android:padding="15dp"
                         android:textColor="#000000"
-                        android:textSize="18sp"
-                        android:layout_marginEnd="5dp"
-                        android:textColorHint="#C43C3C3C"/>
+                        android:textColorHint="#C43C3C3C"
+                        android:textSize="18sp" />
 
                     <EditText
                         android:id="@+id/BirthYear"
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:hint="2000"
+                        android:layout_weight="1"
                         android:background="@drawable/border_all_sides"
+                        android:hint="2000"
                         android:inputType="number"
                         android:padding="15dp"
                         android:textColor="#000000"
-                        android:textSize="18sp"
-                        android:textColorHint="#C43C3C3C"/>
+                        android:textColorHint="#C43C3C3C"
+                        android:textSize="18sp" />
                 </LinearLayout>
+
                 <TextView
                     android:id="@+id/BirthDateError"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:text="This field is required"
                     android:textColor="#FF0000"
                     android:textSize="14sp"
-                    android:visibility="gone"
-                    android:text="This field is required" />
+                    android:visibility="gone" />
+
                 <TextView
                     android:id="@+id/BirthMonthError"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:text="This field is required"
                     android:textColor="#FF0000"
                     android:textSize="14sp"
-                    android:visibility="gone"
-                    android:text="This field is required" />
+                    android:visibility="gone" />
+
                 <TextView
                     android:id="@+id/BirthYearError"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:text="This field is required"
                     android:textColor="#FF0000"
                     android:textSize="14sp"
-                    android:visibility="gone"
-                    android:text="This field is required" />
+                    android:visibility="gone" />
+
+
+                <Spinner
+                    android:id="@+id/stateSpinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#000000"
+                    android:padding="15dp"
+                    android:textSize="14sp"
+                    android:background="@drawable/border_all_sides"
+                    android:layout_marginBottom="10dp"
+                    />
+                <TextView
+                    android:id="@+id/StateError"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="This field is required"
+                    android:textColor="#FF0000"
+                    android:textSize="14sp"
+                    android:visibility="gone" />
+
+                <EditText
+                    android:id="@+id/City"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/border_all_sides"
+                    android:hint="City"
+                    android:padding="15dp"
+                    android:textColor="#000000"
+                    android:textSize="18sp" />
+                <TextView
+                    android:id="@+id/CityError"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="This field is required"
+                    android:textColor="#FF0000"
+                    android:textSize="14sp"
+                    android:visibility="gone" />
+
 
                 <!-- Password -->
                 <EditText
                     android:id="@+id/Password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Enter Password"
+                    android:layout_marginBottom="10dp"
                     android:background="@drawable/border_all_sides"
                     android:drawableEnd="@drawable/ic_open_eye_24"
+                    android:hint="Enter Password"
+                    android:inputType="textPassword"
                     android:padding="15dp"
                     android:textColor="#000000"
-                    android:textSize="18sp"
-                    android:inputType="textPassword"
-                    android:layout_marginBottom="10dp"
-                    android:textColorHint="#C43C3C3C"/>
+                    android:textColorHint="#C43C3C3C"
+                    android:textSize="18sp" />
+
                 <TextView
                     android:id="@+id/PasswordError"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:text="This field is required"
                     android:textColor="#FF0000"
                     android:textSize="14sp"
-                    android:visibility="gone"
-                    android:text="This field is required" />
+                    android:visibility="gone" />
 
                 <!-- Confirm Password -->
                 <EditText
                     android:id="@+id/Confirm_Password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Enter Confirm Password"
+                    android:layout_marginBottom="20dp"
                     android:background="@drawable/border_all_sides"
                     android:drawableEnd="@drawable/ic_open_eye_24"
+                    android:hint="Enter Confirm Password"
+                    android:inputType="textPassword"
                     android:padding="15dp"
                     android:textColor="#000000"
-                    android:textSize="18sp"
-                    android:inputType="textPassword"
-                    android:layout_marginBottom="20dp"
-                    android:textColorHint="#C43C3C3C"/>
+                    android:textColorHint="#C43C3C3C"
+                    android:textSize="18sp" />
+
                 <TextView
                     android:id="@+id/ConfirmPasswordError"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:text="This field is required"
                     android:textColor="#FF0000"
                     android:textSize="14sp"
-                    android:visibility="gone"
-                    android:text="This field is required" />
+                    android:visibility="gone" />
 
                 <!-- Sign Up Button -->
+
+                <RadioGroup
+                    android:id="@+id/radioGroup1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/StudentRadioButton"
+                            android:layout_width="150dp"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="#FB1212"
+                            android:text="Student"
+                            android:textColor="@color/black"
+                            android:textSize="18dp"
+                            android:textStyle="bold" />
+
+                        <RadioButton
+                            android:id="@+id/CompanyRadioButton"
+                            android:layout_width="150dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Company"
+                            android:textColor="@color/black"
+                            android:textSize="18dp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                </RadioGroup>
+
                 <TextView
                     android:id="@+id/SignUpButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Next"
-                    android:textSize="20sp"
-                    android:textColor="#FFFFFF"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/rounded_button"
                     android:gravity="center"
                     android:paddingVertical="15dp"
-                    android:background="@drawable/rounded_button"
-                    android:layout_marginBottom="20dp" />
+                    android:text="Next"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp" />
 
                 <!-- Login Text -->
+
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -265,19 +350,19 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:text="Already have an account?"
-                        android:textColor="#C43C3C3C"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"/>
+                        android:layout_height="match_parent"
+                        android:text="Already have an account?"
+                        android:textColor="#C43C3C3C" />
 
                     <TextView
                         android:id="@+id/textViewLogin"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:paddingStart="5dp"
                         android:text="Login"
                         android:textColor="#2F89FC"
-                        android:textStyle="bold"
-                        android:layout_width="match_parent"
-                         android:layout_height="match_parent"/>
+                        android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>

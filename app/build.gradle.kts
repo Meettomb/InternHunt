@@ -13,7 +13,6 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -47,6 +46,7 @@ android {
 dependencies {
     implementation("org.eclipse.angus:jakarta.mail:2.0.3")
     implementation("jakarta.activation:jakarta.activation-api:2.0.1")
+    implementation("com.squareup.okhttp3:okhttp:4.10.0")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

@@ -18,8 +18,18 @@ import kotlin.concurrent.thread
 import android.graphics.drawable.Drawable
 import android.text.InputType
 import android.view.MotionEvent
+import android.widget.RadioButton
+import android.widget.RadioGroup
+import android.widget.Spinner
+import okhttp3.OkHttpClient
 import java.util.Calendar
 
+import android.widget.ArrayAdapter
+import okhttp3.*
+import org.json.JSONArray
+import java.io.IOException
+import android.widget.AdapterView
+import java.lang.Thread.State
 
 
 class SignUp : AppCompatActivity() {
@@ -40,8 +50,18 @@ class SignUp : AppCompatActivity() {
     private lateinit var birthDateError: TextView
     private lateinit var birthMonthError: TextView
     private lateinit var birthYearError: TextView
+
+    private lateinit var stateError: TextView
+    private lateinit var cityError: TextView
     private lateinit var passwordError: TextView
     private lateinit var confirmPasswordError: TextView
+    private lateinit var radioGroupbutton: RadioGroup
+
+    // For state API
+    private lateinit var stateSpinner: Spinner
+    private lateinit var cityText: EditText
+    private val client = OkHttpClient()
+
 
 
 
@@ -67,11 +87,32 @@ class SignUp : AppCompatActivity() {
         birthDateError = findViewById(R.id.BirthDateError)
         birthMonthError = findViewById(R.id.BirthMonthError)
         birthYearError = findViewById(R.id.BirthYearError)
+        stateError = findViewById(R.id.StateError)
+        cityError = findViewById(R.id.CityError)
         passwordError = findViewById(R.id.PasswordError)
         confirmPasswordError = findViewById(R.id.ConfirmPasswordError)
 
         togglePasswordVisibility(password)
         togglePasswordVisibility(confirmPassword)
+
+        radioGroupbutton = findViewById(R.id.radioGroup1)
+
+        stateSpinner = findViewById(R.id.stateSpinner)
+        fetchStatesFromAPI()
+
+        cityText = findViewById(R.id.City)
+
+
+        var selectedState = ""
+
+        stateSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                selectedState = parent?.getItemAtPosition(position).toString()
+                Toast.makeText(this@SignUp, "Selected: $selectedState", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
 
 
 
@@ -85,6 +126,10 @@ class SignUp : AppCompatActivity() {
             val dobDate = birthDate.text.toString().trim()
             val dobMonth = birthMonth.text.toString().trim()
             val dobYear = birthYear.text.toString().trim()
+            val state = stateSpinner.selectedItem.toString().trim()
+            val city = cityText.text.toString().trim()
+
+
 
             var valid = true
 
@@ -178,6 +223,18 @@ class SignUp : AppCompatActivity() {
                 }
             }
 
+            if (state == "Select State") {
+                stateSpinner.setBackgroundResource(R.drawable.border_error)
+                stateError.visibility = View.VISIBLE
+                valid = false
+            }
+            if (city.isEmpty()) {
+                cityText.error = "Required"
+                cityText.setBackgroundResource(R.drawable.border_error)
+                cityError.visibility = View.VISIBLE
+                valid = false
+            }
+
 
             if (userPassword.isEmpty()) {
                 password.error = "Required"
@@ -238,6 +295,17 @@ class SignUp : AppCompatActivity() {
             })
         }
 
+        // Reset border for spinner
+        fun resetSpinnerBorderOnChange(spinner: Spinner, errorTextView: TextView? = null) {
+            spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                    spinner.setBackgroundResource(R.drawable.border_all_sides)
+                    errorTextView?.visibility = View.GONE
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {}
+            }
+        }
 
         resetBorderOnTextChange(username)
         resetBorderOnTextChange(email)
@@ -256,10 +324,11 @@ class SignUp : AppCompatActivity() {
         resetBorderOnTextChange(birthDate, birthDateError)
         resetBorderOnTextChange(birthMonth, birthMonthError)
         resetBorderOnTextChange(birthYear, birthYearError)
+        resetBorderOnTextChange(cityText, cityError)
 
 
 
-
+        resetSpinnerBorderOnChange(stateSpinner, stateError)
 
 
 
@@ -295,6 +364,47 @@ class SignUp : AppCompatActivity() {
             }
             false
         }
+    }
+
+    private fun fetchStatesFromAPI() {
+        val request = Request.Builder()
+            .url("https://country-state-city-search-rest-api.p.rapidapi.com/states-by-countrycode?countrycode=IN")
+            .get()
+            .addHeader("x-rapidapi-key", "3f03d9797emsh73ca4574bd5e4d8p18d1c3jsn45f14e7f6f51")
+            .addHeader("x-rapidapi-host", "country-state-city-search-rest-api.p.rapidapi.com")
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                e.printStackTrace()
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                response.body?.string()?.let { responseBody ->
+                    val stateNames = mutableListOf<String>()
+
+                    // 🟡 Add "Select State" as the first item
+                    stateNames.add("Select State")
+
+                    val jsonArray = JSONArray(responseBody)
+
+                    for (i in 0 until jsonArray.length()) {
+                        val stateObj = jsonArray.getJSONObject(i)
+                        stateNames.add(stateObj.getString("name"))
+                    }
+
+                    runOnUiThread {
+                        val adapter = ArrayAdapter(
+                            this@SignUp,
+                            R.layout.spinner_selected_item,
+                            stateNames
+                        )
+                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                        stateSpinner.adapter = adapter
+                    }
+                }
+            }
+        })
     }
 
 }
