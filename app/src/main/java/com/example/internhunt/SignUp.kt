@@ -76,6 +76,9 @@ class SignUp : AppCompatActivity() {
     private val client = OkHttpClient()
 
 
+    private lateinit var textViewLogin: TextView
+
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -118,6 +121,13 @@ class SignUp : AppCompatActivity() {
         fetchStatesFromAPI()
 
         cityText = findViewById(R.id.City)
+
+        textViewLogin = findViewById(R.id.textViewLogin)
+
+        textViewLogin.setOnClickListener {
+            val intent = Intent(this, Login::class.java)
+            startActivity(intent)
+        }
 
 
         var selectedState = ""

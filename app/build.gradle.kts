@@ -40,6 +40,9 @@ android {
             excludes += "/META-INF/LICENSE.md"
         }
     }
+    buildFeatures {
+        viewBinding = true
+    }
 
 
 }
@@ -65,6 +68,9 @@ dependencies {
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
     implementation(libs.firebase.firestore)
+    implementation(libs.androidx.annotation)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

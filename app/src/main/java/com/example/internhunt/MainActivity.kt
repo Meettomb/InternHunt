@@ -29,9 +29,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         signup2.setOnClickListener {
-            val intent = Intent(this, CompanySignUp::class.java)
+            val intent = Intent(this, Login::class.java)
             startActivity(intent)
         }
+
 
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->

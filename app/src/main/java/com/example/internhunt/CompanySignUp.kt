@@ -132,7 +132,7 @@ class CompanySignUp : AppCompatActivity() {
 
                 newUserRef.set(user) // Use set() to store data at that specific document ID
                     .addOnSuccessListener {
-                        Toast.makeText(this, "User created successfully!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Registration successfully!", Toast.LENGTH_SHORT).show()
                         startActivity(Intent(this, MainActivity::class.java))
                         finish()
                     }

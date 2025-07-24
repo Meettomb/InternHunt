@@ -157,7 +157,7 @@ class StudentSignUp : AppCompatActivity() {
 
                 newUserRef.set(user)
                     .addOnSuccessListener {
-                        Toast.makeText(this, "User created successfully!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Registration successfully!", Toast.LENGTH_SHORT).show()
                         startActivity(Intent(this, MainActivity::class.java))
                         finish()
                     }
