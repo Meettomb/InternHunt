@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "201374628233",
+    "project_id": "internhunt-a6e38",
+    "storage_bucket": "internhunt-a6e38.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:201374628233:android:b14925d44578c31d760958",
+        "android_client_info": {
+          "package_name": "com.example.internhunt"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMtFKPG_IBGtkCXzpumaiuNH0MD2XHD68"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

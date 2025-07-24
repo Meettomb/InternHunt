@@ -1,13 +1,16 @@
 package com.example.internhunt
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 class StudentSignUp : AppCompatActivity() {
@@ -129,7 +132,38 @@ class StudentSignUp : AppCompatActivity() {
 
             // If all is valid, proceed
             if (isValid) {
-                // TODO: Handle next step or save data
+                val db = FirebaseFirestore.getInstance()
+                val newUserRef = db.collection("Users").document() // Generate a document reference
+
+                val user = hashMapOf(
+                    "id" to newUserRef.id,
+                    "b_date" to dobDate,
+                    "b_month" to dobMonth,
+                    "b_year" to dobYear,
+                    "city" to city,
+                    "collage_name" to collage,
+                    "degree_name" to degree,
+                    "email" to userEmail,
+                    "gender" to selectedGender,
+                    "graduation_start_year" to gradStartYearStr,
+                    "graduation_end_year" to gradYearStr,
+                    "password" to userPassword,
+                    "phone" to userPhone,
+                    "role" to selectedUserType,
+                    "state" to state,
+                    "username" to userName
+                )
+
+
+                newUserRef.set(user)
+                    .addOnSuccessListener {
+                        Toast.makeText(this, "User created successfully!", Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(this, MainActivity::class.java))
+                        finish()
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(this, "Failed to create user: ", Toast.LENGTH_LONG).show()
+                    }
             }
         }
 
@@ -152,7 +186,6 @@ class StudentSignUp : AppCompatActivity() {
         graduationYear.addTextChangedListener {
             graduationYearError.visibility = TextView.GONE
         }
-
 
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->

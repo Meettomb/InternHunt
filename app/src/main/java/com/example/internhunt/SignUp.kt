@@ -30,9 +30,18 @@ import okhttp3.*
 import org.json.JSONArray
 import java.io.IOException
 import android.widget.AdapterView
+import com.google.firebase.firestore.FirebaseFirestore
+import java.security.MessageDigest
 
 
 class SignUp : AppCompatActivity() {
+
+    fun hashPassword(password: String): String {
+        val bytes = password.toByteArray()
+        val md = MessageDigest.getInstance("SHA-256")
+        val digest = md.digest(bytes)
+        return digest.fold("") { str, it -> str + "%02x".format(it) }
+    }
 
     private lateinit var username: EditText
     private lateinit var email: EditText
@@ -291,44 +300,82 @@ class SignUp : AppCompatActivity() {
 
             if (!valid) return@setOnClickListener
 
-            // All fields valid — continue sending email
             progressBar.visibility = View.VISIBLE
-            thread {
-                try {
-                    val otp = (1000..9999).random()
-                    val sender = JakartaMailSender("internhunt2@gmail.com", "cayw smpo qwvu terg")
-                    sender.sendEmail(
-                        toEmail = userEmail,
-                        subject = "Verify Your Email Id With OTP",
-                        body = "Your OTP is: $otp"
-                    )
-                        runOnUiThread {
-                            progressBar.visibility = View.GONE
-                            val intent = Intent(this, VerifyOtp::class.java)
-                            // Send all user data via intent
-                            intent.putExtra("otp", otp.toString())
-                            intent.putExtra("email", userEmail)
-                            intent.putExtra("username", userName)
-                            intent.putExtra("phone", userPhone)
-                            intent.putExtra("password", userPassword)
-                            intent.putExtra("dobDate", dobDate)
-                            intent.putExtra("dobMonth", dobMonth)
-                            intent.putExtra("dobYear", dobYear)
-                            intent.putExtra("state", state)
-                            intent.putExtra("city", city)
-                            intent.putExtra("userType", selectedUserType)
-                            intent.putExtra("gender", selectedGender)
 
-                            startActivity(intent)
-                        }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    runOnUiThread {
+            val db = FirebaseFirestore.getInstance()
+
+            // Check for existing user by email or phone
+            db.collection("Users")
+                .whereEqualTo("email", userEmail)
+                .get()
+                .addOnSuccessListener { emailDocs ->
+                    if (!emailDocs.isEmpty) {
                         progressBar.visibility = View.GONE
-                        Toast.makeText(this, "Failed to send email", Toast.LENGTH_LONG).show()
+                        emailError.text = "Email already exists"
+                        emailError.visibility = View.VISIBLE
+                        return@addOnSuccessListener
                     }
+
+                    db.collection("Users")
+                        .whereEqualTo("phone", userPhone)
+                        .get()
+                        .addOnSuccessListener { phoneDocs ->
+                            if (!phoneDocs.isEmpty) {
+                                progressBar.visibility = View.GONE
+                                phoneError.text = "Phone already exists"
+                                phoneError.visibility = View.VISIBLE
+                                return@addOnSuccessListener
+                            }
+
+                            //  If no existing user, send OTP
+                            val otp = (1000..9999).random()
+                            thread {
+                                try {
+                                    val sender = JakartaMailSender("internhunt2@gmail.com", "cayw smpo qwvu terg")
+                                    sender.sendEmail(
+                                        toEmail = userEmail,
+                                        subject = "Verify Your Email Id With OTP",
+                                        body = "Your OTP is: $otp"
+                                    )
+                                    runOnUiThread {
+                                        progressBar.visibility = View.GONE
+                                        val intent = Intent(this, VerifyOtp::class.java)
+                                        intent.putExtra("otp", otp.toString())
+                                        intent.putExtra("email", userEmail)
+                                        intent.putExtra("username", userName)
+                                        intent.putExtra("phone", userPhone)
+
+                                        val hashedPassword = hashPassword(userPassword)
+                                        intent.putExtra("password", hashedPassword)
+
+                                        intent.putExtra("dobDate", dobDate)
+                                        intent.putExtra("dobMonth", dobMonth)
+                                        intent.putExtra("dobYear", dobYear)
+                                        intent.putExtra("state", state)
+                                        intent.putExtra("city", city)
+                                        intent.putExtra("userType", selectedUserType)
+                                        intent.putExtra("gender", selectedGender)
+                                        startActivity(intent)
+                                    }
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                    runOnUiThread {
+                                        progressBar.visibility = View.GONE
+                                        Toast.makeText(this, "Failed to send email", Toast.LENGTH_LONG).show()
+                                    }
+                                }
+                            }
+                        }
+                        .addOnFailureListener {
+                            progressBar.visibility = View.GONE
+                            Toast.makeText(this, "Phone check failed", Toast.LENGTH_LONG).show()
+                        }
                 }
-            }
+                .addOnFailureListener {
+                    progressBar.visibility = View.GONE
+                    Toast.makeText(this, "Email check failed", Toast.LENGTH_LONG).show()
+                }
+
         }
 
         // Reset border when user starts typing
