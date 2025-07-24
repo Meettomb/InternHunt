@@ -10,6 +10,9 @@ import androidx.core.view.WindowInsetsCompat
 
 class MainActivity : AppCompatActivity() {
     private lateinit var SignUpButton: Button
+    private lateinit var signup2: Button
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -17,12 +20,19 @@ class MainActivity : AppCompatActivity() {
 
 
         SignUpButton = findViewById(R.id.SignUpButton)
+        signup2 = findViewById(R.id.signup2)
 
 
         SignUpButton.setOnClickListener {
             val intent= Intent(this, SignUp::class.java)
             startActivity(intent)
         }
+
+        signup2.setOnClickListener {
+            val intent = Intent(this, CompanySignUp::class.java)
+            startActivity(intent)
+        }
+
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())

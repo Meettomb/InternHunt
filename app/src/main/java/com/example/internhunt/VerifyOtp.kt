@@ -22,6 +22,16 @@ class VerifyOtp : AppCompatActivity() {
     private var currentOtp: String = ""
     private var timer: CountDownTimer? = null
     private lateinit var userEmail: String
+    private lateinit var userName: String
+    private lateinit var userPhone: String
+    private lateinit var userPassword: String
+    private lateinit var dobDate: String
+    private lateinit var dobMonth: String
+    private lateinit var dobYear: String
+    private lateinit var state: String
+    private lateinit var city: String
+    private lateinit var selectedUserType: String
+    private lateinit var selectedGender: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +47,17 @@ class VerifyOtp : AppCompatActivity() {
 
         currentOtp = intent.getStringExtra("otp") ?: ""
         userEmail = intent.getStringExtra("email") ?: ""
+        userName = intent.getStringExtra("username") ?: ""
+        userPhone = intent.getStringExtra("phone") ?: ""
+        userPassword = intent.getStringExtra("password") ?: ""
+        dobDate = intent.getStringExtra("dobDate") ?: ""
+        dobMonth = intent.getStringExtra("dobMonth") ?: ""
+        dobYear = intent.getStringExtra("dobYear") ?: ""
+        state = intent.getStringExtra("state") ?: ""
+        city = intent.getStringExtra("city") ?: ""
+        selectedUserType = intent.getStringExtra("userType") ?: ""
+        selectedGender = intent.getStringExtra("gender") ?: ""
+
 
         startTimer()
         // Get OTP from intent
@@ -49,7 +70,25 @@ class VerifyOtp : AppCompatActivity() {
                 otpMessage.setTextColor(resources.getColor(android.R.color.holo_green_dark))
                 otpMessage.text = "OTP Verified Successfully!"
 
-                val intent = Intent(this, MainActivity::class.java)
+
+                val intent = if (selectedUserType == "Student") {
+                    Intent(this, StudentSignUp::class.java)
+                } else {
+                    Intent(this, CompanySignUp::class.java)
+                }
+
+                intent.putExtra("email", userEmail)
+                intent.putExtra("username", userName)
+                intent.putExtra("phone", userPhone)
+                intent.putExtra("password", userPassword)
+                intent.putExtra("dobDate", dobDate)
+                intent.putExtra("dobMonth", dobMonth)
+                intent.putExtra("dobYear", dobYear)
+                intent.putExtra("state", state)
+                intent.putExtra("city", city)
+                intent.putExtra("userType", selectedUserType)
+                intent.putExtra("gender", selectedGender)
+
                 startActivity(intent)
                 finish()
             } else {

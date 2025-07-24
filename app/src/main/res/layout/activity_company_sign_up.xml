@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    tools:context=".CompanySignUp">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingHorizontal="20dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="40dp">
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="82dp"
+                android:layout_marginBottom="16dp"
+                android:src="@drawable/internhunt" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:layout_marginBottom="16dp"
+                android:gravity="center"
+                android:text="Company"
+                android:textColor="#000000"
+                android:textSize="48sp"
+                android:textStyle="bold" />
+
+            <!-- Company Name -->
+            <EditText
+                android:id="@+id/CompanyName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/border_all_sides"
+                android:hint="Company Name"
+                android:padding="15dp"
+                android:textColor="#000000"
+                android:textColorHint="#C43C3C3C"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/CompanyNameError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="This field is required"
+                android:textColor="#FF0000"
+                android:textSize="14sp"
+                android:visibility="gone" />
+
+
+            <!-- Company Link -->
+            <EditText
+                android:id="@+id/CompanyLink"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/border_all_sides"
+                android:hint="Company Link"
+                android:padding="15dp"
+                android:textColor="#000000"
+                android:textColorHint="#C43C3C3C"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/CompanyLinkError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="This field is required"
+                android:textColor="#FF0000"
+                android:textSize="14sp"
+                android:visibility="gone" />
+
+
+            <!-- Company Description -->
+            <EditText
+                android:id="@+id/CompanyDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/border_all_sides"
+                android:gravity="top|start"
+                android:hint="Enter company description"
+                android:inputType="textMultiLine"
+                android:maxLines="10"
+                android:minLines="4"
+                android:padding="15dp"
+                android:textColor="#000000"
+                android:textColorHint="#C43C3C3C"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/CompanyDescriptionError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="This field is required"
+                android:textColor="#FF0000"
+                android:textSize="14sp"
+                android:visibility="gone" />
+
+
+            <TextView
+                android:id="@+id/SignUpButton2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="15dp"
+                android:background="@drawable/rounded_button"
+                android:gravity="center"
+                android:paddingVertical="15dp"
+                android:text="Sign Up"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp" />
+
+
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

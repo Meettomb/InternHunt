@@ -1,5 +1,6 @@
 package com.example.internhunt
 
+import InputFilterMinMax
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -29,7 +30,6 @@ import okhttp3.*
 import org.json.JSONArray
 import java.io.IOException
 import android.widget.AdapterView
-import java.lang.Thread.State
 
 
 class SignUp : AppCompatActivity() {
@@ -56,6 +56,10 @@ class SignUp : AppCompatActivity() {
     private lateinit var passwordError: TextView
     private lateinit var confirmPasswordError: TextView
     private lateinit var radioGroupbutton: RadioGroup
+    private lateinit var radioError: TextView
+
+    private lateinit var genderRadioButton: RadioGroup
+    private lateinit var genderRadioGroupError: TextView
 
     // For state API
     private lateinit var stateSpinner: Spinner
@@ -96,6 +100,10 @@ class SignUp : AppCompatActivity() {
         togglePasswordVisibility(confirmPassword)
 
         radioGroupbutton = findViewById(R.id.radioGroup1)
+        radioError = findViewById(R.id.RadioError)
+
+        genderRadioButton = findViewById(R.id.genderRadioGroup1)
+        genderRadioGroupError = findViewById(R.id.GenderRadioError)
 
         stateSpinner = findViewById(R.id.stateSpinner)
         fetchStatesFromAPI()
@@ -133,7 +141,7 @@ class SignUp : AppCompatActivity() {
 
             var valid = true
 
-            val currentYear = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR)
+            val currentYear = Calendar.getInstance().get(Calendar.YEAR)
 
             if (userName.isEmpty()) {
                 username.error = "Required"
@@ -172,6 +180,8 @@ class SignUp : AppCompatActivity() {
                 birthMonth.setBackgroundResource(R.drawable.border_error)
                 birthMonthError.text = "Month is required"
                 birthMonthError.visibility = View.VISIBLE
+                birthMonth.filters = arrayOf(InputFilterMinMax(1, 12))
+
                 valid = false
             } else {
                 val month = dobMonth.toIntOrNull()
@@ -253,6 +263,32 @@ class SignUp : AppCompatActivity() {
                 valid = false
             }
 
+            val selectedRadioId = radioGroupbutton.checkedRadioButtonId
+            val selectedGenderRadioId = genderRadioButton.checkedRadioButtonId
+
+            var selectedUserType = ""
+            var selectedGender = ""
+
+            if (selectedRadioId == -1) {
+                radioError.visibility = View.VISIBLE
+                valid = false
+            } else {
+                radioError.visibility = View.GONE
+                val radioButton: RadioButton = findViewById(selectedRadioId)
+                selectedUserType = radioButton.text.toString()
+            }
+
+            if (selectedGenderRadioId == -1) {
+                genderRadioGroupError.visibility = View.VISIBLE
+                valid = false
+            } else {
+                genderRadioGroupError.visibility = View.GONE
+                val genderButton: RadioButton = findViewById(selectedGenderRadioId)
+                selectedGender = genderButton.text.toString()
+            }
+
+
+
             if (!valid) return@setOnClickListener
 
             // All fields valid — continue sending email
@@ -266,13 +302,25 @@ class SignUp : AppCompatActivity() {
                         subject = "Verify Your Email Id With OTP",
                         body = "Your OTP is: $otp"
                     )
-                    runOnUiThread {
-                        progressBar.visibility = View.GONE
-                        val intent = Intent(this, VerifyOtp::class.java)
-                        intent.putExtra("otp", otp.toString())
-                        intent.putExtra("email", userEmail)
-                        startActivity(intent)
-                    }
+                        runOnUiThread {
+                            progressBar.visibility = View.GONE
+                            val intent = Intent(this, VerifyOtp::class.java)
+                            // Send all user data via intent
+                            intent.putExtra("otp", otp.toString())
+                            intent.putExtra("email", userEmail)
+                            intent.putExtra("username", userName)
+                            intent.putExtra("phone", userPhone)
+                            intent.putExtra("password", userPassword)
+                            intent.putExtra("dobDate", dobDate)
+                            intent.putExtra("dobMonth", dobMonth)
+                            intent.putExtra("dobYear", dobYear)
+                            intent.putExtra("state", state)
+                            intent.putExtra("city", city)
+                            intent.putExtra("userType", selectedUserType)
+                            intent.putExtra("gender", selectedGender)
+
+                            startActivity(intent)
+                        }
                 } catch (e: Exception) {
                     e.printStackTrace()
                     runOnUiThread {
@@ -306,6 +354,12 @@ class SignUp : AppCompatActivity() {
                 override fun onNothingSelected(parent: AdapterView<*>?) {}
             }
         }
+        // Reset RadioGroup error
+        fun resetRadioGroupOnChange(radioGroup: RadioGroup, errorTextView: TextView) {
+            radioGroup.setOnCheckedChangeListener { _, _ ->
+                errorTextView.visibility = View.GONE
+            }
+        }
 
         resetBorderOnTextChange(username)
         resetBorderOnTextChange(email)
@@ -325,6 +379,8 @@ class SignUp : AppCompatActivity() {
         resetBorderOnTextChange(birthMonth, birthMonthError)
         resetBorderOnTextChange(birthYear, birthYearError)
         resetBorderOnTextChange(cityText, cityError)
+        resetRadioGroupOnChange(radioGroupbutton, radioError)
+        resetRadioGroupOnChange(genderRadioButton, genderRadioGroupError)
 
 
 

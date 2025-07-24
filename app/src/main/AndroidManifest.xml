@@ -14,11 +14,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.InternHunt">
         <activity
+            android:name=".CompanySignUp"
+            android:exported="false" />
+        <activity
+            android:name=".StudentSignUp"
+            android:exported="false" />
+        <activity
             android:name=".VerifyOtp"
             android:exported="true" />
         <activity
             android:name=".SignUp"
-            android:exported="true" />
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
