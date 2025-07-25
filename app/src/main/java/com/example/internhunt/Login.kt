@@ -11,8 +11,11 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
 import android.content.Context
+import android.text.InputType
+import android.view.MotionEvent
 import android.widget.Button
 import androidx.activity.enableEdgeToEdge
+import androidx.core.content.ContextCompat
 import com.google.firebase.firestore.FirebaseFirestore
 import java.security.MessageDigest
 
@@ -101,6 +104,56 @@ class Login : AppCompatActivity() {
                     Toast.makeText(this, "Login failed: ${it.localizedMessage}", Toast.LENGTH_LONG).show()
                 }
         }
+
+
+        var isPasswordVisible = false
+
+        val passwordEditText = findViewById<EditText>(R.id.Password)
+        passwordEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+        // Set initial eye icon (open eye → "password is hidden")
+        passwordEditText.setCompoundDrawablesWithIntrinsicBounds(
+            null, null,
+            ContextCompat.getDrawable(this, R.drawable.visibility), null
+        )
+
+        passwordEditText.setOnTouchListener { v, event ->
+            if (event.action == MotionEvent.ACTION_UP) {
+                val drawableEnd = 2 // index for drawableEnd
+                val drawable = passwordEditText.compoundDrawables[drawableEnd]
+                if (drawable != null) {
+                    val bounds = drawable.bounds
+                    val x = event.rawX.toInt()
+                    val width = passwordEditText.right - passwordEditText.left
+                    val drawableStartX = width - bounds.width() - passwordEditText.paddingEnd
+
+                    if (x >= drawableStartX + passwordEditText.left) {
+                        // Toggle visibility
+                        isPasswordVisible = !isPasswordVisible
+                        if (isPasswordVisible) {
+                            passwordEditText.inputType =
+                                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                            passwordEditText.setCompoundDrawablesWithIntrinsicBounds(
+                                null, null,
+                                ContextCompat.getDrawable(this, R.drawable.visibility_off), null
+                            )
+                        } else {
+                            passwordEditText.inputType =
+                                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                            passwordEditText.setCompoundDrawablesWithIntrinsicBounds(
+                                null, null,
+                                ContextCompat.getDrawable(this, R.drawable.visibility), null
+                            )
+                        }
+                        // Move cursor to end after toggling
+                        passwordEditText.setSelection(passwordEditText.text.length)
+                        return@setOnTouchListener true
+                    }
+                }
+            }
+            false
+        }
+
+
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())

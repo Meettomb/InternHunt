@@ -30,6 +30,7 @@ import okhttp3.*
 import org.json.JSONArray
 import java.io.IOException
 import android.widget.AdapterView
+import androidx.core.content.ContextCompat
 import com.google.firebase.firestore.FirebaseFirestore
 import java.security.MessageDigest
 
@@ -78,6 +79,7 @@ class SignUp : AppCompatActivity() {
 
     private lateinit var textViewLogin: TextView
 
+    private var isPasswordVisible = false
 
 
 
@@ -453,24 +455,31 @@ class SignUp : AppCompatActivity() {
         }
     }
 
+
+
     private fun togglePasswordVisibility(editText: EditText) {
-        var isPasswordVisible = false
-
-        editText.setOnTouchListener { v, event ->
+        editText.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_UP) {
-                val drawableEnd = 2 // index for end drawable
+                val drawableEnd = 2 // Index for drawableEnd
+                val drawable = editText.compoundDrawables[drawableEnd]
 
-                val drawable: Drawable? = editText.compoundDrawables[drawableEnd]
                 drawable?.let {
-                    if (event.rawX >= (editText.right - drawable.bounds.width() - editText.paddingEnd)) {
-                        // Toggle password visibility
+                    val touchAreaStart = editText.right - drawable.bounds.width() - editText.paddingEnd
+                    if (event.rawX >= touchAreaStart) {
                         isPasswordVisible = !isPasswordVisible
+
+                        // Toggle input type
                         editText.inputType = if (isPasswordVisible) {
                             InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
                         } else {
                             InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
                         }
-                        editText.setSelection(editText.text.length) // Keep cursor at the end
+                        editText.setSelection(editText.text.length)
+
+                        // Toggle icon
+                        val iconRes = if (isPasswordVisible) R.drawable.visibility_off else R.drawable.visibility
+                        editText.setCompoundDrawablesWithIntrinsicBounds(null, null, ContextCompat.getDrawable(this, iconRes), null)
+
                         return@setOnTouchListener true
                     }
                 }
@@ -478,6 +487,7 @@ class SignUp : AppCompatActivity() {
             false
         }
     }
+
 
     private fun fetchStatesFromAPI() {
         val request = Request.Builder()

@@ -6,11 +6,18 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import com.google.firebase.firestore.FirebaseFirestore
+import android.net.Uri
+import android.widget.ImageView
+import android.widget.ProgressBar
+import com.google.firebase.storage.FirebaseStorage
+import android.view.View
+
 
 
 class StudentSignUp : AppCompatActivity() {
@@ -39,6 +46,14 @@ class StudentSignUp : AppCompatActivity() {
     private lateinit var selectedUserType: String
     private lateinit var selectedGender: String
 
+    // Image Uplode
+    private lateinit var profileImageView: ImageView
+    private var selectedImageUri: Uri? = null
+    private lateinit var progressBar: ProgressBar
+    private lateinit var ImageUplodeError: TextView
+
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,6 +71,9 @@ class StudentSignUp : AppCompatActivity() {
         graduationYearError = findViewById(R.id.GraduationYearError)
 
         signUpButton2 = findViewById(R.id.SignUpButton2)
+        progressBar = findViewById(R.id.progressBar)
+
+        ImageUplodeError = findViewById(R.id.imageUplodeError)
 
 
         userEmail = intent.getStringExtra("email") ?: ""
@@ -71,6 +89,20 @@ class StudentSignUp : AppCompatActivity() {
         selectedGender = intent.getStringExtra("gender") ?: ""
 
 
+        profileImageView = findViewById(R.id.profileImageView)
+        val selectImageText = findViewById<TextView>(R.id.selectImageText)
+
+        val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            uri?.let {
+                selectedImageUri = it
+                profileImageView.setImageURI(it)
+            }
+        }
+
+        profileImageView.setOnClickListener { pickImage.launch("image/*") }
+        selectImageText.setOnClickListener { pickImage.launch("image/*") }
+
+
         signUpButton2.setOnClickListener {
             var isValid = true
             val currentYear = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR)
@@ -79,6 +111,7 @@ class StudentSignUp : AppCompatActivity() {
             val degree = degreeName.text.toString().trim()
             val gradStartYearStr = graduationStartYear.text.toString().trim()
             val gradYearStr = graduationYear.text.toString().trim()
+            val imageUplode = ImageUplodeError.text.toString().trim()
 
             val gradStartYear = gradStartYearStr.toIntOrNull()
             val gradYear = gradYearStr.toIntOrNull()
@@ -130,40 +163,79 @@ class StudentSignUp : AppCompatActivity() {
                 graduationYearError.visibility = TextView.GONE
             }
 
+            if (selectedImageUri == null) {
+                ImageUplodeError.visibility = TextView.VISIBLE
+                isValid = false
+            } else {
+                ImageUplodeError.visibility = TextView.GONE
+            }
             // If all is valid, proceed
             if (isValid) {
+
+                progressBar.visibility = View.VISIBLE
+
                 val db = FirebaseFirestore.getInstance()
                 val newUserRef = db.collection("Users").document() // Generate a document reference
 
-                val user = hashMapOf(
-                    "id" to newUserRef.id,
-                    "b_date" to dobDate,
-                    "b_month" to dobMonth,
-                    "b_year" to dobYear,
-                    "city" to city,
-                    "collage_name" to collage,
-                    "degree_name" to degree,
-                    "email" to userEmail,
-                    "gender" to selectedGender,
-                    "graduation_start_year" to gradStartYearStr,
-                    "graduation_end_year" to gradYearStr,
-                    "password" to userPassword,
-                    "phone" to userPhone,
-                    "role" to selectedUserType,
-                    "state" to state,
-                    "username" to userName
-                )
+
+                if (selectedImageUri != null) {
+                    val storageRef = FirebaseStorage.getInstance().reference
+                    val imageRef = storageRef.child("profile_images/${newUserRef.id}.jpg")
+
+                    imageRef.putFile(selectedImageUri!!)
+                        .continueWithTask { task ->
+                            if (!task.isSuccessful) {
+                                throw task.exception ?: Exception("Upload failed")
+                            }
+                            imageRef.downloadUrl
+                        }
+                        .addOnSuccessListener { uri ->
+                            val user = hashMapOf(
+                                "id" to newUserRef.id,
+                                "b_date" to dobDate,
+                                "b_month" to dobMonth,
+                                "b_year" to dobYear,
+                                "city" to city,
+                                "collage_name" to collage,
+                                "degree_name" to degree,
+                                "email" to userEmail,
+                                "gender" to selectedGender,
+                                "graduation_start_year" to gradStartYearStr,
+                                "graduation_end_year" to gradYearStr,
+                                "password" to userPassword,
+                                "phone" to userPhone,
+                                "role" to selectedUserType,
+                                "state" to state,
+                                "username" to userName,
+                                "profile_image_url" to uri.toString()
+                            )
+
+                            newUserRef.set(user)
+                                .addOnSuccessListener {
+                                    progressBar.visibility = View.GONE // Hide loader
+                                    Toast.makeText(this, "Registration successful!", Toast.LENGTH_SHORT).show()
+                                    startActivity(Intent(this, MainActivity::class.java))
+                                    finish()
+                                }
+                                .addOnFailureListener {
+                                    progressBar.visibility = View.GONE // Hide loader
+                                    Toast.makeText(this, "Failed to save user data", Toast.LENGTH_LONG).show()
+                                }
+
+                        }
+                        .addOnFailureListener {
+                            progressBar.visibility = View.GONE // Hide loader
+                            Toast.makeText(this, "Image upload failed", Toast.LENGTH_LONG).show()
+                        }
+
+                } else {
+                    progressBar.visibility = View.GONE // Hide loader
+                    Toast.makeText(this, "Please select a profile image", Toast.LENGTH_SHORT).show()
+                }
 
 
-                newUserRef.set(user)
-                    .addOnSuccessListener {
-                        Toast.makeText(this, "Registration successfully!", Toast.LENGTH_SHORT).show()
-                        startActivity(Intent(this, MainActivity::class.java))
-                        finish()
-                    }
-                    .addOnFailureListener {
-                        Toast.makeText(this, "Failed to create user: ", Toast.LENGTH_LONG).show()
-                    }
+
+
             }
         }
 

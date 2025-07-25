@@ -8,15 +8,21 @@ import androidx.core.view.WindowInsetsCompat
 
 import android.content.Context
 import android.content.Intent
+import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import com.google.firebase.firestore.FirebaseFirestore
 
+import android.widget.ImageView
+import com.bumptech.glide.Glide
+
+
 class Home : AppCompatActivity() {
 
     private lateinit var logoutButton: TextView
     private lateinit var usernameTextView: TextView
+    private lateinit var userImageView: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,6 +31,9 @@ class Home : AppCompatActivity() {
 
         logoutButton = findViewById(R.id.LogoutButton)
         usernameTextView = findViewById(R.id.username)
+        val userImageView = findViewById<ImageView>(R.id.UserProfileImage)
+
+
 
 
         // Get session
@@ -46,6 +55,12 @@ class Home : AppCompatActivity() {
                 if (doc != null && doc.exists()) {
                     val username = doc.getString("username") ?: "Unknown"
                     usernameTextView.text = username
+                    val imageUrl = doc.getString("profile_image_url")
+                    if (!imageUrl.isNullOrEmpty()) {
+                        Glide.with(this)
+                            .load(imageUrl)
+                            .into(userImageView)
+                    }
                 } else {
                     Toast.makeText(this, "User not found", Toast.LENGTH_SHORT).show()
                 }
@@ -61,9 +76,12 @@ class Home : AppCompatActivity() {
         logoutButton.setOnClickListener {
             prefs.edit().clear().apply() // Clear session
             val intent = Intent(this, Login::class.java)
+
+            // Clears all the previous activities in the back stack (user can’t press "Back" to go to Home again)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+
             startActivity(intent)
-            finish()
+            finish() // closes the current Home activity
         }
 
 

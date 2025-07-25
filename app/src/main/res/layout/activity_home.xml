@@ -37,6 +37,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="20sp" />
+
+
+        <ImageView
+            android:id="@+id/UserProfileImage"
+            android:layout_width="70dp"
+            android:layout_height="69dp"
+            android:scaleType="centerCrop"
+            tools:srcCompat="@tools:sample/avatars" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
