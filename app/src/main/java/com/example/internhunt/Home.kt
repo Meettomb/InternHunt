@@ -21,7 +21,6 @@ import com.bumptech.glide.Glide
 class Home : AppCompatActivity() {
 
     private lateinit var logoutButton: TextView
-    private lateinit var usernameTextView: TextView
     private lateinit var userImageView: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,7 +29,6 @@ class Home : AppCompatActivity() {
         setContentView(R.layout.activity_home)
 
         logoutButton = findViewById(R.id.LogoutButton)
-        usernameTextView = findViewById(R.id.username)
         val userImageView = findViewById<ImageView>(R.id.UserProfileImage)
 
 
@@ -54,7 +52,7 @@ class Home : AppCompatActivity() {
             .addOnSuccessListener { doc ->
                 if (doc != null && doc.exists()) {
                     val username = doc.getString("username") ?: "Unknown"
-                    usernameTextView.text = username
+
                     val imageUrl = doc.getString("profile_image_url")
                     if (!imageUrl.isNullOrEmpty()) {
                         Glide.with(this)

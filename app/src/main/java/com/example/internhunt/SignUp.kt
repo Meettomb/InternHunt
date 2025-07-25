@@ -267,22 +267,42 @@ class SignUp : AppCompatActivity() {
             }
 
 
+            // Clear old errors
+            passwordError.text = ""
+            confirmPasswordError.text = ""
+            password.setBackgroundResource(R.drawable.border_all_sides)
+            confirmPassword.setBackgroundResource(R.drawable.border_all_sides)
+
+            // Validate Password
             if (userPassword.isEmpty()) {
                 password.error = "Required"
                 password.setBackgroundResource(R.drawable.border_error)
                 valid = false
+            } else if (userPassword.length < 6) {
+                passwordError.text = "Password must be at least 6 characters"
+                passwordError.visibility = View.VISIBLE
+                password.setBackgroundResource(R.drawable.border_error)
+                valid = false
+            } else {
+                passwordError.visibility = View.GONE
             }
+
+            // Validate Confirm Password
             if (userConfirmPassword.isEmpty()) {
                 confirmPassword.error = "Required"
                 confirmPassword.setBackgroundResource(R.drawable.border_error)
-                passwordError.visibility = View.VISIBLE
+                confirmPasswordError.visibility = View.GONE
                 valid = false
             } else if (userConfirmPassword != userPassword) {
                 confirmPassword.error = "Password mismatch"
                 confirmPassword.setBackgroundResource(R.drawable.border_error)
+                confirmPasswordError.text = "Passwords do not match"
                 confirmPasswordError.visibility = View.VISIBLE
                 valid = false
+            } else {
+                confirmPasswordError.visibility = View.GONE
             }
+
 
             val selectedRadioId = radioGroupbutton.checkedRadioButtonId
             val selectedGenderRadioId = genderRadioButton.checkedRadioButtonId
