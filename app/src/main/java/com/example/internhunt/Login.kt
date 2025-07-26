@@ -56,7 +56,7 @@ class Login : AppCompatActivity() {
         progressBar = findViewById(R.id.progressBar)
 
         textViewSignUp.setOnClickListener {
-            val intent = Intent(this, SignUp::class.java)
+            val intent = Intent(this, select_role::class.java)
             startActivity(intent)
         }
 

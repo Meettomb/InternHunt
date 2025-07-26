@@ -16,6 +16,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import java.util.Calendar
 
 
 class CompanySignUp : AppCompatActivity() {
@@ -37,13 +38,9 @@ class CompanySignUp : AppCompatActivity() {
     private lateinit var userName: String
     private lateinit var userPhone: String
     private lateinit var userPassword: String
-    private lateinit var dobDate: String
-    private lateinit var dobMonth: String
-    private lateinit var dobYear: String
     private lateinit var state: String
     private lateinit var city: String
     private lateinit var selectedUserType: String
-    private lateinit var selectedGender: String
     // Image Uplode
     private lateinit var profileImageView: ImageView
     private lateinit var ImageUplodeError: TextView
@@ -89,13 +86,11 @@ class CompanySignUp : AppCompatActivity() {
         userName = intent.getStringExtra("username") ?: ""
         userPhone = intent.getStringExtra("phone") ?: ""
         userPassword = intent.getStringExtra("password") ?: ""
-        dobDate = intent.getStringExtra("dobDate") ?: ""
-        dobMonth = intent.getStringExtra("dobMonth") ?: ""
-        dobYear = intent.getStringExtra("dobYear") ?: ""
+
         state = intent.getStringExtra("state") ?: ""
         city = intent.getStringExtra("city") ?: ""
         selectedUserType = intent.getStringExtra("userType") ?: ""
-        selectedGender = intent.getStringExtra("gender") ?: ""
+
 
 
         signUpButton2.setOnClickListener {
@@ -164,29 +159,34 @@ class CompanySignUp : AppCompatActivity() {
                             imageRef.downloadUrl
                         }
                         .addOnSuccessListener{uri ->
+                            val calendar = Calendar.getInstance()
+                            val day = calendar.get(Calendar.DAY_OF_MONTH).toString().padStart(2, '0')
+                            val month = (calendar.get(Calendar.MONTH) + 1).toString().padStart(2, '0') // Month is 0-based
+                            val year = calendar.get(Calendar.YEAR).toString()
+
+                            val signupDate = "$day-$month-$year"
+
                             val user = hashMapOf(
                                 "id" to newUserRef.id,
-                                "b_date" to dobDate,
-                                "b_month" to dobMonth,
-                                "b_year" to dobYear,
                                 "city" to city,
                                 "company_name" to company_name,
                                 "company_url" to company_link,
                                 "company_description" to description,
                                 "email" to userEmail,
-                                "gender" to selectedGender,
                                 "password" to userPassword,
                                 "phone" to userPhone,
                                 "role" to selectedUserType,
                                 "state" to state,
                                 "username" to userName,
-                                "profile_image_url" to uri.toString()
+                                "profile_image_url" to uri.toString(),
+                                "isactive" to true,
+                                "signup_date" to signupDate
                             )
                                 newUserRef.set(user) // Use set() to store data at that specific document ID
                                 .addOnSuccessListener {
                                     progressBar.visibility = View.GONE // Hide loader
                                     Toast.makeText(this, "Registration successfully!", Toast.LENGTH_SHORT).show()
-                                    startActivity(Intent(this, MainActivity::class.java))
+                                    startActivity(Intent(this, Login::class.java))
                                     finish()
                                 }
 

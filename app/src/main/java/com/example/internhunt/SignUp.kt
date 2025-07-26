@@ -30,6 +30,7 @@ import okhttp3.*
 import org.json.JSONArray
 import java.io.IOException
 import android.widget.AdapterView
+import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import com.google.firebase.firestore.FirebaseFirestore
 import java.security.MessageDigest
@@ -65,8 +66,7 @@ class SignUp : AppCompatActivity() {
     private lateinit var cityError: TextView
     private lateinit var passwordError: TextView
     private lateinit var confirmPasswordError: TextView
-    private lateinit var radioGroupbutton: RadioGroup
-    private lateinit var radioError: TextView
+
 
     private lateinit var genderRadioButton: RadioGroup
     private lateinit var genderRadioGroupError: TextView
@@ -80,6 +80,8 @@ class SignUp : AppCompatActivity() {
     private lateinit var textViewLogin: TextView
 
     private var isPasswordVisible = false
+
+    private lateinit var selectedUserType: String
 
 
 
@@ -113,8 +115,6 @@ class SignUp : AppCompatActivity() {
         togglePasswordVisibility(password)
         togglePasswordVisibility(confirmPassword)
 
-        radioGroupbutton = findViewById(R.id.radioGroup1)
-        radioError = findViewById(R.id.RadioError)
 
         genderRadioButton = findViewById(R.id.genderRadioGroup1)
         genderRadioGroupError = findViewById(R.id.GenderRadioError)
@@ -125,10 +125,29 @@ class SignUp : AppCompatActivity() {
         cityText = findViewById(R.id.City)
 
         textViewLogin = findViewById(R.id.textViewLogin)
+        val DoBTextView = findViewById<TextView>(R.id.DoBTextView)
+        val birthDateMonthYearLayout = findViewById<LinearLayout>(R.id.birthDateMonthYearLayout)
+        val GendertextView = findViewById<TextView>(R.id.GendertextView)
 
         textViewLogin.setOnClickListener {
             val intent = Intent(this, Login::class.java)
             startActivity(intent)
+        }
+
+        selectedUserType = intent.getStringExtra("userType") ?: ""
+
+        if (selectedUserType == "Company") {
+            DoBTextView.visibility = View.GONE
+            birthDateMonthYearLayout.visibility = View.GONE
+            genderRadioButton.visibility = View.GONE
+            GendertextView.visibility = View.GONE
+        }
+        if(selectedUserType == "Company"){
+            genderRadioButton.visibility = View.GONE
+            GendertextView.visibility = View.GONE
+        }
+        if(selectedUserType == "Company"){
+            username.visibility = View.GONE
         }
 
 
@@ -164,12 +183,15 @@ class SignUp : AppCompatActivity() {
 
             val currentYear = Calendar.getInstance().get(Calendar.YEAR)
 
-            if (userName.isEmpty()) {
-                username.error = "Required"
-                username.setBackgroundResource(R.drawable.border_error)
-                usernameError.visibility = View.VISIBLE
-                valid = false
+            if(selectedUserType != "Company"){
+                if (userName.isEmpty()) {
+                    username.error = "Required"
+                    username.setBackgroundResource(R.drawable.border_error)
+                    usernameError.visibility = View.VISIBLE
+                    valid = false
+                }
             }
+
             if (!Patterns.EMAIL_ADDRESS.matcher(userEmail).matches()) {
                 email.error = "Invalid email"
                 email.setBackgroundResource(R.drawable.border_error)
@@ -189,69 +211,71 @@ class SignUp : AppCompatActivity() {
                 phoneError.visibility = View.VISIBLE
                 valid = false
             }
-
-            if (dobDate.isEmpty()) {
-                birthDate.setBackgroundResource(R.drawable.border_error)
-                birthDateError.text = "Date is required"
-                birthDateError.visibility = View.VISIBLE
-                valid = false
-            }
-
-            if (dobMonth.isEmpty()) {
-                birthMonth.setBackgroundResource(R.drawable.border_error)
-                birthMonthError.text = "Month is required"
-                birthMonthError.visibility = View.VISIBLE
-                birthMonth.filters = arrayOf(InputFilterMinMax(1, 12))
-
-                valid = false
-            } else {
-                val month = dobMonth.toIntOrNull()
-                if (month == null || month !in 1..12) {
-                    birthMonth.setBackgroundResource(R.drawable.border_error)
-                    birthMonthError.text = "Month must be between 1 and 12"
-                    birthMonthError.visibility = View.VISIBLE
-                    valid = false
-                }
-            }
-
-            if (dobYear.isEmpty()) {
-                birthYear.setBackgroundResource(R.drawable.border_error)
-                birthYearError.text = "Year is required"
-                birthYearError.visibility = View.VISIBLE
-                valid = false
-            } else {
-                val year = dobYear.toIntOrNull()
-                if (year == null || year !in 1900..currentYear) {
-                    birthYear.setBackgroundResource(R.drawable.border_error)
-                    birthYearError.text = "Year must be between 1900 and $currentYear"
-                    birthYearError.visibility = View.VISIBLE
-                    valid = false
-                }
-            }
-
-            // Check date only if month and year are valid
-            val date = dobDate.toIntOrNull()
-            val month = dobMonth.toIntOrNull()
-            val year = dobYear.toIntOrNull()
-
-            if (date != null && month != null && year != null) {
-                try {
-                    val calendar = Calendar.getInstance()
-                    calendar.set(Calendar.YEAR, year)
-                    calendar.set(Calendar.MONTH, month - 1) // Month is 0-based in Calendar
-                    val maxDay = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
-                    if (date !in 1..maxDay) {
-                        birthDate.setBackgroundResource(R.drawable.border_error)
-                        birthDateError.text = "Date must be between 1 and $maxDay"
-                        birthDateError.visibility = View.VISIBLE
-                        valid = false
-                    }
-                } catch (e: Exception) {
+            if (selectedUserType != "Company"){
+                if (dobDate.isEmpty()) {
                     birthDate.setBackgroundResource(R.drawable.border_error)
-                    birthDateError.text = "Invalid date"
+                    birthDateError.text = "Date is required"
                     birthDateError.visibility = View.VISIBLE
                     valid = false
                 }
+
+                if (dobMonth.isEmpty()) {
+                    birthMonth.setBackgroundResource(R.drawable.border_error)
+                    birthMonthError.text = "Month is required"
+                    birthMonthError.visibility = View.VISIBLE
+                    birthMonth.filters = arrayOf(InputFilterMinMax(1, 12))
+
+                    valid = false
+                } else {
+                    val month = dobMonth.toIntOrNull()
+                    if (month == null || month !in 1..12) {
+                        birthMonth.setBackgroundResource(R.drawable.border_error)
+                        birthMonthError.text = "Month must be between 1 and 12"
+                        birthMonthError.visibility = View.VISIBLE
+                        valid = false
+                    }
+                }
+
+                if (dobYear.isEmpty()) {
+                    birthYear.setBackgroundResource(R.drawable.border_error)
+                    birthYearError.text = "Year is required"
+                    birthYearError.visibility = View.VISIBLE
+                    valid = false
+                } else {
+                    val year = dobYear.toIntOrNull()
+                    if (year == null || year !in 1900..currentYear) {
+                        birthYear.setBackgroundResource(R.drawable.border_error)
+                        birthYearError.text = "Year must be between 1900 and $currentYear"
+                        birthYearError.visibility = View.VISIBLE
+                        valid = false
+                    }
+                }
+
+                // Check date only if month and year are valid
+                val date = dobDate.toIntOrNull()
+                val month = dobMonth.toIntOrNull()
+                val year = dobYear.toIntOrNull()
+
+                if (date != null && month != null && year != null) {
+                    try {
+                        val calendar = Calendar.getInstance()
+                        calendar.set(Calendar.YEAR, year)
+                        calendar.set(Calendar.MONTH, month - 1) // Month is 0-based in Calendar
+                        val maxDay = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
+                        if (date !in 1..maxDay) {
+                            birthDate.setBackgroundResource(R.drawable.border_error)
+                            birthDateError.text = "Date must be between 1 and $maxDay"
+                            birthDateError.visibility = View.VISIBLE
+                            valid = false
+                        }
+                    } catch (e: Exception) {
+                        birthDate.setBackgroundResource(R.drawable.border_error)
+                        birthDateError.text = "Invalid date"
+                        birthDateError.visibility = View.VISIBLE
+                        valid = false
+                    }
+                }
+
             }
 
             if (state == "Select State") {
@@ -304,28 +328,22 @@ class SignUp : AppCompatActivity() {
             }
 
 
-            val selectedRadioId = radioGroupbutton.checkedRadioButtonId
+
             val selectedGenderRadioId = genderRadioButton.checkedRadioButtonId
 
-            var selectedUserType = ""
             var selectedGender = ""
 
-            if (selectedRadioId == -1) {
-                radioError.visibility = View.VISIBLE
-                valid = false
-            } else {
-                radioError.visibility = View.GONE
-                val radioButton: RadioButton = findViewById(selectedRadioId)
-                selectedUserType = radioButton.text.toString()
-            }
+            if (selectedUserType != "Company"){
 
-            if (selectedGenderRadioId == -1) {
-                genderRadioGroupError.visibility = View.VISIBLE
-                valid = false
-            } else {
-                genderRadioGroupError.visibility = View.GONE
-                val genderButton: RadioButton = findViewById(selectedGenderRadioId)
-                selectedGender = genderButton.text.toString()
+                if (selectedGenderRadioId == -1) {
+                    genderRadioGroupError.visibility = View.VISIBLE
+                    valid = false
+                } else {
+                    genderRadioGroupError.visibility = View.GONE
+                    val genderButton: RadioButton = findViewById(selectedGenderRadioId)
+                    selectedGender = genderButton.text.toString()
+                }
+
             }
 
 
@@ -380,13 +398,17 @@ class SignUp : AppCompatActivity() {
                                         val hashedPassword = hashPassword(userPassword)
                                         intent.putExtra("password", hashedPassword)
 
-                                        intent.putExtra("dobDate", dobDate)
-                                        intent.putExtra("dobMonth", dobMonth)
-                                        intent.putExtra("dobYear", dobYear)
+                                        if (selectedUserType != "Company"){
+                                            intent.putExtra("dobDate", dobDate)
+                                            intent.putExtra("dobMonth", dobMonth)
+                                            intent.putExtra("dobYear", dobYear)
+                                            intent.putExtra("gender", selectedGender)
+                                        }
+
                                         intent.putExtra("state", state)
                                         intent.putExtra("city", city)
                                         intent.putExtra("userType", selectedUserType)
-                                        intent.putExtra("gender", selectedGender)
+
                                         startActivity(intent)
                                     }
                                 } catch (e: Exception) {
@@ -458,7 +480,6 @@ class SignUp : AppCompatActivity() {
         resetBorderOnTextChange(birthMonth, birthMonthError)
         resetBorderOnTextChange(birthYear, birthYearError)
         resetBorderOnTextChange(cityText, cityError)
-        resetRadioGroupOnChange(radioGroupbutton, radioError)
         resetRadioGroupOnChange(genderRadioButton, genderRadioGroupError)
 
 

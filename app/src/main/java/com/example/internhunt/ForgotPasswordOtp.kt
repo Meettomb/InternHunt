@@ -37,7 +37,6 @@ class ForgotPasswordOtp : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_forgot_password_otp)
 
-
         otpInput = findViewById(R.id.otpInput)
         verifyButton = findViewById(R.id.verifyButton)
         resendButton = findViewById(R.id.resendButton)

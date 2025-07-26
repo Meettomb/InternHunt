@@ -79,12 +79,20 @@ class EnterNewPassword : AppCompatActivity() {
                             val userDoc = docs.documents[0].reference
                             userDoc.update("password", hashedPassword)
                                 .addOnSuccessListener {
-                                    Toast.makeText(this, "Password updated successfully!", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        this,
+                                        "Password updated successfully!",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                     startActivity(Intent(this, Login::class.java))
                                     finish()
                                 }
                                 .addOnFailureListener { e ->
-                                    Toast.makeText(this, "Failed to update password: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+                                    Toast.makeText(
+                                        this,
+                                        "Failed to update password: ${e.localizedMessage}",
+                                        Toast.LENGTH_LONG
+                                    ).show()
                                 }
                         } else {
                             Toast.makeText(this, "User not found", Toast.LENGTH_SHORT).show()
@@ -102,6 +110,7 @@ class EnterNewPassword : AppCompatActivity() {
             insets
         }
     }
+
     private fun togglePasswordVisibility(editText: EditText) {
         editText.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_UP) {
@@ -109,7 +118,8 @@ class EnterNewPassword : AppCompatActivity() {
                 val drawable = editText.compoundDrawables[drawableEnd]
 
                 drawable?.let {
-                    val touchAreaStart = editText.right - drawable.bounds.width() - editText.paddingEnd
+                    val touchAreaStart =
+                        editText.right - drawable.bounds.width() - editText.paddingEnd
                     if (event.rawX >= touchAreaStart) {
                         isPasswordVisible = !isPasswordVisible
 
@@ -122,8 +132,14 @@ class EnterNewPassword : AppCompatActivity() {
                         editText.setSelection(editText.text.length)
 
                         // Toggle icon
-                        val iconRes = if (isPasswordVisible) R.drawable.visibility_off else R.drawable.visibility
-                        editText.setCompoundDrawablesWithIntrinsicBounds(null, null, ContextCompat.getDrawable(this, iconRes), null)
+                        val iconRes =
+                            if (isPasswordVisible) R.drawable.visibility_off else R.drawable.visibility
+                        editText.setCompoundDrawablesWithIntrinsicBounds(
+                            null,
+                            null,
+                            ContextCompat.getDrawable(this, iconRes),
+                            null
+                        )
 
                         return@setOnTouchListener true
                     }

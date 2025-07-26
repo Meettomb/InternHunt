@@ -17,7 +17,7 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import com.google.firebase.storage.FirebaseStorage
 import android.view.View
-
+import java.util.Calendar
 
 
 class StudentSignUp : AppCompatActivity() {
@@ -79,10 +79,18 @@ class StudentSignUp : AppCompatActivity() {
         userEmail = intent.getStringExtra("email") ?: ""
         userName = intent.getStringExtra("username") ?: ""
         userPhone = intent.getStringExtra("phone") ?: ""
+
         userPassword = intent.getStringExtra("password") ?: ""
-        dobDate = intent.getStringExtra("dobDate") ?: ""
-        dobMonth = intent.getStringExtra("dobMonth") ?: ""
-        dobYear = intent.getStringExtra("dobYear") ?: ""
+        val dobDay = intent.getStringExtra("dobDate") ?: ""
+        val dobMonth = intent.getStringExtra("dobMonth") ?: ""
+        val dobYear = intent.getStringExtra("dobYear") ?: ""
+
+        val dateOfBirth = if (dobDay.isNotEmpty() && dobMonth.isNotEmpty() && dobYear.isNotEmpty()) {
+            dobDay.padStart(2, '0') + "-" + dobMonth.padStart(2, '0') + "-" + dobYear
+        } else {
+            "" // Leave empty if any part is missing
+        }
+
         state = intent.getStringExtra("state") ?: ""
         city = intent.getStringExtra("city") ?: ""
         selectedUserType = intent.getStringExtra("userType") ?: ""
@@ -190,11 +198,16 @@ class StudentSignUp : AppCompatActivity() {
                             imageRef.downloadUrl
                         }
                         .addOnSuccessListener { uri ->
+                            val calendar = Calendar.getInstance()
+                            val day = calendar.get(Calendar.DAY_OF_MONTH).toString().padStart(2, '0')
+                            val month = (calendar.get(Calendar.MONTH) + 1).toString().padStart(2, '0') // Month is 0-based
+                            val year = calendar.get(Calendar.YEAR).toString()
+
+                            val signupDate = "$day-$month-$year"
+
                             val user = hashMapOf(
                                 "id" to newUserRef.id,
-                                "b_date" to dobDate,
-                                "b_month" to dobMonth,
-                                "b_year" to dobYear,
+                                "date_of_birth" to dateOfBirth,
                                 "city" to city,
                                 "collage_name" to collage,
                                 "degree_name" to degree,
@@ -207,14 +220,17 @@ class StudentSignUp : AppCompatActivity() {
                                 "role" to selectedUserType,
                                 "state" to state,
                                 "username" to userName,
-                                "profile_image_url" to uri.toString()
+                                "profile_image_url" to uri.toString(),
+
+                                "isactive" to true,
+                                "signup_date" to signupDate
                             )
 
                             newUserRef.set(user)
                                 .addOnSuccessListener {
                                     progressBar.visibility = View.GONE // Hide loader
                                     Toast.makeText(this, "Registration successful!", Toast.LENGTH_SHORT).show()
-                                    startActivity(Intent(this, MainActivity::class.java))
+                                    startActivity(Intent(this, Login::class.java))
                                     finish()
                                 }
                                 .addOnFailureListener {

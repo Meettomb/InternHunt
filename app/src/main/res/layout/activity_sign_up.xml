@@ -122,6 +122,7 @@
 
                 <!-- Date of Birth -->
                 <TextView
+                    android:id="@+id/DoBTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
@@ -132,6 +133,7 @@
                     android:textStyle="bold"/>
 
                 <LinearLayout
+                    android:id="@+id/birthDateMonthYearLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
@@ -298,59 +300,9 @@
                     android:textSize="14sp"
                     android:visibility="gone" />
 
-                <!-- Sign Up Button -->
 
                 <TextView
-                    android:id="@+id/textView3"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Select your role"
-                    android:layout_marginBottom="0dp"
-                    android:textColor="#C43C3C3C"
-                    android:textColorHint="#C43C3C3C"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:layout_marginTop="10dp"/>
-
-                <RadioGroup
-                    android:id="@+id/radioGroup1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <RadioButton
-                        android:id="@+id/StudentRadioButton"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:backgroundTint="#FB1212"
-                        android:text="Student"
-                        android:textColor="@color/black"
-                        android:textSize="18sp"/>
-
-                    <RadioButton
-                        android:id="@+id/CompanyRadioButton"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Company"
-                        android:textColor="@color/black"
-                        android:textSize="18sp"/>
-                </RadioGroup>
-                <TextView
-                    android:id="@+id/RadioError"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="This field is required"
-                    android:textColor="#FF0000"
-                    android:textSize="14sp"
-                    android:visibility="gone" />
-
-
-
-
-                <TextView
-                    android:id="@+id/textView4"
+                    android:id="@+id/GendertextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Select your Gender"
@@ -375,7 +327,7 @@
                         android:backgroundTint="#FB1212"
                         android:text="Male"
                         android:textColor="@color/black"
-                        android:textSize="18sp"/>
+                        android:textSize="18sp" />
 
                     <RadioButton
                         android:id="@+id/FemaleRadioButton"
@@ -384,7 +336,7 @@
                         android:layout_weight="1"
                         android:text="Female"
                         android:textColor="@color/black"
-                        android:textSize="18sp"/>
+                        android:textSize="18sp" />
                 </RadioGroup>
                 <TextView
                     android:id="@+id/GenderRadioError"
@@ -397,6 +349,7 @@
 
 
 
+                <!-- Sign Up Button -->
 
                 <TextView
                     android:id="@+id/SignUpButton"
