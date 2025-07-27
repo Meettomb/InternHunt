@@ -20,19 +20,22 @@ import com.bumptech.glide.Glide
 
 class Home : AppCompatActivity() {
 
-    private lateinit var logoutButton: TextView
     private lateinit var userImageView: ImageView
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_home)
 
-        logoutButton = findViewById(R.id.LogoutButton)
-        val userImageView = findViewById<ImageView>(R.id.UserProfileImage)
+        userImageView = findViewById(R.id.UserProfileImage)
 
 
-
+        userImageView.setOnClickListener {
+            var intent = Intent(this, Profile::class.java)
+            startActivity(intent)
+        }
 
         // Get session
         val prefs = getSharedPreferences("UserSession", Context.MODE_PRIVATE)
@@ -51,7 +54,6 @@ class Home : AppCompatActivity() {
         db.collection("Users").document(userId).get()
             .addOnSuccessListener { doc ->
                 if (doc != null && doc.exists()) {
-                    val username = doc.getString("username") ?: "Unknown"
 
                     val imageUrl = doc.getString("profile_image_url")
                     if (!imageUrl.isNullOrEmpty()) {
@@ -70,17 +72,7 @@ class Home : AppCompatActivity() {
 
 
 
-        // Logout action
-        logoutButton.setOnClickListener {
-            prefs.edit().clear().apply() // Clear session
-            val intent = Intent(this, Login::class.java)
 
-            // Clears all the previous activities in the back stack (user can’t press "Back" to go to Home again)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-
-            startActivity(intent)
-            finish() // closes the current Home activity
-        }
 
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->

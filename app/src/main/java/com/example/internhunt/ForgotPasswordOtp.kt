@@ -31,6 +31,8 @@ class ForgotPasswordOtp : AppCompatActivity() {
 
     private lateinit var progressBar: ProgressBar
 
+    private var otpExpiryTime: Long = 0L
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +50,7 @@ class ForgotPasswordOtp : AppCompatActivity() {
 
 
         currentOtp = intent.getStringExtra("otp") ?: ""
+        otpExpiryTime = System.currentTimeMillis() + 2 * 60 * 1000
         userEmail = intent.getStringExtra("email") ?: ""
 
 
@@ -55,14 +58,26 @@ class ForgotPasswordOtp : AppCompatActivity() {
 
 
         verifyButton.setOnClickListener {
-            verifyButton.isEnabled = false // ✅ Disable button immediately
+            verifyButton.isEnabled = false // Disable immediately
+
+            val currentTime = System.currentTimeMillis()
+            val enteredOtp = otpInput.text.toString().trim()
+
             Handler(Looper.getMainLooper()).postDelayed({
-                verifyButton.isEnabled = true // ✅ Re-enable after 2 seconds
+                verifyButton.isEnabled = true // Re-enable after delay
             }, 2000)
 
-            var enteropt = otpInput.text.toString().trim()
+            // Check for OTP expiry
+            if (currentTime > otpExpiryTime) {
+                otpMessage.setTextColor(resources.getColor(android.R.color.holo_red_dark))
+                otpMessage.text = "OTP has expired. Please request a new one."
+                resendButton.visibility = View.VISIBLE
+                backButton.visibility = View.VISIBLE
+                return@setOnClickListener // Exit here after re-enabling is scheduled
+            }
 
-            if (enteropt.length != 4) {
+            // Check OTP length
+            if (enteredOtp.length != 4) {
                 otpMessage.setTextColor(resources.getColor(android.R.color.holo_red_dark))
                 otpMessage.text = "Please enter a valid 4-digit OTP"
                 progressBar.visibility = View.GONE
@@ -70,24 +85,23 @@ class ForgotPasswordOtp : AppCompatActivity() {
             }
 
             progressBar.visibility = View.VISIBLE
-            if (enteropt == currentOtp){
+
+            if (enteredOtp == currentOtp) {
                 otpMessage.setTextColor(resources.getColor(android.R.color.holo_green_dark))
                 otpMessage.text = "OTP Verified Successfully!"
-
-
                 progressBar.visibility = View.GONE
-                var intent = Intent(this, EnterNewPassword::class.java)
+
+                val intent = Intent(this, EnterNewPassword::class.java)
                 intent.putExtra("email", userEmail)
                 startActivity(intent)
                 finish()
-            }
-            else{
+            } else {
                 progressBar.visibility = View.GONE
                 otpMessage.setTextColor(resources.getColor(android.R.color.holo_red_dark))
                 otpMessage.text = "Invalid OTP. Please try again."
-
             }
         }
+
 
         resendButton.setOnClickListener {
             sendNewOtp()
@@ -134,6 +148,7 @@ class ForgotPasswordOtp : AppCompatActivity() {
             try {
                 val newOtp = (1000..9999).random().toString()
                 currentOtp = newOtp
+                otpExpiryTime = System.currentTimeMillis() + 2 * 60 * 1000 // 2 minutes
                 val sender = JakartaMailSender("internhunt2@gmail.com", "cayw smpo qwvu terg")
                 sender.sendEmail(
                     toEmail = userEmail,

@@ -32,6 +32,8 @@ class VerifyOtp : AppCompatActivity() {
     private lateinit var city: String
     private lateinit var selectedUserType: String
     private lateinit var selectedGender: String
+    private var otpExpiryTime: Long = 0L
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +48,8 @@ class VerifyOtp : AppCompatActivity() {
         timerText = findViewById(R.id.timerText)
 
         currentOtp = intent.getStringExtra("otp") ?: ""
+        otpExpiryTime = System.currentTimeMillis() + 2 * 60 * 1000
+
         userEmail = intent.getStringExtra("email") ?: ""
         userName = intent.getStringExtra("username") ?: ""
         userPhone = intent.getStringExtra("phone") ?: ""
@@ -65,8 +69,17 @@ class VerifyOtp : AppCompatActivity() {
 
         verifyButton.setOnClickListener {
             val enteredOtp = otpInput.text.toString().trim()
+            val currentTime = System.currentTimeMillis()
 
-            if (enteredOtp == correctOtp) {
+            if (currentTime > otpExpiryTime) {
+                otpMessage.setTextColor(resources.getColor(android.R.color.holo_red_dark))
+                otpMessage.text = "OTP has expired. Please request a new one."
+                resendButton.visibility = Button.VISIBLE
+                backButton.visibility = Button.VISIBLE
+                return@setOnClickListener
+            }
+
+            if (enteredOtp == currentOtp) {
                 otpMessage.setTextColor(resources.getColor(android.R.color.holo_green_dark))
                 otpMessage.text = "OTP Verified Successfully!"
 
@@ -133,10 +146,12 @@ class VerifyOtp : AppCompatActivity() {
         resendButton.visibility = Button.GONE
         backButton.visibility = Button.GONE
 
+
         thread {
             try {
                 val newOtp = (1000..9999).random().toString()
                 currentOtp = newOtp
+                otpExpiryTime = System.currentTimeMillis() + 2 * 60 * 1000 // 2 minutes
                 val sender = JakartaMailSender("internhunt2@gmail.com", "cayw smpo qwvu terg")
                 sender.sendEmail(
                     toEmail = userEmail,

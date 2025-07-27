@@ -19,13 +19,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/LogoutButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="LogOut"
-                android:visibility="visible" />
-
             <androidx.gridlayout.widget.GridLayout
                 android:id="@+id/Header"
                 android:layout_width="match_parent"
@@ -39,8 +32,8 @@
 
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/UserProfileImage"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="43dp"
+                    android:layout_height="43dp"
                     android:background="@drawable/full_round_border"
                     android:scaleType="centerCrop"
                     app:layout_column="0"
@@ -51,16 +44,16 @@
                 <EditText
                     android:id="@+id/search_bar"
                     android:layout_width="0dp"
-                    android:layout_height="40dp"
+                    android:layout_height="47dp"
                     android:layout_marginLeft="10dp"
                     android:background="@drawable/search_borders"
+                    android:drawableStart="@drawable/search"
                     android:hint="Search"
+                    android:imeOptions="actionSearch"
+                    android:inputType="text"
+                    android:paddingHorizontal="15dp"
                     android:textColor="@color/black"
                     android:textColorHint="#C43C3C3C"
-                    android:drawableStart="@drawable/search"
-                    android:paddingHorizontal="15dp"
-                    android:inputType="text"
-                    android:imeOptions="actionSearch"
                     app:layout_column="1"
                     app:layout_columnWeight="1"
                     app:layout_gravity="center_vertical"
