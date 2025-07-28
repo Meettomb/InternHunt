@@ -14,17 +14,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.InternHunt">
-        <activity
-            android:name=".Navbar"
-            android:exported="false"
-            android:label="@string/title_activity_navbar"
-            android:theme="@style/Theme.InternHunt.NoActionBar" />
+
         <activity
             android:name=".Profile"
             android:exported="false" />
-        <activity
-            android:name=".ManageProfile"
-            android:exported="false" />
+
         <activity
             android:name=".select_role"
             android:exported="false" />
@@ -62,7 +56,8 @@
         <activity
             android:name=".SignUp"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustPan|stateVisible" />
+
         <activity android:name=".MainActivity" />
     </application>
 
