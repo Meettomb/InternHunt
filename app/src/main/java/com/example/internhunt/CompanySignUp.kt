@@ -17,6 +17,7 @@ import androidx.core.widget.addTextChangedListener
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import java.util.Calendar
+import kotlin.concurrent.thread
 
 
 class CompanySignUp : AppCompatActivity() {
@@ -186,6 +187,7 @@ class CompanySignUp : AppCompatActivity() {
                                 .addOnSuccessListener {
                                     progressBar.visibility = View.GONE // Hide loader
                                     Toast.makeText(this, "Registration successfully!", Toast.LENGTH_SHORT).show()
+                                    sendFinelMessage()
                                     startActivity(Intent(this, Login::class.java))
                                     finish()
                                 }
@@ -203,9 +205,6 @@ class CompanySignUp : AppCompatActivity() {
                     progressBar.visibility = View.GONE // Hide loader
                     Toast.makeText(this, "Please select a profile image", Toast.LENGTH_SHORT).show()
                 }
-
-
-
 
             }
 
@@ -232,4 +231,23 @@ class CompanySignUp : AppCompatActivity() {
             insets
         }
     }
+
+    private fun sendFinelMessage() {
+        thread {
+            try {
+
+                val sender = JakartaMailSender("internhunt2@gmail.com", "cayw smpo qwvu terg")
+                sender.sendEmail(
+                    toEmail = userEmail,
+                    subject = "Success Message",
+                    body = "Your Registration Success fully Complete."
+                )
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+
+            }
+        }
+    }
+
 }

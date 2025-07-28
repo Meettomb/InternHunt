@@ -63,6 +63,8 @@ dependencies {
     // image preview
     implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation(libs.androidx.gridlayout)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
     annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
 
     implementation("com.google.android.material:material:1.12.0")

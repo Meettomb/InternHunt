@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
 import android.view.MotionEvent
+import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
@@ -14,6 +15,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.firestore.FirebaseFirestore
 import java.security.MessageDigest
+import kotlin.concurrent.thread
 
 class EnterNewPassword : AppCompatActivity() {
     private lateinit var userEmail: String
@@ -84,6 +86,9 @@ class EnterNewPassword : AppCompatActivity() {
                                         "Password updated successfully!",
                                         Toast.LENGTH_SHORT
                                     ).show()
+
+                                    sendFinelMessage()
+
                                     startActivity(Intent(this, Login::class.java))
                                     finish()
                                 }
@@ -153,6 +158,24 @@ class EnterNewPassword : AppCompatActivity() {
         val digest = MessageDigest.getInstance("SHA-256")
         val result = digest.digest(password.toByteArray(Charsets.UTF_8))
         return result.joinToString("") { "%02x".format(it) }
+    }
+
+    private fun sendFinelMessage() {
+        thread {
+            try {
+
+                val sender = JakartaMailSender("internhunt2@gmail.com", "cayw smpo qwvu terg")
+                sender.sendEmail(
+                    toEmail = userEmail,
+                    subject = "Success Message",
+                    body = "Your password has been changed Success fully."
+                )
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+
+            }
+        }
     }
 
 

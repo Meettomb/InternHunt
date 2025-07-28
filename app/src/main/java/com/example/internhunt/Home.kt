@@ -15,12 +15,19 @@ import androidx.activity.enableEdgeToEdge
 import com.google.firebase.firestore.FirebaseFirestore
 
 import android.widget.ImageView
+import androidx.activity.addCallback
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import com.bumptech.glide.Glide
 
 
 class Home : AppCompatActivity() {
 
     private lateinit var userImageView: ImageView
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var logoutButton: TextView
+    private lateinit var userImageView2: ImageView
+    private lateinit var usernameText: TextView
 
 
 
@@ -30,12 +37,38 @@ class Home : AppCompatActivity() {
         setContentView(R.layout.activity_home)
 
         userImageView = findViewById(R.id.UserProfileImage)
-
+        drawerLayout = findViewById(R.id.drawer_layout)
+        userImageView2 = findViewById(R.id.UserProfileImage2)
+        logoutButton = findViewById(R.id.LogoutButton)
+        usernameText = findViewById(R.id.UserName)
 
         userImageView.setOnClickListener {
-            var intent = Intent(this, Profile::class.java)
-            startActivity(intent)
+            drawerLayout.openDrawer(GravityCompat.START)
         }
+
+
+        findViewById<TextView>(R.id.nav_home).setOnClickListener {
+            // Handle navigation to Home screen
+        }
+
+        findViewById<TextView>(R.id.nav_update).setOnClickListener {
+            // Handle navigation to Update Details screen
+        }
+
+//        findViewById<TextView>(R.id.edit_profile_image_link).setOnClickListener {
+//            // Handle navigation to Update Details screen
+//        }
+
+
+
+        onBackPressedDispatcher.addCallback(this) {
+            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                drawerLayout.closeDrawer(GravityCompat.START)
+            } else {
+                finish() // Or use super.onBackPressed() if needed
+            }
+        }
+
 
         // Get session
         val prefs = getSharedPreferences("UserSession", Context.MODE_PRIVATE)
@@ -60,6 +93,17 @@ class Home : AppCompatActivity() {
                         Glide.with(this)
                             .load(imageUrl)
                             .into(userImageView)
+
+                        Glide.with(this)
+                            .load(imageUrl)
+                            .into(userImageView2)
+                    }
+                    val userName = doc.getString("username")
+                    if (!userName.isNullOrEmpty()){
+                        usernameText.text = userName
+                    }
+                    else{
+                        usernameText.text = "Guest"
                     }
                 } else {
                     Toast.makeText(this, "User not found", Toast.LENGTH_SHORT).show()

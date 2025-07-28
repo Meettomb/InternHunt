@@ -29,6 +29,7 @@ class Login : AppCompatActivity() {
         val hashBytes = digest.digest(password.toByteArray(Charsets.UTF_8))
         return hashBytes.joinToString("") { "%02x".format(it) }
     }
+    private var isPasswordVisible = false
 
     private lateinit var textViewSignUp: TextView
     private lateinit var loginButton: TextView
@@ -54,6 +55,9 @@ class Login : AppCompatActivity() {
         forgotPasswordLink = findViewById(R.id.ForgotPasswordLink)
 
         progressBar = findViewById(R.id.progressBar)
+
+        togglePasswordVisibility(passwordEditText)
+
 
         textViewSignUp.setOnClickListener {
             val intent = Intent(this, select_role::class.java)
@@ -177,52 +181,8 @@ class Login : AppCompatActivity() {
         }
 
 
-        var isPasswordVisible = false
 
-        val passwordEditText = findViewById<EditText>(R.id.Password)
-        passwordEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-        // Set initial eye icon (open eye → "password is hidden")
-        passwordEditText.setCompoundDrawablesWithIntrinsicBounds(
-            null, null,
-            ContextCompat.getDrawable(this, R.drawable.visibility), null
-        )
 
-        passwordEditText.setOnTouchListener { v, event ->
-            if (event.action == MotionEvent.ACTION_UP) {
-                val drawableEnd = 2 // index for drawableEnd
-                val drawable = passwordEditText.compoundDrawables[drawableEnd]
-                if (drawable != null) {
-                    val bounds = drawable.bounds
-                    val x = event.rawX.toInt()
-                    val width = passwordEditText.right - passwordEditText.left
-                    val drawableStartX = width - bounds.width() - passwordEditText.paddingEnd
-
-                    if (x >= drawableStartX + passwordEditText.left) {
-                        // Toggle visibility
-                        isPasswordVisible = !isPasswordVisible
-                        if (isPasswordVisible) {
-                            passwordEditText.inputType =
-                                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-                            passwordEditText.setCompoundDrawablesWithIntrinsicBounds(
-                                null, null,
-                                ContextCompat.getDrawable(this, R.drawable.visibility_off), null
-                            )
-                        } else {
-                            passwordEditText.inputType =
-                                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-                            passwordEditText.setCompoundDrawablesWithIntrinsicBounds(
-                                null, null,
-                                ContextCompat.getDrawable(this, R.drawable.visibility), null
-                            )
-                        }
-                        // Move cursor to end after toggling
-                        passwordEditText.setSelection(passwordEditText.text.length)
-                        return@setOnTouchListener true
-                    }
-                }
-            }
-            false
-        }
 
 
 
@@ -232,4 +192,38 @@ class Login : AppCompatActivity() {
             insets
         }
     }
+
+    private fun togglePasswordVisibility(editText: EditText) {
+        editText.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_UP) {
+                val drawableEnd = 2 // Index for drawableEnd
+                val drawable = editText.compoundDrawables[drawableEnd]
+
+                drawable?.let {
+                    val touchAreaStart = editText.right - drawable.bounds.width() - editText.paddingEnd
+                    if (event.rawX >= touchAreaStart) {
+                        isPasswordVisible = !isPasswordVisible
+
+                        // Toggle input type
+                        editText.inputType = if (isPasswordVisible) {
+                            InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                        } else {
+                            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                        }
+                        editText.setSelection(editText.text.length)
+
+                        // Toggle icon
+                        val iconRes = if (isPasswordVisible) R.drawable.visibility_off else R.drawable.visibility
+                        editText.setCompoundDrawablesWithIntrinsicBounds(null, null, ContextCompat.getDrawable(this, iconRes), null)
+
+                        return@setOnTouchListener true
+                    }
+                }
+            }
+            false
+        }
+    }
+
+
+
 }

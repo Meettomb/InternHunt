@@ -18,6 +18,7 @@ import android.widget.ProgressBar
 import com.google.firebase.storage.FirebaseStorage
 import android.view.View
 import java.util.Calendar
+import kotlin.concurrent.thread
 
 
 class StudentSignUp : AppCompatActivity() {
@@ -230,6 +231,7 @@ class StudentSignUp : AppCompatActivity() {
                                 .addOnSuccessListener {
                                     progressBar.visibility = View.GONE // Hide loader
                                     Toast.makeText(this, "Registration successful!", Toast.LENGTH_SHORT).show()
+                                    sendFinelMessage()
                                     startActivity(Intent(this, Login::class.java))
                                     finish()
                                 }
@@ -282,4 +284,23 @@ class StudentSignUp : AppCompatActivity() {
             insets
         }
     }
+
+    private fun sendFinelMessage() {
+        thread {
+            try {
+
+                val sender = JakartaMailSender("internhunt2@gmail.com", "cayw smpo qwvu terg")
+                sender.sendEmail(
+                    toEmail = userEmail,
+                    subject = "Success Message",
+                    body = "Your Registration Success fully Complete."
+                )
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+
+            }
+        }
+    }
+
 }

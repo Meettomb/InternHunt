@@ -1,68 +1,299 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-
-    android:id="@+id/main"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
     tools:context=".Home">
 
-    <ScrollView
+    <!-- Main Content (Right Side) -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#E7E3D9">
+        android:background="#FFFFFF">
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:background="#E7E3D9">
 
-            <androidx.gridlayout.widget.GridLayout
-                android:id="@+id/Header"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="#FFFFFF"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="8dp"
-                app:columnCount="2"
-                app:rowCount="1">
+                android:orientation="vertical">
 
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/UserProfileImage"
-                    android:layout_width="43dp"
-                    android:layout_height="43dp"
-                    android:background="@drawable/full_round_border"
-                    android:scaleType="centerCrop"
-                    app:layout_column="0"
-                    app:layout_gravity="center_vertical"
-                    app:layout_row="0"
-                    app:shapeAppearanceOverlay="@style/CircleImage" />
+                <!-- Header -->
+                <androidx.gridlayout.widget.GridLayout
+                    android:id="@+id/Header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="#FFFFFF"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="8dp"
+                    app:columnCount="2"
+                    app:rowCount="1">
 
-                <EditText
-                    android:id="@+id/search_bar"
-                    android:layout_width="0dp"
-                    android:layout_height="47dp"
-                    android:layout_marginLeft="10dp"
-                    android:background="@drawable/search_borders"
-                    android:drawableStart="@drawable/search"
-                    android:hint="Search"
-                    android:imeOptions="actionSearch"
-                    android:inputType="text"
-                    android:paddingHorizontal="15dp"
-                    android:textColor="@color/black"
-                    android:textColorHint="#C43C3C3C"
-                    app:layout_column="1"
-                    app:layout_columnWeight="1"
-                    app:layout_gravity="center_vertical"
-                    app:layout_row="0" />
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/UserProfileImage"
+                        android:layout_width="43dp"
+                        android:layout_height="43dp"
+                        android:background="@drawable/full_round_border"
+                        android:backgroundTint="#21000000"
+                        android:scaleType="centerCrop"
+                        app:layout_column="0"
+                        app:layout_gravity="center_vertical"
+                        app:layout_row="0"
+                        app:shapeAppearanceOverlay="@style/CircleImage" />
 
-            </androidx.gridlayout.widget.GridLayout>
+                    <EditText
+                        android:id="@+id/search_bar"
+                        android:layout_width="0dp"
+                        android:layout_height="47dp"
+                        android:layout_marginLeft="10dp"
+                        android:background="@drawable/search_borders"
+                        android:drawableStart="@drawable/search"
+                        android:gravity="start|center_vertical"
+                        android:hint="Search"
+                        android:imeOptions="actionSearch"
+                        android:inputType="text"
+                        android:paddingHorizontal="15dp"
+                        android:textColor="@color/black"
+                        android:textColorHint="#C43C3C3C"
+                        android:textSize="18sp"
+                        app:layout_column="1"
+                        app:layout_columnWeight="1"
+                        app:layout_gravity="center_vertical"
+                        app:layout_row="0" />
+                </androidx.gridlayout.widget.GridLayout>
+
+                <!-- Job Section -->
+                <androidx.gridlayout.widget.GridLayout
+                    android:id="@+id/Job"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp">
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/CompanyProfileImage"
+                        android:layout_width="102dp"
+                        android:layout_height="102dp"
+                        android:background="#27210000"
+                        android:scaleType="centerCrop"
+                        app:layout_column="0"
+                        app:layout_row="0" />
+
+                    <LinearLayout
+                        android:layout_width="298dp"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingLeft="10dp"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp">
+
+                        <TextView
+                            android:id="@+id/JobTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Backend Developer"
+                            android:textColor="#000000"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/textView4"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="Google"
+                            android:textColor="#979797"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/textView5"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="Ahmedabad, Gujarat"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+                </androidx.gridlayout.widget.GridLayout>
+            </LinearLayout>
+        </ScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Navigation Drawer (Left Side) -->
+    <LinearLayout
+        android:layout_width="280dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="#FFFFFF"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Top Scrollable Content -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:id="@+id/side_navbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Profile in Drawer -->
+                <androidx.gridlayout.widget.GridLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="102dp"
+                    android:layout_marginTop="10dp"
+                    android:paddingEnd="10dp"
+                    app:columnCount="2">
+
+                    <FrameLayout
+                        android:layout_width="86dp"
+                        android:layout_height="86dp"
+                        android:layout_margin="4dp"
+                        android:background="@drawable/full_round_border"
+                        android:padding="2dp"> <!-- space between border and image -->
+
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:id="@+id/UserProfileImage2"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:background="@android:color/white"
+                            app:shapeAppearanceOverlay="@style/CircleImage" />
+
+                        <ImageView
+                            android:id="@+id/edit_icon_overlay"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_gravity="bottom|end"
+                            android:layout_margin="4dp"
+                            android:src="@drawable/edit"
+                            android:background="@drawable/border_all_sides"
+                            android:padding="4dp" />
+                    </FrameLayout>
 
 
-        </LinearLayout>
-    </ScrollView>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingLeft="10dp"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
+                        app:layout_column="1"
+                        app:layout_gravity="center"
+                        app:layout_row="0">
+
+                        <TextView
+                            android:id="@+id/UserName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="start"
+                            android:maxLines="2"
+                            android:textColor="#0E64D2"
+                            android:textSize="20sp"
+                            android:textStyle="bold"/>
+
+                    </LinearLayout>
+                </androidx.gridlayout.widget.GridLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="#CCCCCC" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="0dp"
+                    android:paddingTop="20dp"
+                    android:text="Account"
+                    android:textColor="#000000"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="15dp"/>
+
+
+                <TextView
+                    android:id="@+id/nav_home"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/nav_item_background"
+                    android:paddingVertical="10dp"
+                    android:paddingHorizontal="5dp"
+                    android:layout_marginVertical="8dp"
+                    android:text="Home"
+                    android:textColor="#888888"
+                    android:textSize="18sp"
+                    android:drawableStart="@drawable/home"
+                    android:drawablePadding="12dp" />
+
+                <TextView
+                    android:id="@+id/nav_update"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/nav_item_background"
+                    android:paddingVertical="10dp"
+                    android:paddingHorizontal="5dp"
+                    android:layout_marginVertical="8dp"
+                    android:text="Manage Personal Detail"
+                    android:textColor="#888888"
+                    android:textSize="18sp"
+                    android:drawableStart="@drawable/edit_small_size"
+                    android:drawablePadding="12dp"/>
+
+                <TextView
+                    android:id="@+id/nav_security"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/nav_item_background"
+                    android:paddingVertical="10dp"
+                    android:paddingHorizontal="5dp"
+                    android:layout_marginVertical="8dp"
+                    android:text="Security"
+                    android:textColor="#888888"
+                    android:textSize="18sp"
+                    android:drawableStart="@drawable/security"
+                    android:drawablePadding="12dp"/>
+
+            </LinearLayout>
+        </ScrollView>
+
+        <!-- Logout at the Bottom -->
+        <TextView
+            android:id="@+id/LogoutButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/border_all_sides"
+            android:backgroundTint="#E03737"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="Log out"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:drawableStart="@drawable/logout"
+            android:drawablePadding="12dp"
+            android:elevation="4dp"/>
+
+
+            </LinearLayout>
+
+
+        </androidx.drawerlayout.widget.DrawerLayout>
