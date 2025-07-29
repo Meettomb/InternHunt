@@ -66,6 +66,10 @@ class Home : AppCompatActivity() {
             // Handle navigation to Update Details screen
         }
 
+        findViewById<TextView>(R.id.nav_add_post).setOnClickListener {
+            // Handle navigation to Update Details screen
+        }
+
         findViewById<TextView>(R.id.bookmark).setOnClickListener {
             // Handle navigation to Update Details screen
         }
@@ -133,6 +137,7 @@ class Home : AppCompatActivity() {
                         if (!userName.isNullOrEmpty()) {
                             usernameText.text = userName
                         }
+                        findViewById<TextView>(R.id.nav_add_post).visibility = View.GONE
                     }
                     else if(role == "Company"){
                         if (!companyName.isNullOrEmpty()){

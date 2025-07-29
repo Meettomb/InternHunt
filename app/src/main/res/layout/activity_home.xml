@@ -273,6 +273,20 @@
                     android:drawablePadding="12dp"/>
 
                 <TextView
+                    android:id="@+id/nav_add_post"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/nav_item_background"
+                    android:paddingVertical="10dp"
+                    android:paddingHorizontal="5dp"
+                    android:layout_marginVertical="8dp"
+                    android:text="Add Post / Job"
+                    android:textColor="#888888"
+                    android:textSize="18sp"
+                    android:drawableStart="@drawable/plus"
+                    android:drawablePadding="12dp"/>
+
+                <TextView
                     android:id="@+id/bookmark"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
