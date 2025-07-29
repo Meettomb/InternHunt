@@ -8,6 +8,7 @@ import androidx.core.view.WindowInsetsCompat
 
 import android.content.Context
 import android.content.Intent
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -16,6 +17,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 import android.widget.ImageView
 import androidx.activity.addCallback
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.bumptech.glide.Glide
@@ -33,8 +35,13 @@ class Home : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+//        enableEdgeToEdge()
         setContentView(R.layout.activity_home)
+        window.statusBarColor = ContextCompat.getColor(this, R.color.white)
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+
+
+
 
         userImageView = findViewById(R.id.UserProfileImage)
         drawerLayout = findViewById(R.id.drawer_layout)
@@ -51,13 +58,33 @@ class Home : AppCompatActivity() {
             // Handle navigation to Home screen
         }
 
-        findViewById<TextView>(R.id.nav_update).setOnClickListener {
+        findViewById<TextView>(R.id.manage_personal_detail).setOnClickListener {
             // Handle navigation to Update Details screen
         }
 
-//        findViewById<TextView>(R.id.edit_profile_image_link).setOnClickListener {
-//            // Handle navigation to Update Details screen
-//        }
+        findViewById<TextView>(R.id.nav_security).setOnClickListener {
+            // Handle navigation to Update Details screen
+        }
+
+        findViewById<TextView>(R.id.bookmark).setOnClickListener {
+            // Handle navigation to Update Details screen
+        }
+
+        findViewById<TextView>(R.id.history).setOnClickListener {
+            // Handle navigation to Update Details screen
+        }
+
+        findViewById<TextView>(R.id.notification).setOnClickListener {
+            // Handle navigation to Update Details screen
+        }
+
+        findViewById<TextView>(R.id.setting).setOnClickListener {
+            // Handle navigation to Update Details screen
+        }
+
+        findViewById<TextView>(R.id.help).setOnClickListener {
+            // Handle navigation to Update Details screen
+        }
 
 
 
@@ -99,8 +126,18 @@ class Home : AppCompatActivity() {
                             .into(userImageView2)
                     }
                     val userName = doc.getString("username")
-                    if (!userName.isNullOrEmpty()){
-                        usernameText.text = userName
+                    val companyName = doc.getString("company_name")
+                    val role = doc.getString("role")
+
+                    if (role == "Student") {
+                        if (!userName.isNullOrEmpty()) {
+                            usernameText.text = userName
+                        }
+                    }
+                    else if(role == "Company"){
+                        if (!companyName.isNullOrEmpty()){
+                            usernameText.text = companyName
+                        }
                     }
                     else{
                         usernameText.text = "Guest"
@@ -129,11 +166,11 @@ class Home : AppCompatActivity() {
 
 
 
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+//
+//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+//            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+//            insets
+//        }
     }
 }

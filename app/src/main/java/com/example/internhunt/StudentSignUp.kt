@@ -222,7 +222,6 @@ class StudentSignUp : AppCompatActivity() {
                                 "state" to state,
                                 "username" to userName,
                                 "profile_image_url" to uri.toString(),
-
                                 "isactive" to true,
                                 "signup_date" to signupDate
                             )

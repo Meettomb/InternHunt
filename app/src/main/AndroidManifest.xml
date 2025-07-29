@@ -15,6 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.InternHunt">
 
+
         <activity
             android:name=".Profile"
             android:exported="false" />
@@ -31,16 +32,19 @@
         <activity
             android:name=".splash"
             android:exported="true"
+            android:theme="@style/Theme.InternHunt.Splash"/>
+
+
+        <activity
+            android:name=".Home"
+            android:exported="true"
             android:theme="@style/Theme.InternHunt.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".Home"
-            android:exported="false" />
+
         <activity
             android:name=".Login"
             android:exported="false" />
@@ -60,5 +64,4 @@
 
         <activity android:name=".MainActivity" />
     </application>
-
 </manifest>

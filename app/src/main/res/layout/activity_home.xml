@@ -31,7 +31,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:background="#FFFFFF"
+                    android:background="@color/white"
                     android:paddingHorizontal="10dp"
                     android:paddingVertical="8dp"
                     app:columnCount="2"
@@ -120,6 +120,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
                             android:text="Ahmedabad, Gujarat"
+                            android:textColor="#979797"
                             android:textSize="14sp" />
                     </LinearLayout>
                 </androidx.gridlayout.widget.GridLayout>
@@ -153,11 +154,12 @@
                 <androidx.gridlayout.widget.GridLayout
                     android:layout_width="match_parent"
                     android:layout_height="102dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="0dp"
                     android:paddingEnd="10dp"
                     app:columnCount="2">
 
                     <FrameLayout
+                        android:id="@+id/nav_profile"
                         android:layout_width="86dp"
                         android:layout_height="86dp"
                         android:layout_margin="4dp"
@@ -243,7 +245,7 @@
                     android:drawablePadding="12dp" />
 
                 <TextView
-                    android:id="@+id/nav_update"
+                    android:id="@+id/manage_personal_detail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/nav_item_background"
@@ -268,6 +270,76 @@
                     android:textColor="#888888"
                     android:textSize="18sp"
                     android:drawableStart="@drawable/security"
+                    android:drawablePadding="12dp"/>
+
+                <TextView
+                    android:id="@+id/bookmark"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/nav_item_background"
+                    android:paddingVertical="10dp"
+                    android:paddingHorizontal="5dp"
+                    android:layout_marginVertical="8dp"
+                    android:text="Saved Jobs / Bookmarks"
+                    android:textColor="#888888"
+                    android:textSize="18sp"
+                    android:drawableStart="@drawable/bookmark"
+                    android:drawablePadding="12dp"/>
+
+                <TextView
+                    android:id="@+id/history"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/nav_item_background"
+                    android:paddingVertical="10dp"
+                    android:paddingHorizontal="5dp"
+                    android:layout_marginVertical="8dp"
+                    android:text="Applied Jobs"
+                    android:textColor="#888888"
+                    android:textSize="18sp"
+                    android:drawableStart="@drawable/history"
+                    android:drawablePadding="12dp"/>
+
+                <TextView
+                    android:id="@+id/notification"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/nav_item_background"
+                    android:paddingVertical="10dp"
+                    android:paddingHorizontal="5dp"
+                    android:layout_marginVertical="8dp"
+                    android:text="Notifications"
+                    android:textColor="#888888"
+                    android:textSize="18sp"
+                    android:drawableStart="@drawable/notification_settings"
+                    android:drawablePadding="12dp"/>
+
+                <TextView
+                    android:id="@+id/setting"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/nav_item_background"
+                    android:paddingVertical="10dp"
+                    android:paddingHorizontal="5dp"
+                    android:layout_marginVertical="8dp"
+                    android:text="Settings"
+                    android:textColor="#888888"
+                    android:textSize="18sp"
+                    android:drawableStart="@drawable/settings"
+                    android:drawablePadding="12dp"/>
+
+                <TextView
+                    android:id="@+id/help"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/nav_item_background"
+                    android:paddingVertical="10dp"
+                    android:paddingHorizontal="5dp"
+                    android:layout_marginVertical="8dp"
+                    android:text="Help / Support"
+                    android:textColor="#888888"
+                    android:textSize="18sp"
+                    android:drawableStart="@drawable/help"
                     android:drawablePadding="12dp"/>
 
             </LinearLayout>
