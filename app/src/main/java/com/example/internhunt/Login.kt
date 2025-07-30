@@ -151,7 +151,7 @@ class Login : AppCompatActivity() {
                 .get()
                 .addOnSuccessListener { documents ->
                     if (documents.isEmpty) {
-                        emailError.text = "Email not found"
+                        emailError.text = "Email not found."
                         emailError.visibility = TextView.VISIBLE
                     } else {
                         val doc = documents.documents[0]

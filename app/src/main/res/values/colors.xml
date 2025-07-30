@@ -5,5 +5,8 @@
     <color name="my_status_color">#CECECE</color>
     <color name="primary_color">#0E64D2</color>
     <color name="light_color">#979797</color>
+    <color name="background">#E7E3D9</color>
+    <color name="second_text_color">#2F2F2F</color>
+    <color name="third_text_color">#979797</color>
 
 </resources>

@@ -10,6 +10,8 @@ import android.content.Context
 import android.content.Intent
 import android.view.View
 import android.widget.Button
+import android.widget.FrameLayout
+import androidx.gridlayout.widget.GridLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -17,6 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 import android.widget.ImageView
 import androidx.activity.addCallback
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -30,6 +33,7 @@ class Home : AppCompatActivity() {
     private lateinit var logoutButton: TextView
     private lateinit var userImageView2: ImageView
     private lateinit var usernameText: TextView
+    private lateinit var profile_drawer: GridLayout
 
 
 
@@ -48,19 +52,25 @@ class Home : AppCompatActivity() {
         userImageView2 = findViewById(R.id.UserProfileImage2)
         logoutButton = findViewById(R.id.LogoutButton)
         usernameText = findViewById(R.id.UserName)
+        profile_drawer = findViewById(R.id.profile_drawer)
 
         userImageView.setOnClickListener {
             drawerLayout.openDrawer(GravityCompat.START)
         }
 
+        profile_drawer.setOnClickListener {
+            var intent = Intent(this, Profile::class.java)
+            startActivity(intent)
+        }
 
         findViewById<TextView>(R.id.nav_home).setOnClickListener {
-            // Handle navigation to Home screen
+            val intent = intent
+            finish()
+            overridePendingTransition(0, 0)
+            startActivity(intent)
+            overridePendingTransition(0, 0)
         }
 
-        findViewById<TextView>(R.id.manage_personal_detail).setOnClickListener {
-            // Handle navigation to Update Details screen
-        }
 
         findViewById<TextView>(R.id.nav_security).setOnClickListener {
             // Handle navigation to Update Details screen
@@ -147,6 +157,7 @@ class Home : AppCompatActivity() {
                     else{
                         usernameText.text = "Guest"
                     }
+
                 } else {
                     Toast.makeText(this, "User not found", Toast.LENGTH_SHORT).show()
                 }
