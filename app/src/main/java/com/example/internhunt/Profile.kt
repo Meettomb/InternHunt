@@ -33,8 +33,7 @@ class Profile : AppCompatActivity() {
     private lateinit var update_cover_text: TextView
     private lateinit var collage_name: TextView
     private lateinit var backButton: ImageView
-    private val REQUEST_CODE_COVER_IMAGE = 1001
-    private val REQUEST_CODE_PROFILE_IMAGE = 1002
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
