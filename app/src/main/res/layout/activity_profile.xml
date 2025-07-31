@@ -194,6 +194,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/white"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -255,10 +256,11 @@
                         android:drawableEnd="@drawable/ic_user"
                         android:hint="Username"
                         android:padding="15dp"
+                        android:singleLine="true"
                         android:textColor="#000000"
                         android:textColorHint="#C43C3C3C"
-                        android:textSize="18sp"
-                        android:singleLine="true" />
+                        android:textSize="18sp" />
+
                     <TextView
                         android:id="@+id/UsernameError"
                         android:layout_width="match_parent"
@@ -278,7 +280,7 @@
                         android:textColor="#C43C3C3C"
                         android:textColorHint="#C43C3C3C"
                         android:textSize="18sp"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
 
                     <LinearLayout
                         android:id="@+id/birthDateMonthYearLayout"
@@ -296,11 +298,11 @@
                             android:background="@drawable/border_all_sides"
                             android:hint="30"
                             android:inputType="number"
+                            android:maxLength="2"
                             android:padding="15dp"
                             android:textColor="#000000"
                             android:textColorHint="#C43C3C3C"
-                            android:textSize="18sp"
-                            android:maxLength="2"/>
+                            android:textSize="18sp" />
 
                         <EditText
                             android:id="@+id/BirthMonth"
@@ -311,11 +313,11 @@
                             android:background="@drawable/border_all_sides"
                             android:hint="12"
                             android:inputType="number"
+                            android:maxLength="2"
                             android:padding="15dp"
                             android:textColor="#000000"
                             android:textColorHint="#C43C3C3C"
-                            android:textSize="18sp"
-                            android:maxLength="2"/>
+                            android:textSize="18sp" />
 
                         <EditText
                             android:id="@+id/BirthYear"
@@ -325,12 +327,13 @@
                             android:background="@drawable/border_all_sides"
                             android:hint="2000"
                             android:inputType="number"
+                            android:maxLength="4"
                             android:padding="15dp"
                             android:textColor="#000000"
                             android:textColorHint="#C43C3C3C"
-                            android:textSize="18sp"
-                            android:maxLength="4"/>
+                            android:textSize="18sp" />
                     </LinearLayout>
+
                     <TextView
                         android:id="@+id/BirthDateError"
                         android:layout_width="match_parent"
@@ -362,12 +365,13 @@
                         android:id="@+id/state"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="#000000"
-                        android:padding="15dp"
-                        android:textSize="18sp"
-                        android:background="@drawable/border_all_sides"
                         android:layout_marginBottom="10dp"
-                        android:hint="State"/>
+                        android:background="@drawable/border_all_sides"
+                        android:hint="State"
+                        android:padding="15dp"
+                        android:textColor="#000000"
+                        android:textSize="18sp" />
+
                     <TextView
                         android:id="@+id/StateError"
                         android:layout_width="match_parent"
@@ -386,8 +390,9 @@
                         android:hint="City"
                         android:padding="15dp"
                         android:textColor="#000000"
-                        android:textSize="18sp"
-                        android:textColorHint="#C43C3C3C"/>
+                        android:textColorHint="#C43C3C3C"
+                        android:textSize="18sp" />
+
                     <TextView
                         android:id="@+id/CityError"
                         android:layout_width="match_parent"
@@ -402,13 +407,13 @@
                         android:id="@+id/GendertextView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Select your Gender"
+                        android:layout_marginTop="10dp"
                         android:layout_marginBottom="0dp"
+                        android:text="Select your Gender"
                         android:textColor="#C43C3C3C"
                         android:textColorHint="#C43C3C3C"
                         android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:layout_marginTop="10dp"/>
+                        android:textStyle="bold" />
 
                     <RadioGroup
                         android:id="@+id/genderRadioGroup1"
@@ -435,6 +440,7 @@
                             android:textColor="@color/black"
                             android:textSize="18sp" />
                     </RadioGroup>
+
                     <TextView
                         android:id="@+id/GenderRadioError"
                         android:layout_width="match_parent"
@@ -443,7 +449,6 @@
                         android:textColor="#FF0000"
                         android:textSize="14sp"
                         android:visibility="gone" />
-
 
 
                     <!-- Sign Up Button -->
@@ -460,7 +465,6 @@
                         android:text="Update"
                         android:textColor="#FFFFFF"
                         android:textSize="20sp" />
-
 
 
                 </LinearLayout>

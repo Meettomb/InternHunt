@@ -524,7 +524,7 @@ class Profile : AppCompatActivity() {
                    .addOnSuccessListener {
                        progressBar.visibility = View.GONE
                        Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_SHORT).show()
-                       finish()
+                       detailScrollView.visibility = View.GONE
                    }
                    .addOnFailureListener { e ->
                        progressBar.visibility = View.GONE
