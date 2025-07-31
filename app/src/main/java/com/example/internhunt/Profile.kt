@@ -27,6 +27,8 @@ class Profile : AppCompatActivity() {
 
     private lateinit var userProfileImage2: ImageView
     private lateinit var username: TextView
+    private lateinit var headline: TextView
+    private lateinit var Location: TextView
     private lateinit var usernameEdit: EditText
     private lateinit var uploadOverlay: FrameLayout
     private lateinit var uploadSection: LinearLayout
@@ -40,7 +42,7 @@ class Profile : AppCompatActivity() {
     private lateinit var collage_name: TextView
     private lateinit var backButton: ImageView
 
-    private lateinit var headLine: EditText
+    private lateinit var headLineEdit: EditText
     private lateinit var birthDateEdit: EditText
     private lateinit var birthMonthEdit: EditText
     private lateinit var birthYearEdit: EditText
@@ -84,6 +86,8 @@ class Profile : AppCompatActivity() {
 
         userProfileImage2 = findViewById(R.id.UserProfileImage2)
         username = findViewById(R.id.username)
+        headline = findViewById(R.id.headline)
+        Location = findViewById(R.id.Location)
         usernameEdit = findViewById(R.id.Username)
         uploadOverlay = findViewById(R.id.upload_back_cover_overlay)
         uploadSection = findViewById(R.id.upload_section)
@@ -97,7 +101,7 @@ class Profile : AppCompatActivity() {
         collage_name = findViewById(R.id.collage_name)
         backButton = findViewById(R.id.backButton)
 
-        headLine = findViewById(R.id.headLine)
+        headLineEdit = findViewById(R.id.headLine)
         stateEdit = findViewById(R.id.state)
         cityEdit = findViewById(R.id.City)
         genderEdit = findViewById(R.id.genderRadioGroup1)
@@ -510,7 +514,7 @@ class Profile : AppCompatActivity() {
            if (UserId != null){
                val db = FirebaseFirestore.getInstance()
                val updateMap = hashMapOf<String, Any>(
-                   "headline" to headLine.text.toString(),
+                   "headline" to headLineEdit.text.toString(),
                    "username" to username,
                    "birth_date" to dobDate,
                    "birth_month" to dobMonth,
@@ -524,8 +528,17 @@ class Profile : AppCompatActivity() {
                    .addOnSuccessListener {
                        progressBar.visibility = View.GONE
                        Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_SHORT).show()
+
+                       // Update views after saving data
+                       var username = findViewById<TextView>(R.id.username)
+                       username.text = usernameEdit.text.toString()
+                       headline.text = headLineEdit.text.toString()
+                       Location.text = "${cityEdit.text.toString()}, ${stateEdit.text.toString()}"
+
+                       // Hide detail update form
                        detailScrollView.visibility = View.GONE
                    }
+
                    .addOnFailureListener { e ->
                        progressBar.visibility = View.GONE
                        Toast.makeText(this, "Update failed: ${e.message}", Toast.LENGTH_SHORT).show()
@@ -632,8 +645,15 @@ class Profile : AppCompatActivity() {
                         genderEdit.check(R.id.FemaleRadioButton)
                     }
 
-                    val headline = doc.getString("headline") ?: ""
-                    headLine.setText(headline)
+                    val headlineStr = doc.getString("headline") ?: ""
+                    headLineEdit.setText(headlineStr)
+
+                    if (!headlineStr.isNullOrEmpty()) {
+                        headline.text = headlineStr
+                    }
+                    else{
+                        headline.text = "Add Headline"
+                    }
 
                     val dateOfBirth = doc.getString("date_of_birth") ?: ""
                     val dateOfBirtView = findViewById<TextView>(R.id.BirthDate)

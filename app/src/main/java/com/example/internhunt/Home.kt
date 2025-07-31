@@ -125,8 +125,15 @@ class Home : AppCompatActivity() {
 
         // Fetch user from Firestore
         val db = FirebaseFirestore.getInstance()
-        db.collection("Users").document(userId).get()
-            .addOnSuccessListener { doc ->
+        val userRef = db.collection("Users").document(userId)
+
+
+        userRef.addSnapshotListener { doc, error ->
+            if (error != null) {
+                Toast.makeText(this, "Error: ${error.localizedMessage}", Toast.LENGTH_LONG).show()
+                return@addSnapshotListener
+            }
+
                 if (doc != null && doc.exists()) {
 
                     val imageUrl = doc.getString("profile_image_url")
@@ -162,9 +169,7 @@ class Home : AppCompatActivity() {
                     Toast.makeText(this, "User not found", Toast.LENGTH_SHORT).show()
                 }
             }
-            .addOnFailureListener {
-                Toast.makeText(this, "Error: ${it.localizedMessage}", Toast.LENGTH_LONG).show()
-            }
+
 
 
 
