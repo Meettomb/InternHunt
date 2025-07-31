@@ -1,12 +1,16 @@
 package com.example.internhunt
 
+import InputFilterMinMax
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
+import android.widget.RadioGroup
+import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -17,11 +21,13 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import com.google.firebase.firestore.FirebaseFirestore
+import java.util.Calendar
 
 class Profile : AppCompatActivity() {
 
     private lateinit var userProfileImage2: ImageView
     private lateinit var username: TextView
+    private lateinit var usernameEdit: EditText
     private lateinit var uploadOverlay: FrameLayout
     private lateinit var uploadSection: LinearLayout
     private lateinit var dragHandle: TextView
@@ -34,6 +40,26 @@ class Profile : AppCompatActivity() {
     private lateinit var collage_name: TextView
     private lateinit var backButton: ImageView
 
+    private lateinit var headLine: EditText
+    private lateinit var birthDateEdit: EditText
+    private lateinit var birthMonthEdit: EditText
+    private lateinit var birthYearEdit: EditText
+    private lateinit var stateEdit: EditText
+    private lateinit var cityEdit: EditText
+    private lateinit var genderEdit: RadioGroup
+
+    private lateinit var updateButton: TextView
+    private lateinit var UsernameError: TextView
+    private lateinit var BirthDateError: TextView
+    private lateinit var BirthMonthError: TextView
+    private lateinit var BirthYearError: TextView
+    private lateinit var StateError: TextView
+    private lateinit var CityError: TextView
+    private lateinit var GenderRadioError: TextView
+    private lateinit var detailScrollView: ScrollView
+    private lateinit var detailEditIcon: TextView
+    private lateinit var closeUpdateDetail: ImageView
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,8 +68,23 @@ class Profile : AppCompatActivity() {
         window.statusBarColor = ContextCompat.getColor(this, R.color.primary_color)
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 
+        // Load Session
+        val prefs = getSharedPreferences("UserSession", MODE_PRIVATE)
+        val UserId = prefs.getString("userid", null)
+
+        if (UserId != null){
+            loadUserProfile(UserId)
+        }
+        else{
+            Toast.makeText(this, "Please Login Again", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, Login::class.java))
+            finish()
+            return
+        }
+
         userProfileImage2 = findViewById(R.id.UserProfileImage2)
         username = findViewById(R.id.username)
+        usernameEdit = findViewById(R.id.Username)
         uploadOverlay = findViewById(R.id.upload_back_cover_overlay)
         uploadSection = findViewById(R.id.upload_section)
         dragHandle = findViewById(R.id.back_cover_drag_handle)
@@ -55,6 +96,26 @@ class Profile : AppCompatActivity() {
         update_cover_text = findViewById(R.id.update_cover_text)
         collage_name = findViewById(R.id.collage_name)
         backButton = findViewById(R.id.backButton)
+
+        headLine = findViewById(R.id.headLine)
+        stateEdit = findViewById(R.id.state)
+        cityEdit = findViewById(R.id.City)
+        genderEdit = findViewById(R.id.genderRadioGroup1)
+        updateButton = findViewById(R.id.UpdateButton)
+        UsernameError = findViewById(R.id.UsernameError)
+        BirthDateError = findViewById(R.id.BirthDateError)
+        BirthMonthError = findViewById(R.id.BirthMonthError)
+        BirthYearError = findViewById(R.id.BirthYearError)
+        StateError = findViewById(R.id.StateError)
+        CityError = findViewById(R.id.CityError)
+        GenderRadioError = findViewById(R.id.GenderRadioError)
+        birthDateEdit = findViewById(R.id.BirthDate)
+        birthMonthEdit = findViewById(R.id.BirthMonth)
+        birthYearEdit = findViewById(R.id.BirthYear)
+        detailScrollView = findViewById(R.id.detail_update_scroll_view)
+        detailEditIcon = findViewById(R.id.detail_edit_icon)
+        closeUpdateDetail = findViewById(R.id.closeUpdatedetail)
+
 
         // Back Button
         backButton.setOnClickListener {
@@ -85,9 +146,6 @@ class Profile : AppCompatActivity() {
             closeUploadSection()
         }
 
-
-
-
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (uploadOverlay.visibility == View.VISIBLE) {
@@ -99,20 +157,23 @@ class Profile : AppCompatActivity() {
         })
 
 
-        // Load Session
-        val prefs = getSharedPreferences("UserSession", MODE_PRIVATE)
-        val UserId = prefs.getString("userid", null)
-
-        if (UserId != null){
-            loadUserProfile(UserId)
+        detailEditIcon.setOnClickListener {
+            detailScrollView.visibility = View.VISIBLE
         }
-        else{
-            Toast.makeText(this, "Please Login Again", Toast.LENGTH_SHORT).show()
-            startActivity(Intent(this, Login::class.java))
-            finish()
-            return
+        closeUpdateDetail.setOnClickListener {
+            detailScrollView.visibility = View.GONE
         }
-
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (detailScrollView.visibility == View.VISIBLE) {
+                    detailScrollView.visibility = View.GONE
+                } else {
+                    // Default behavior (finish the activity or go back)
+                    isEnabled = false  // disable this callback
+                    onBackPressedDispatcher.onBackPressed() // call default back behavior
+                }
+            }
+        })
 
         // Perform upload click
         uploadClick.setOnClickListener {
@@ -122,11 +183,14 @@ class Profile : AppCompatActivity() {
             closeUploadSection()
         }
 
-
         userProfileImage2.setOnClickListener {
             val intent = Intent(Intent.ACTION_GET_CONTENT)
             intent.type = "image/*"
             startActivityForResult(intent, 1002)  // use different requestCode than cover
+        }
+
+        updateButton.setOnClickListener {
+            updatePersonalDetails()
         }
 
 
@@ -318,6 +382,168 @@ class Profile : AppCompatActivity() {
 
 
 
+    private fun updatePersonalDetails(): Boolean {
+        var isValid = true
+
+        val username = usernameEdit.text.toString().trim()
+        val dobDate = birthDateEdit.text.toString().trim()
+        val dobMonth = birthMonthEdit.text.toString().trim()
+        val dobYear = birthYearEdit.text.toString().trim()
+        val state = stateEdit.text.toString().trim()
+        val city = cityEdit.text.toString().trim()
+        val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+
+        // Username
+        if (username.isEmpty()) {
+            UsernameError.text = "Username is required"
+            UsernameError.visibility = View.VISIBLE
+            isValid = false
+        } else {
+            UsernameError.visibility = View.GONE
+        }
+
+        // Birth date
+        if (dobDate.isEmpty()) {
+            BirthDateError.text = "Date is required"
+            BirthDateError.visibility = View.VISIBLE
+            birthDateEdit.setBackgroundResource(R.drawable.border_error)
+            isValid = false
+        } else {
+            BirthDateError.visibility = View.GONE
+        }
+
+        // Birth month
+        if (dobMonth.isEmpty()) {
+            BirthMonthError.text = "Month is required"
+            BirthMonthError.visibility = View.VISIBLE
+            birthMonthEdit.setBackgroundResource(R.drawable.border_error)
+            isValid = false
+        } else {
+            val month = dobMonth.toIntOrNull()
+            if (month == null || month !in 1..12) {
+                BirthMonthError.text = "Month must be between 1 and 12"
+                BirthMonthError.visibility = View.VISIBLE
+                birthMonthEdit.setBackgroundResource(R.drawable.border_error)
+                isValid = false
+            } else {
+                BirthMonthError.visibility = View.GONE
+            }
+        }
+
+        // Birth year
+        if (dobYear.isEmpty()) {
+            BirthYearError.text = "Year is required"
+            BirthYearError.visibility = View.VISIBLE
+            birthYearEdit.setBackgroundResource(R.drawable.border_error)
+            isValid = false
+        } else {
+            val year = dobYear.toIntOrNull()
+            if (year == null || year !in 1900..currentYear) {
+                BirthYearError.text = "Year must be between 1900 and $currentYear"
+                BirthYearError.visibility = View.VISIBLE
+                birthYearEdit.setBackgroundResource(R.drawable.border_error)
+                isValid = false
+            } else {
+                BirthYearError.visibility = View.GONE
+            }
+        }
+
+        // Check date validity if all 3 parts are valid
+        val day = dobDate.toIntOrNull()
+        val month = dobMonth.toIntOrNull()
+        val year = dobYear.toIntOrNull()
+
+        if (day != null && month != null && year != null) {
+            val cal = Calendar.getInstance()
+            cal.set(Calendar.YEAR, year)
+            cal.set(Calendar.MONTH, month - 1) // 0-based month
+            val maxDay = cal.getActualMaximum(Calendar.DAY_OF_MONTH)
+            if (day !in 1..maxDay) {
+                BirthDateError.text = "Date must be between 1 and $maxDay"
+                BirthDateError.visibility = View.VISIBLE
+                birthDateEdit.setBackgroundResource(R.drawable.border_error)
+                isValid = false
+            } else {
+                BirthDateError.visibility = View.GONE
+            }
+        }
+
+        // State
+        if (state.isEmpty()) {
+            StateError.text = "State is required"
+            StateError.visibility = View.VISIBLE
+            isValid = false
+        } else {
+            StateError.visibility = View.GONE
+        }
+
+        // City
+        if (city.isEmpty()) {
+            CityError.text = "City is required"
+            CityError.visibility = View.VISIBLE
+            isValid = false
+        } else {
+            CityError.visibility = View.GONE
+        }
+
+        // Gender
+        if (genderEdit.checkedRadioButtonId == -1) {
+            GenderRadioError.text = "Please select your gender"
+            GenderRadioError.visibility = View.VISIBLE
+            isValid = false
+        } else {
+            GenderRadioError.visibility = View.GONE
+        }
+
+        // Gender
+        val gender = when (genderEdit.checkedRadioButtonId) {
+            R.id.MaleRadioButton -> "Male"
+            R.id.FemaleRadioButton -> "Female"
+            else -> ""
+        }
+
+       if (isValid){
+           progressBar.visibility = View.VISIBLE
+           val prefs = getSharedPreferences("UserSession", MODE_PRIVATE)
+           val UserId = prefs.getString("userid", null)
+
+           if (UserId != null){
+               val db = FirebaseFirestore.getInstance()
+               val updateMap = hashMapOf<String, Any>(
+                   "headline" to headLine.text.toString(),
+                   "username" to username,
+                   "birth_date" to dobDate,
+                   "birth_month" to dobMonth,
+                   "birth_year" to dobYear,
+                   "state" to state,
+                   "city" to city,
+                   "gender" to gender
+               )
+               db.collection("Users").document(UserId)
+                   .update(updateMap)
+                   .addOnSuccessListener {
+                       progressBar.visibility = View.GONE
+                       Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_SHORT).show()
+                       finish()
+                   }
+                   .addOnFailureListener { e ->
+                       progressBar.visibility = View.GONE
+                       Toast.makeText(this, "Update failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                   }
+
+           } else {
+               progressBar.visibility = View.GONE
+               Toast.makeText(this, "User ID not found in session", Toast.LENGTH_SHORT).show()
+           }
+       }
+
+        return isValid
+    }
+
+
+
+
+
     private fun loadUserProfile(userId: String) {
         val db = FirebaseFirestore.getInstance()
 
@@ -370,27 +596,71 @@ class Profile : AppCompatActivity() {
                     if (role == "Student") {
                         if (!userName.isNullOrEmpty()) {
                             username.text = userName
+                            usernameEdit.setText(userName)
+
+                            val collageName = doc.getString("collage_name") ?: ""
+                            val collageView = findViewById<TextView>(R.id.collage_name)
+                            collageView.text = collageName.split(" ").joinToString(" ") { word ->
+                                word.replaceFirstChar { it.uppercase() }
+                            }
+
                         }
                     } else if (role == "Company") {
                         if (!companyName.isNullOrEmpty()) {
                             username.text = companyName
+                            usernameEdit.setText(companyName)
                             collage_name.visibility = View.GONE
                         }
                     } else {
                         username.text = "Guest"
                     }
 
-                    val collageName = doc.getString("collage_name") ?: ""
-                    val collageView = findViewById<TextView>(R.id.collage_name)
-                    collageView.text = collageName.split(" ").joinToString(" ") { word ->
-                        word.replaceFirstChar { it.uppercase() }
-                    }
+
 
 
                     val state = doc.getString("state") ?: ""
                     val city = doc.getString("city") ?: ""
                     val locationView = findViewById<TextView>(R.id.Location)
                     locationView.text = "$city, $state".trim().trimStart(',')
+                    stateEdit.setText(state)
+                    cityEdit.setText(city)
+
+                    val gender = doc.getString("gender") ?: ""
+                    if (gender == "Male") {
+                        genderEdit.check(R.id.MaleRadioButton)
+                    } else if (gender == "Female") {
+                        genderEdit.check(R.id.FemaleRadioButton)
+                    }
+
+                    val headline = doc.getString("headline") ?: ""
+                    headLine.setText(headline)
+
+                    val dateOfBirth = doc.getString("date_of_birth") ?: ""
+                    val dateOfBirtView = findViewById<TextView>(R.id.BirthDate)
+                    val birthMonthView = findViewById<TextView>(R.id.BirthMonth)
+                    val birthYearView = findViewById<TextView>(R.id.BirthYear)
+
+                    // If date is in format "dd-MM-yyyy"
+                    if (dateOfBirth.isNotEmpty() && dateOfBirth.contains("-")) {
+                        val parts = dateOfBirth.split("-")
+                        if (parts.size == 3) {
+                            dateOfBirtView.text = parts[0]  // Day
+                            birthMonthView.text = parts[1]  // Month
+                            birthYearView.text = parts[2]   // Year
+                        } else {
+                            // fallback if format is wrong
+                            dateOfBirtView.text = ""
+                            birthMonthView.text = ""
+                            birthYearView.text = ""
+                        }
+                    } else {
+                        dateOfBirtView.text = ""
+                        birthMonthView.text = ""
+                        birthYearView.text = ""
+                    }
+
+
+
 
                 } else {
                     Toast.makeText(this, "User not found", Toast.LENGTH_SHORT).show()
