@@ -185,7 +185,7 @@ class CompanySignUp : AppCompatActivity() {
                             )
                                 newUserRef.set(user) // Use set() to store data at that specific document ID
                                 .addOnSuccessListener {
-                                    progressBar.visibility = View.GONE // Hide loader
+//                                    progressBar.visibility = View.GONE // Hide loader
                                     Toast.makeText(this, "Registration successfully!", Toast.LENGTH_SHORT).show()
                                     sendFinelMessage()
                                     startActivity(Intent(this, Login::class.java))
@@ -193,16 +193,16 @@ class CompanySignUp : AppCompatActivity() {
                                 }
 
                                 .addOnFailureListener { exception ->
-                                    progressBar.visibility = View.GONE // Hide loader
+//                                    progressBar.visibility = View.GONE // Hide loader
                                     Toast.makeText(this, "Failed to create user: ${exception.localizedMessage}", Toast.LENGTH_LONG).show()
                                 }
                         }
                         .addOnFailureListener {
-                            progressBar.visibility = View.GONE // Hide loader
+//                            progressBar.visibility = View.GONE // Hide loader
                             Toast.makeText(this, "Image upload failed", Toast.LENGTH_LONG).show()
                         }
                 } else{
-                    progressBar.visibility = View.GONE // Hide loader
+//                    progressBar.visibility = View.GONE // Hide loader
                     Toast.makeText(this, "Please select a profile image", Toast.LENGTH_SHORT).show()
                 }
 

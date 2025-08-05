@@ -15,7 +15,7 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -92,8 +92,6 @@
                 android:visibility="gone" />
 
 
-
-
             <!-- Year of Graduation Start -->
             <EditText
                 android:id="@+id/GraduationStartYear"
@@ -147,15 +145,15 @@
             <ImageView
                 android:id="@+id/profileImageView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:srcCompat="@tools:sample/avatars"/>
+                android:layout_height="100dp"
+                tools:srcCompat="@tools:sample/avatars" />
 
             <TextView
                 android:id="@+id/selectImageText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tap to upload image"
                 android:layout_gravity="center"
+                android:text="Tap to upload image"
                 android:textColor="#000000" />
 
             <TextView

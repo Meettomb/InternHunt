@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".JobPost">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/backButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="10dp"
+                app:srcCompat="@drawable/back" />
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:text="Post Internship"
+                android:textColor="@color/primary_color"
+                android:textSize="34sp"
+                android:textStyle="bold" />
+
+            <!-- InternshipTitle -->
+            <EditText
+                android:id="@+id/InternshipTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/border_all_sides"
+                android:drawableEnd="@drawable/work"
+                android:hint="Internship Title"
+                android:padding="15dp"
+                android:textColor="#000000"
+                android:textColorHint="#C43C3C3C"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/InternshipTitleError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="This field is required"
+                android:textColor="#FF0000"
+                android:textSize="14sp"
+                android:visibility="gone" />
+
+
+            <!-- Internship Description -->
+            <EditText
+                android:id="@+id/Description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/border_all_sides"
+                android:drawableEnd="@drawable/description"
+                android:gravity="top|start"
+                android:hint="Internship Description"
+                android:inputType="textMultiLine"
+                android:maxLines="10"
+                android:minLines="4"
+                android:padding="15dp"
+                android:textColor="#000000"
+                android:textColorHint="#C43C3C3C"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/DescriptionError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="This field is required"
+                android:textColor="#FF0000"
+                android:textSize="14sp"
+                android:visibility="gone" />
+
+
+            <!-- Location -->
+            <TextView
+                android:id="@+id/textView7"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Internship Location"
+                android:textColor="#C43C3C3C"
+                android:textColorHint="#C43C3C3C"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/Location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/border_all_sides"
+                android:drawableEnd="@drawable/location_on"
+                android:hint="Location"
+                android:padding="15dp"
+                android:textColor="#000000"
+                android:textColorHint="#C43C3C3C"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/LocationError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="This field is required"
+                android:textColor="#FF0000"
+                android:textSize="14sp"
+                android:visibility="gone" />
+
+            <EditText
+                android:id="@+id/Stipend"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/border_all_sides"
+                android:drawableEnd="@drawable/currency_rupee"
+                android:hint="Stipend"
+                android:inputType="number"
+                android:padding="15dp"
+                android:textColor="#000000"
+                android:textColorHint="#C43C3C3C"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/StipendError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="This field is required"
+                android:textColor="#FF0000"
+                android:textSize="14sp"
+                android:visibility="gone" />
+
+            <EditText
+                android:id="@+id/Duration"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/border_all_sides"
+                android:drawableEnd="@drawable/hourglass_bottom"
+                android:hint="Duration in Month(6)"
+                android:inputType="number"
+                android:padding="15dp"
+                android:textColor="#000000"
+                android:textColorHint="#C43C3C3C"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/DurationError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="This field is required"
+                android:textColor="#FF0000"
+                android:textSize="14sp"
+                android:visibility="gone" />
+
+            <EditText
+                android:id="@+id/CompanyId"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/border_all_sides"
+                android:visibility="gone" />
+
+
+            <!-- Internship Skills -->
+            <EditText
+                android:id="@+id/Skills"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/border_all_sides"
+                android:drawableEnd="@drawable/psychology"
+                android:gravity="top|start"
+                android:hint="Skills"
+                android:inputType="textMultiLine"
+                android:maxLines="10"
+                android:minLines="4"
+                android:padding="15dp"
+                android:textColor="#000000"
+                android:textColorHint="#C43C3C3C"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/skillsError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="This field is required"
+                android:textColor="#FF0000"
+                android:textSize="14sp"
+                android:visibility="gone" />
+
+
+            <!-- Application Deadline -->
+            <TextView
+                android:id="@+id/DeadlineTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:text="Application Deadline"
+                android:textColor="#C43C3C3C"
+                android:textColorHint="#C43C3C3C"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/Date"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/border_all_sides"
+                    android:hint="30"
+                    android:inputType="number"
+                    android:maxLength="2"
+                    android:padding="15dp"
+                    android:textColor="#000000"
+                    android:textColorHint="#C43C3C3C"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+id/Month"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/border_all_sides"
+                    android:hint="12"
+                    android:inputType="number"
+                    android:maxLength="2"
+                    android:padding="15dp"
+                    android:textColor="#000000"
+                    android:textColorHint="#C43C3C3C"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+id/Year"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/border_all_sides"
+                    android:hint="2000"
+                    android:inputType="number"
+                    android:maxLength="4"
+                    android:padding="15dp"
+                    android:textColor="#000000"
+                    android:textColorHint="#C43C3C3C"
+                    android:textSize="18sp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/DateError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="This field is required"
+                android:textColor="#FF0000"
+                android:textSize="14sp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/MonthError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="This field is required"
+                android:textColor="#FF0000"
+                android:textSize="14sp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/YearError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="This field is required"
+                android:textColor="#FF0000"
+                android:textSize="14sp"
+                android:visibility="gone" />
+
+
+            <!-- Post Button -->
+
+            <TextView
+                android:id="@+id/PostButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="30dp"
+                android:background="@drawable/rounded_button"
+                android:gravity="center"
+                android:paddingVertical="15dp"
+                android:text="Post"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp" />
+
+
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

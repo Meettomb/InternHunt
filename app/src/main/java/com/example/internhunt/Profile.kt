@@ -4,6 +4,7 @@ import InputFilterMinMax
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -317,7 +318,6 @@ class Profile : AppCompatActivity() {
         }
     }
 
-
     private fun uploadProfileImageToFirebase(imageUri: android.net.Uri) {
         progressBar.visibility = View.VISIBLE
 
@@ -383,8 +383,6 @@ class Profile : AppCompatActivity() {
             Toast.makeText(this, "Image upload failed: ${it.localizedMessage}", Toast.LENGTH_SHORT).show()
         }
     }
-
-
 
     private fun updatePersonalDetails(): Boolean {
         var isValid = true
@@ -535,6 +533,9 @@ class Profile : AppCompatActivity() {
                        headline.text = headLineEdit.text.toString()
                        Location.text = "${cityEdit.text.toString()}, ${stateEdit.text.toString()}"
 
+                       val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+                       imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
+
                        // Hide detail update form
                        detailScrollView.visibility = View.GONE
                    }
@@ -552,10 +553,6 @@ class Profile : AppCompatActivity() {
 
         return isValid
     }
-
-
-
-
 
     private fun loadUserProfile(userId: String) {
         val db = FirebaseFirestore.getInstance()
