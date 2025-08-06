@@ -10,123 +10,76 @@
 
     <!-- Main Content (Right Side) -->
     <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#FFFFFF">
+        tools:context=".Home"
+        android:background="@color/background">
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#E7E3D9">
+        <!-- Header -->
+        <androidx.gridlayout.widget.GridLayout
+            android:id="@+id/Header"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="8dp"
+            app:columnCount="2"
+            app:rowCount="1"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/UserProfileImage"
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@drawable/full_round_border"
+                android:backgroundTint="#21000000"
+                android:scaleType="centerCrop"
+                app:layout_column="0"
+                app:layout_gravity="center_vertical"
+                app:layout_row="0"
+                app:shapeAppearanceOverlay="@style/CircleImage" />
 
-                <!-- Header -->
-                <androidx.gridlayout.widget.GridLayout
-                    android:id="@+id/Header"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:background="@color/white"
-                    android:paddingHorizontal="10dp"
-                    android:paddingVertical="8dp"
-                    app:columnCount="2"
-                    app:rowCount="1">
+            <EditText
+                android:id="@+id/search_bar"
+                android:layout_width="0dp"
+                android:layout_height="47dp"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/search_borders"
+                android:drawableStart="@drawable/search"
+                android:gravity="start|center_vertical"
+                android:hint="Search"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:paddingHorizontal="15dp"
+                android:textColor="@color/black"
+                android:textColorHint="#C43C3C3C"
+                android:textSize="18sp"
+                app:layout_column="1"
+                app:layout_columnWeight="1"
+                app:layout_gravity="center_vertical"
+                app:layout_row="0" />
+        </androidx.gridlayout.widget.GridLayout>
 
-                    <com.google.android.material.imageview.ShapeableImageView
-                        android:id="@+id/UserProfileImage"
-                        android:layout_width="43dp"
-                        android:layout_height="43dp"
-                        android:background="@drawable/full_round_border"
-                        android:backgroundTint="#21000000"
-                        android:scaleType="centerCrop"
-                        app:layout_column="0"
-                        app:layout_gravity="center_vertical"
-                        app:layout_row="0"
-                        app:shapeAppearanceOverlay="@style/CircleImage" />
+        <!-- RecyclerView -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="3dp"
+            android:clipToPadding="false"
+            app:layout_constraintTop_toBottomOf="@id/Header"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-                    <EditText
-                        android:id="@+id/search_bar"
-                        android:layout_width="0dp"
-                        android:layout_height="47dp"
-                        android:layout_marginLeft="10dp"
-                        android:background="@drawable/search_borders"
-                        android:drawableStart="@drawable/search"
-                        android:gravity="start|center_vertical"
-                        android:hint="Search"
-                        android:imeOptions="actionSearch"
-                        android:inputType="text"
-                        android:paddingHorizontal="15dp"
-                        android:textColor="@color/black"
-                        android:textColorHint="#C43C3C3C"
-                        android:textSize="18sp"
-                        app:layout_column="1"
-                        app:layout_columnWeight="1"
-                        app:layout_gravity="center_vertical"
-                        app:layout_row="0" />
-                </androidx.gridlayout.widget.GridLayout>
-
-                <!-- Job Section -->
-                <androidx.gridlayout.widget.GridLayout
-                    android:id="@+id/Job"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp">
-
-                    <com.google.android.material.imageview.ShapeableImageView
-                        android:id="@+id/CompanyProfileImage"
-                        android:layout_width="102dp"
-                        android:layout_height="102dp"
-                        android:background="#27210000"
-                        android:scaleType="centerCrop"
-                        app:layout_column="0"
-                        app:layout_row="0" />
-
-                    <LinearLayout
-                        android:layout_width="298dp"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:paddingLeft="10dp"
-                        android:paddingTop="10dp"
-                        android:paddingBottom="10dp">
-
-                        <TextView
-                            android:id="@+id/JobTitle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Backend Developer"
-                            android:textColor="#000000"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/textView4"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:text="Google"
-                            android:textColor="#979797"
-                            android:textSize="14sp" />
-
-                        <TextView
-                            android:id="@+id/textView5"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:text="Ahmedabad, Gujarat"
-                            android:textColor="#979797"
-                            android:textSize="14sp" />
-                    </LinearLayout>
-                </androidx.gridlayout.widget.GridLayout>
-            </LinearLayout>
-        </ScrollView>
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <!-- Navigation Drawer (Left Side) -->
     <LinearLayout

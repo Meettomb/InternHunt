@@ -18,12 +18,16 @@ import androidx.activity.enableEdgeToEdge
 import com.google.firebase.firestore.FirebaseFirestore
 
 import android.widget.ImageView
+import android.widget.LinearLayout
 import androidx.activity.addCallback
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.firebase.firestore.firestoreSettings
 
 
 class Home : AppCompatActivity() {
@@ -34,6 +38,7 @@ class Home : AppCompatActivity() {
     private lateinit var userImageView2: ImageView
     private lateinit var usernameText: TextView
     private lateinit var profile_drawer: GridLayout
+    private lateinit var recyclerView: RecyclerView
 
 
 
@@ -53,6 +58,7 @@ class Home : AppCompatActivity() {
         logoutButton = findViewById(R.id.LogoutButton)
         usernameText = findViewById(R.id.UserName)
         profile_drawer = findViewById(R.id.profile_drawer)
+        recyclerView = findViewById(R.id.recyclerView)
 
         userImageView.setOnClickListener {
             drawerLayout.openDrawer(GravityCompat.START)
@@ -188,6 +194,28 @@ class Home : AppCompatActivity() {
 
 
 
+        // get intern ship post data from databse
+        val db2 = FirebaseFirestore.getInstance()
+        val internshipList = ArrayList<InternshipPostData>()
+        val adapter = InternshipAdapter(internshipList)
+
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = adapter
+
+        db2.collection("internshipPostsData")
+            .get()
+            .addOnSuccessListener { documents ->
+                internshipList.clear()
+                for (doc in documents){
+                    val post = doc.toObject(InternshipPostData::class.java)
+                    internshipList.add(post)
+                }
+                adapter.notifyDataSetChanged()
+            }
+
+            .addOnFailureListener { exception ->
+                Toast.makeText(this, "Error: ${exception.message}", Toast.LENGTH_LONG).show()
+            }
 
     }
 }

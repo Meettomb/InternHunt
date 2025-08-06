@@ -375,6 +375,7 @@ class JobPost : AppCompatActivity() {
 
         progressBar.visibility = View.VISIBLE
         val db = FirebaseFirestore.getInstance()
+        val newUserRef = db.collection("internshipPostsData").document()
 
         val title = internshipTitle.text.toString().trim()
         val desc = description.text.toString().trim()
@@ -396,6 +397,7 @@ class JobPost : AppCompatActivity() {
 
         // Prepare data
         val postData = hashMapOf(
+            "id" to newUserRef.id,
             "title" to title,
             "description" to desc,
             "location" to loc,
@@ -415,8 +417,7 @@ class JobPost : AppCompatActivity() {
         )
 
         // Save to Firestore
-        db.collection("internshipPostsData")
-            .add(postData)
+        newUserRef.set(postData)
             .addOnSuccessListener {
                 progressBar.visibility = View.GONE
                 Toast.makeText(this, "Internship posted successfully!", Toast.LENGTH_SHORT).show()

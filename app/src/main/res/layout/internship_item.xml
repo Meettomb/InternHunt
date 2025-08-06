@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/round_border_without_color"
+    android:layout_marginVertical="2dp"
+    android:layout_marginHorizontal="2dp">
+    <androidx.gridlayout.widget.GridLayout
+        android:id="@+id/Job"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/CompanyProfileImage"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="#27210000"
+            android:scaleType="centerCrop"
+            app:layout_gravity="center_vertical" />
+
+
+        <LinearLayout
+            android:layout_width="298dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            app:layout_gravity="center_horizontal">
+
+            <TextView
+                android:id="@+id/JobTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Internship Title"
+                android:textColor="#000000"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/companyId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/companyname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Company name"
+                android:textColor="#979797"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/Location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Location"
+                android:textColor="#979797"
+                android:textSize="14sp" />
+        </LinearLayout>
+    </androidx.gridlayout.widget.GridLayout>
+
+</LinearLayout>
