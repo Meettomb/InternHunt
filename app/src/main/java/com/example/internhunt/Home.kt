@@ -11,6 +11,7 @@ import android.content.Intent
 import android.os.Build
 import android.view.View
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.FrameLayout
 import androidx.gridlayout.widget.GridLayout
 import android.widget.TextView
@@ -46,6 +47,24 @@ class Home : AppCompatActivity() {
     private lateinit var filterSection: LinearLayout
     private lateinit var bottomSheetOverlay : FrameLayout
 
+    // Define checkbox variables at class level
+    private lateinit var checkFullTime: CheckBox
+    private lateinit var checkPartTime: CheckBox
+    private lateinit var checkOnSite: CheckBox
+    private lateinit var checkWorkFromHome: CheckBox
+    private lateinit var checkHybrid: CheckBox
+
+    private lateinit var applyButton: TextView
+    private lateinit var clearButton: TextView
+
+    private lateinit var adapter: InternshipAdapter
+    private val internshipList = ArrayList<InternshipPostData>()  // master list
+    private val filteredList = ArrayList<InternshipPostData>()    // list to show on RecyclerView
+
+    private lateinit var noDataText: TextView
+
+
+
 
 
 
@@ -72,12 +91,95 @@ class Home : AppCompatActivity() {
         usernameText = findViewById(R.id.UserName)
         profile_drawer = findViewById(R.id.profile_drawer)
         recyclerView = findViewById(R.id.recyclerView)
-
-
         bottomSheet = findViewById(R.id.bottom_sheet)
         dragLine = findViewById(R.id.drag_line)
         filterSection = findViewById(R.id.filter_section)
         bottomSheetOverlay = findViewById(R.id.bottom_sheet_overlay)
+
+        checkFullTime = findViewById(R.id.checkFullTime)
+        checkPartTime = findViewById(R.id.checkPartTime)
+        checkOnSite = findViewById(R.id.checkOnSite)
+        checkWorkFromHome = findViewById(R.id.checkWorkFromHome)
+        checkHybrid = findViewById(R.id.checkHybrid)
+
+        applyButton = findViewById(R.id.applyButton)
+        clearButton = findViewById(R.id.clearButton)
+        noDataText = findViewById(R.id.noDataText)
+
+
+
+        // Get session
+        val prefs = getSharedPreferences("UserSession", Context.MODE_PRIVATE)
+        val userId = prefs.getString("userid", null)
+
+        // Check if session exists
+        if (userId == null) {
+            Toast.makeText(this, "Please login again", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, Login::class.java))
+            finish()
+            return
+        }
+
+        // Fetch user from Firestore
+        val db = FirebaseFirestore.getInstance()
+        val userRef = db.collection("Users").document(userId)
+
+        adapter = InternshipAdapter(filteredList)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = adapter
+
+        LoadInternshipPost()
+
+
+
+
+        applyButton.setOnClickListener {
+            val selectedTimes = mutableListOf<String>()
+            val selectedTypes = mutableListOf<String>()
+
+            if (checkFullTime.isChecked) selectedTimes.add("Full Time")
+            if (checkPartTime.isChecked) selectedTimes.add("Part Time")
+
+            if (checkOnSite.isChecked) selectedTypes.add("On Site")
+            if (checkWorkFromHome.isChecked) selectedTypes.add("Work from Home")
+            if (checkHybrid.isChecked) selectedTypes.add("Hybrid")
+
+            // Filter the data
+            val result = internshipList.filter { post ->
+                (selectedTimes.isEmpty() || selectedTimes.contains(post.internshipTime)) &&
+                        (selectedTypes.isEmpty() || selectedTypes.contains(post.internshipType))
+            }
+
+            // Update list
+            filteredList.clear()
+            filteredList.addAll(result)
+            adapter.notifyDataSetChanged()
+            noDataText.visibility = if (filteredList.isEmpty()) View.VISIBLE else View.GONE
+
+            // Close bottom sheet
+            bottomSheetOverlay.visibility = View.GONE
+            bottomSheet.visibility = View.GONE
+        }
+
+        clearButton.setOnClickListener {
+            // Uncheck all filters
+            checkFullTime.isChecked = false
+            checkPartTime.isChecked = false
+            checkOnSite.isChecked = false
+            checkWorkFromHome.isChecked = false
+            checkHybrid.isChecked = false
+
+            // Reset filtered list
+            filteredList.clear()
+            filteredList.addAll(internshipList)
+            adapter.notifyDataSetChanged()
+            noDataText.visibility = if (filteredList.isEmpty()) View.VISIBLE else View.GONE
+
+            // Close bottom sheet
+            bottomSheetOverlay.visibility = View.GONE
+            bottomSheet.visibility = View.GONE
+        }
+
 
         // Show bottom sheet
         filterSection.setOnClickListener {
@@ -177,21 +279,7 @@ class Home : AppCompatActivity() {
         }
 
 
-        // Get session
-        val prefs = getSharedPreferences("UserSession", Context.MODE_PRIVATE)
-        val userId = prefs.getString("userid", null)
 
-        // Check if session exists
-        if (userId == null) {
-            Toast.makeText(this, "Please login again", Toast.LENGTH_SHORT).show()
-            startActivity(Intent(this, Login::class.java))
-            finish()
-            return
-        }
-
-        // Fetch user from Firestore
-        val db = FirebaseFirestore.getInstance()
-        val userRef = db.collection("Users").document(userId)
 
 
         userRef.addSnapshotListener { doc, error ->
@@ -200,41 +288,41 @@ class Home : AppCompatActivity() {
                 return@addSnapshotListener
             }
 
-                if (doc != null && doc.exists()) {
+            if (doc != null && doc.exists()) {
 
-                    val imageUrl = doc.getString("profile_image_url")
-                    if (!imageUrl.isNullOrEmpty()) {
-                        Glide.with(this)
-                            .load(imageUrl)
-                            .into(userImageView)
+                val imageUrl = doc.getString("profile_image_url")
+                if (!imageUrl.isNullOrEmpty()) {
+                    Glide.with(this)
+                        .load(imageUrl)
+                        .into(userImageView)
 
-                        Glide.with(this)
-                            .load(imageUrl)
-                            .into(userImageView2)
-                    }
-                    val userName = doc.getString("username")
-                    val companyName = doc.getString("company_name")
-                    val role = doc.getString("role")
-
-                    if (role == "Student") {
-                        if (!userName.isNullOrEmpty()) {
-                            usernameText.text = userName
-                        }
-                        findViewById<TextView>(R.id.nav_add_post).visibility = View.GONE
-                    }
-                    else if(role == "Company"){
-                        if (!companyName.isNullOrEmpty()){
-                            usernameText.text = companyName
-                        }
-                    }
-                    else{
-                        usernameText.text = "Guest"
-                    }
-
-                } else {
-                    Toast.makeText(this, "User not found", Toast.LENGTH_SHORT).show()
+                    Glide.with(this)
+                        .load(imageUrl)
+                        .into(userImageView2)
                 }
+                val userName = doc.getString("username")
+                val companyName = doc.getString("company_name")
+                val role = doc.getString("role")
+
+                if (role == "Student") {
+                    if (!userName.isNullOrEmpty()) {
+                        usernameText.text = userName
+                    }
+                    findViewById<TextView>(R.id.nav_add_post).visibility = View.GONE
+                }
+                else if(role == "Company"){
+                    if (!companyName.isNullOrEmpty()){
+                        usernameText.text = companyName
+                    }
+                }
+                else{
+                    usernameText.text = "Guest"
+                }
+
+            } else {
+                Toast.makeText(this, "User not found", Toast.LENGTH_SHORT).show()
             }
+        }
 
 
 
@@ -253,28 +341,33 @@ class Home : AppCompatActivity() {
 
 
 
-        // get intern ship post data from databse
-        val db2 = FirebaseFirestore.getInstance()
-        val internshipList = ArrayList<InternshipPostData>()
-        val adapter = InternshipAdapter(internshipList)
 
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = adapter
+
+    }
+
+    private fun LoadInternshipPost() {
+        val db2 = FirebaseFirestore.getInstance()
 
         db2.collection("internshipPostsData")
             .get()
             .addOnSuccessListener { documents ->
                 internshipList.clear()
-                for (doc in documents){
+                for (doc in documents) {
                     val post = doc.toObject(InternshipPostData::class.java)
                     internshipList.add(post)
                 }
-                adapter.notifyDataSetChanged()
-            }
 
+                // Show all initially
+                filteredList.clear()
+                filteredList.addAll(internshipList)
+                adapter.notifyDataSetChanged()
+                noDataText.visibility = if (filteredList.isEmpty()) View.VISIBLE else View.GONE
+            }
             .addOnFailureListener { exception ->
                 Toast.makeText(this, "Error: ${exception.message}", Toast.LENGTH_LONG).show()
             }
-
     }
+
+
+
 }

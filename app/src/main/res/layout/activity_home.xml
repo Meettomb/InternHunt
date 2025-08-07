@@ -18,6 +18,19 @@
         tools:context=".Home">
 
         <!-- Header -->
+        <TextView
+            android:id="@+id/noDataText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:foregroundGravity="center"
+            android:gravity="center"
+            android:text="No Record Found"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="18sp"
+            android:visibility="visible" />
+
         <androidx.gridlayout.widget.GridLayout
             android:id="@+id/Header"
             android:layout_width="0dp"
@@ -75,7 +88,6 @@
             app:layout_constraintBottom_toTopOf="@id/bottom_nav"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
-
 
 
         <LinearLayout
@@ -168,7 +180,8 @@
                 android:focusable="true"
                 android:orientation="vertical"
                 android:paddingHorizontal="8dp"
-                android:paddingBottom="15dp">
+                android:paddingBottom="15dp"
+                android:visibility="visible">
 
                 <!-- Drag line -->
                 <View
@@ -220,22 +233,46 @@
                     android:text="Hybrid"
                     android:textColor="@color/black" />
 
-                <TextView
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:background="@drawable/rounded_button"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
                     android:gravity="center"
-                    android:paddingVertical="8dp"
-                    android:text="Apply"
-                    android:textColor="@color/white"
-                    android:textSize="18sp" />
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="16dp">
+
+                    <TextView
+                        android:id="@+id/applyButton"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/rounded_button"
+                        android:gravity="center"
+                        android:text="Apply"
+                        android:textColor="@color/white"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/clearButton"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/rounded_button"
+                        android:gravity="center"
+                        android:text="Clear"
+                        android:textColor="@color/white"
+                        android:textSize="18sp" />
+                </LinearLayout>
 
             </LinearLayout>
         </FrameLayout>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
 
     <!-- Navigation Drawer (Left Side) -->
@@ -353,20 +390,6 @@
                     android:text="Home"
                     android:textColor="#888888"
                     android:textSize="18sp" />
-
-                <!--                <TextView-->
-                <!--                    android:id="@+id/manage_personal_detail"-->
-                <!--                    android:layout_width="match_parent"-->
-                <!--                    android:layout_height="wrap_content"-->
-                <!--                    android:background="@drawable/nav_item_background"-->
-                <!--                    android:paddingVertical="10dp"-->
-                <!--                    android:paddingHorizontal="5dp"-->
-                <!--                    android:layout_marginVertical="8dp"-->
-                <!--                    android:text="Manage Personal Detail"-->
-                <!--                    android:textColor="#888888"-->
-                <!--                    android:textSize="18sp"-->
-                <!--                    android:drawableStart="@drawable/edit_small_size"-->
-                <!--                    android:drawablePadding="12dp"/>-->
 
                 <TextView
                     android:id="@+id/nav_security"

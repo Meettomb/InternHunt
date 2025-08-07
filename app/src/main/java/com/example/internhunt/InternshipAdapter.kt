@@ -19,6 +19,8 @@ class InternshipAdapter(private val internship: List<InternshipPostData>):
         val companyName: TextView = itemView.findViewById(R.id.companyname)
         val companyID: TextView = itemView.findViewById(R.id.companyId)
         val location = itemView.findViewById<TextView>(R.id.Location)
+        val internshipType = itemView.findViewById<TextView>(R.id.internshipType)
+        val internshipTime = itemView.findViewById<TextView>(R.id.internshipTime)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): InternshipViewHolder {
@@ -32,6 +34,8 @@ class InternshipAdapter(private val internship: List<InternshipPostData>):
         holder.title.text = item.title
         holder.location.text = item.location
         holder.companyID.text = item.companyId
+        holder.internshipType.text = item.internshipType
+        holder.internshipTime.text = item.internshipTime
 
         // Fetch company details based on companyId and populate companyName
         val db = FirebaseFirestore.getInstance()
@@ -59,7 +63,7 @@ class InternshipAdapter(private val internship: List<InternshipPostData>):
 
 
 
-}
+    }
 
     override fun getItemCount(): Int = internship.size
 }
