@@ -6,7 +6,7 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Home"
+    tools:context=".CompanyLists"
     android:fitsSystemWindows="true">
 
     <!-- Main Content (Right Side) -->
@@ -15,21 +15,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/background"
-        tools:context=".Home">
+        tools:context=".CompanyLists">
 
         <!-- Header -->
-        <TextView
-            android:id="@+id/noDataText"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerInParent="true"
-            android:layout_gravity="center"
-            android:foregroundGravity="center"
-            android:gravity="center"
-            android:text="No Record Found"
-            android:textColor="@android:color/darker_gray"
-            android:textSize="18sp"
-            android:visibility="gone" />
 
         <androidx.gridlayout.widget.GridLayout
             android:id="@+id/Header"
@@ -80,195 +68,14 @@
         <!-- RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginTop="3dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
             android:clipToPadding="false"
             android:layout_marginHorizontal="5dp"
-            app:layout_constraintBottom_toTopOf="@id/bottom_nav"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/Header" />
-
-
-        <LinearLayout
-            android:id="@+id/bottom_nav"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_marginTop="4dp"
-            android:background="@color/primary_color"
-            android:orientation="horizontal"
-            android:paddingHorizontal="10dp"
-            android:weightSum="2"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
-
-
-        <!-- Filter Button -->
-            <LinearLayout
-                android:id="@+id/filter_section"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="5dp">
-
-                <ImageView
-                    android:id="@+id/imageView4"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:tint="@android:color/white"
-                    app:srcCompat="@drawable/filter" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Filter"
-                    android:textColor="@android:color/white"
-                    android:textSize="12sp" />
-            </LinearLayout>
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@color/background" />
-            <!-- Company Button -->
-            <LinearLayout
-                android:id="@+id/company_section"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="5dp">
-
-                <ImageView
-                    android:id="@+id/imageView5"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:tint="@android:color/white"
-                    app:srcCompat="@drawable/apartment" />
-
-                <TextView
-                    android:id="@+id/textView5"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Companys"
-                    android:textColor="@android:color/white"
-                    android:textSize="12sp" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <FrameLayout
-            android:id="@+id/bottom_sheet_overlay"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#80000000"
-            android:clickable="true"
-            android:focusable="true"
-            android:visibility="gone">
-
-            <!-- Bottom Sheet -->
-            <LinearLayout
-                android:id="@+id/bottom_sheet"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:background="@android:color/white"
-                android:clickable="true"
-                android:elevation="8dp"
-                android:focusable="true"
-                android:orientation="vertical"
-                android:paddingHorizontal="8dp"
-                android:paddingBottom="15dp"
-                android:visibility="visible">
-
-                <!-- Drag line -->
-                <View
-                    android:id="@+id/drag_line"
-                    android:layout_width="50dp"
-                    android:layout_height="5dp"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/border_all_sides" />
-
-                <!-- Checkboxes -->
-                <CheckBox
-                    android:id="@+id/checkPartTime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:buttonTint="@color/primary_color"
-                    android:text="Part Time"
-                    android:textColor="@color/black" />
-
-                <CheckBox
-                    android:id="@+id/checkFullTime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:buttonTint="@color/primary_color"
-                    android:text="Full Time"
-                    android:textColor="@color/black" />
-
-                <CheckBox
-                    android:id="@+id/checkOnSite"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:buttonTint="@color/primary_color"
-                    android:text="On Site"
-                    android:textColor="@color/black" />
-
-                <CheckBox
-                    android:id="@+id/checkWorkFromHome"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:buttonTint="@color/primary_color"
-                    android:text="Work from Home"
-                    android:textColor="@color/black" />
-
-                <CheckBox
-                    android:id="@+id/checkHybrid"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:buttonTint="@color/primary_color"
-                    android:text="Hybrid"
-                    android:textColor="@color/black" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    android:paddingHorizontal="16dp">
-
-                    <TextView
-                        android:id="@+id/applyButton"
-                        android:layout_width="0dp"
-                        android:layout_height="48dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/rounded_button"
-                        android:gravity="center"
-                        android:text="Apply"
-                        android:textColor="@color/white"
-                        android:textSize="18sp" />
-
-                    <TextView
-                        android:id="@+id/clearButton"
-                        android:layout_width="0dp"
-                        android:layout_height="48dp"
-                        android:layout_marginStart="8dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/rounded_button"
-                        android:gravity="center"
-                        android:text="Clear"
-                        android:textColor="@color/white"
-                        android:textSize="18sp" />
-                </LinearLayout>
-
-            </LinearLayout>
-        </FrameLayout>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -233,6 +233,16 @@ class Home : AppCompatActivity() {
             // Handle navigation to Update Details screen
         }
 
+        findViewById<TextView>(R.id.MyPosts).setOnClickListener {
+            val intent = Intent(this, CompanyPosts::class.java)
+            startActivity(intent)
+        }
+
+        findViewById<LinearLayout>(R.id.company_section).setOnClickListener {
+            val intent = Intent(this, CompanyLists::class.java)
+            startActivity(intent)
+        }
+
         findViewById<TextView>(R.id.notification).setOnClickListener {
             // Handle navigation to Update Details screen
         }
@@ -286,11 +296,15 @@ class Home : AppCompatActivity() {
                         usernameText.text = userName
                     }
                     findViewById<TextView>(R.id.nav_add_post).visibility = View.GONE
+                    findViewById<TextView>(R.id.MyPosts).visibility = View.GONE
                 }
                 else if(role == "Company"){
                     if (!companyName.isNullOrEmpty()){
                         usernameText.text = companyName
                     }
+
+                    findViewById<TextView>(R.id.bookmark).visibility = View.GONE
+                    findViewById<TextView>(R.id.history).visibility = View.GONE
                 }
                 else{
                     usernameText.text = "Guest"

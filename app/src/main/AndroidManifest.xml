@@ -15,13 +15,22 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.InternHunt">
         <activity
+            android:name=".CompanyLists"
+            android:exported="false" />
+        <activity
+            android:name=".CompanyHomePage"
+            android:exported="false" />
+        <activity
+            android:name=".CompanyPosts"
+            android:exported="false" />
+        <activity
             android:name=".JobPost"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan|stateVisible"  />
+            android:windowSoftInputMode="adjustPan|stateVisible" />
         <activity
             android:name=".Profile"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan|stateVisible"  />
+            android:windowSoftInputMode="adjustPan|stateVisible" />
         <activity
             android:name=".select_role"
             android:exported="false" />
@@ -63,7 +72,6 @@
             android:name=".SignUp"
             android:exported="false"
             android:windowSoftInputMode="adjustPan|stateVisible" />
-
         <activity android:name=".MainActivity" />
     </application>
 
