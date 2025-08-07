@@ -1,9 +1,11 @@
 package com.example.internhunt
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.text.InputType
 import android.view.MotionEvent
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -30,6 +32,13 @@ class EnterNewPassword : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_enter_new_password)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            window.statusBarColor = ContextCompat.getColor(this, R.color.white)
+            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+        } else {
+            // For older versions, use a dark color with light icons
+            window.statusBarColor = ContextCompat.getColor(this, R.color.black)
+        }
 
         newPassword = findViewById(R.id.Password)
         passwordError = findViewById(R.id.PasswordError)

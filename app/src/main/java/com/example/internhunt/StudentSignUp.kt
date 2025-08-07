@@ -13,10 +13,12 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import com.google.firebase.firestore.FirebaseFirestore
 import android.net.Uri
+import android.os.Build
 import android.widget.ImageView
 import android.widget.ProgressBar
 import com.google.firebase.storage.FirebaseStorage
 import android.view.View
+import androidx.core.content.ContextCompat
 import java.util.Calendar
 import kotlin.concurrent.thread
 
@@ -60,6 +62,14 @@ class StudentSignUp : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_student_sign_up)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            window.statusBarColor = ContextCompat.getColor(this, R.color.white)
+            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+        } else {
+            // For older versions, use a dark color with light icons
+            window.statusBarColor = ContextCompat.getColor(this, R.color.black)
+        }
 
         collageName = findViewById(R.id.CollageName)
         collageNameError = findViewById(R.id.CollageNameError)

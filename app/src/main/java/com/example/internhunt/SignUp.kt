@@ -17,6 +17,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import kotlin.concurrent.thread
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.text.InputType
 import android.view.MotionEvent
 import android.widget.RadioButton
@@ -89,6 +90,14 @@ class SignUp : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_sign_up)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            window.statusBarColor = ContextCompat.getColor(this, R.color.white)
+            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+        } else {
+            // For older versions, use a dark color with light icons
+            window.statusBarColor = ContextCompat.getColor(this, R.color.black)
+        }
 
 
         username = findViewById(R.id.Username)

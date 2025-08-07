@@ -6,7 +6,8 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Home">
+    tools:context=".Home"
+    android:fitsSystemWindows="true">
 
     <!-- Main Content (Right Side) -->
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -151,22 +152,23 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#80000000"
-            android:visibility="gone"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:visibility="gone">
 
             <!-- Bottom Sheet -->
             <LinearLayout
                 android:id="@+id/bottom_sheet"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
-                android:orientation="vertical"
                 android:background="@android:color/white"
-                android:elevation="8dp"
                 android:clickable="true"
+                android:elevation="8dp"
                 android:focusable="true"
-                android:paddingStart="8dp">
+                android:orientation="vertical"
+                android:paddingHorizontal="8dp"
+                android:paddingBottom="15dp">
 
                 <!-- Drag line -->
                 <View
@@ -182,41 +184,53 @@
                     android:id="@+id/checkPartTime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Part Time"
                     android:buttonTint="@color/primary_color"
-                    android:textColor="@color/black"/>
+                    android:text="Part Time"
+                    android:textColor="@color/black" />
 
                 <CheckBox
                     android:id="@+id/checkFullTime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Full Time"
                     android:buttonTint="@color/primary_color"
-                    android:textColor="@color/black"/>
+                    android:text="Full Time"
+                    android:textColor="@color/black" />
 
                 <CheckBox
                     android:id="@+id/checkOnSite"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="On Site"
                     android:buttonTint="@color/primary_color"
-                    android:textColor="@color/black"/>
+                    android:text="On Site"
+                    android:textColor="@color/black" />
 
                 <CheckBox
                     android:id="@+id/checkWorkFromHome"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Work from Home"
                     android:buttonTint="@color/primary_color"
-                    android:textColor="@color/black"/>
+                    android:text="Work from Home"
+                    android:textColor="@color/black" />
 
                 <CheckBox
                     android:id="@+id/checkHybrid"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Hybrid"
                     android:buttonTint="@color/primary_color"
-                    android:textColor="@color/black"/>
+                    android:text="Hybrid"
+                    android:textColor="@color/black" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:background="@drawable/rounded_button"
+                    android:gravity="center"
+                    android:paddingVertical="8dp"
+                    android:text="Apply"
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
+
             </LinearLayout>
         </FrameLayout>
 

@@ -1,6 +1,7 @@
 package com.example.internhunt
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Looper
@@ -15,6 +16,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import kotlin.concurrent.thread
 import android.os.Handler
+import androidx.core.content.ContextCompat
 
 class ForgotPasswordOtp : AppCompatActivity() {
 
@@ -38,6 +40,14 @@ class ForgotPasswordOtp : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_forgot_password_otp)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            window.statusBarColor = ContextCompat.getColor(this, R.color.white)
+            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+        } else {
+            // For older versions, use a dark color with light icons
+            window.statusBarColor = ContextCompat.getColor(this, R.color.black)
+        }
 
         otpInput = findViewById(R.id.otpInput)
         verifyButton = findViewById(R.id.verifyButton)
