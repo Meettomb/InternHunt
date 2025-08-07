@@ -8,12 +8,21 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 
-class UsersAdapter(private val users: MutableList<Users>) :
+class UsersAdapter(private val users: MutableList<Users>, private val onItemClick: (Users) -> Unit) :
     RecyclerView.Adapter<UsersAdapter.UserViewHolder>() {
 
     inner class UserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         val companyImage: ImageView = itemView.findViewById(R.id.CompanyLogo)
         val companyName: TextView = itemView.findViewById(R.id.CompanyName)
+
+        init {
+            itemView.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    onItemClick(users[position])
+                }
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {

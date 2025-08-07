@@ -15,6 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.InternHunt">
         <activity
+            android:name=".CompanyDetail"
+            android:exported="false" />
+        <activity
             android:name=".CompanyLists"
             android:exported="false" />
         <activity
