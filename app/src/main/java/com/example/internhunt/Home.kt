@@ -19,6 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 import android.widget.ImageView
 import android.widget.LinearLayout
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
@@ -39,6 +40,11 @@ class Home : AppCompatActivity() {
     private lateinit var usernameText: TextView
     private lateinit var profile_drawer: GridLayout
     private lateinit var recyclerView: RecyclerView
+    private lateinit var bottomSheet: LinearLayout
+    private lateinit var dragLine: View
+    private lateinit var filterSection: LinearLayout
+    private lateinit var bottomSheetOverlay : FrameLayout
+
 
 
 
@@ -59,6 +65,51 @@ class Home : AppCompatActivity() {
         usernameText = findViewById(R.id.UserName)
         profile_drawer = findViewById(R.id.profile_drawer)
         recyclerView = findViewById(R.id.recyclerView)
+
+
+        bottomSheet = findViewById(R.id.bottom_sheet)
+        dragLine = findViewById(R.id.drag_line)
+        filterSection = findViewById(R.id.filter_section)
+        bottomSheetOverlay = findViewById(R.id.bottom_sheet_overlay)
+
+        // Show bottom sheet
+        filterSection.setOnClickListener {
+            bottomSheetOverlay.visibility = View.VISIBLE
+            bottomSheet.visibility = View.VISIBLE
+        }
+
+        // Close bottom sheet on drag line click
+        dragLine.setOnClickListener {
+            bottomSheetOverlay.visibility = View.GONE
+            bottomSheet.visibility = View.GONE
+        }
+
+        // Close when clicking outside the bottom sheet
+        bottomSheetOverlay.setOnClickListener {
+            bottomSheetOverlay.visibility = View.GONE
+            bottomSheet.visibility = View.GONE
+        }
+
+        // Prevent outside click closing when clicking on the bottom sheet itself
+        bottomSheet.setOnClickListener {
+            // Do nothing
+        }
+
+        // Handle back press to close the sheet
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (bottomSheetOverlay.visibility == View.VISIBLE) {
+                    bottomSheetOverlay.visibility = View.GONE
+                    bottomSheet.visibility = View.GONE
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                }
+            }
+        })
+
+
+
 
         userImageView.setOnClickListener {
             drawerLayout.openDrawer(GravityCompat.START)

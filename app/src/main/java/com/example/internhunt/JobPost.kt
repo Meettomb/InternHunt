@@ -331,7 +331,7 @@ class JobPost : AppCompatActivity() {
             internshipTypeDropdown.error = null
         }
 
-        val internshipTimeOptions = listOf("Full Time", "Half Time")
+        val internshipTimeOptions = listOf("Full Time", "Part Time")
         val internshipTimeAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, internshipTimeOptions)
         internshipTimeDropdown.setAdapter(internshipTimeAdapter)
         // Hide error when user selects internship time
