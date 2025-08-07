@@ -129,6 +129,7 @@ class Home : AppCompatActivity() {
         recyclerView.adapter = adapter
 
         LoadInternshipPost()
+        setupBottomSheetListeners()
 
 
 
@@ -144,79 +145,55 @@ class Home : AppCompatActivity() {
             if (checkWorkFromHome.isChecked) selectedTypes.add("Work from Home")
             if (checkHybrid.isChecked) selectedTypes.add("Hybrid")
 
-            // Filter the data
             val result = internshipList.filter { post ->
                 (selectedTimes.isEmpty() || selectedTimes.contains(post.internshipTime)) &&
                         (selectedTypes.isEmpty() || selectedTypes.contains(post.internshipType))
             }
 
-            // Update list
             filteredList.clear()
             filteredList.addAll(result)
             adapter.notifyDataSetChanged()
+            Toast.makeText(this, "Filter Applied", Toast.LENGTH_SHORT).show()
             noDataText.visibility = if (filteredList.isEmpty()) View.VISIBLE else View.GONE
 
-            // Close bottom sheet
-            bottomSheetOverlay.visibility = View.GONE
-            bottomSheet.visibility = View.GONE
+            bottomSheet.animate()
+                .translationY(bottomSheet.height.toFloat())
+                .alpha(0f)
+                .setDuration(300)
+                .withEndAction {
+                    bottomSheet.visibility = View.GONE
+                    bottomSheetOverlay.visibility = View.GONE
+                }
+                .start()
         }
 
+
         clearButton.setOnClickListener {
-            // Uncheck all filters
             checkFullTime.isChecked = false
             checkPartTime.isChecked = false
             checkOnSite.isChecked = false
             checkWorkFromHome.isChecked = false
             checkHybrid.isChecked = false
 
-            // Reset filtered list
             filteredList.clear()
             filteredList.addAll(internshipList)
             adapter.notifyDataSetChanged()
+            Toast.makeText(this, "Filter Clear", Toast.LENGTH_SHORT).show()
             noDataText.visibility = if (filteredList.isEmpty()) View.VISIBLE else View.GONE
 
-            // Close bottom sheet
-            bottomSheetOverlay.visibility = View.GONE
-            bottomSheet.visibility = View.GONE
-        }
-
-
-        // Show bottom sheet
-        filterSection.setOnClickListener {
-            bottomSheetOverlay.visibility = View.VISIBLE
-            bottomSheet.visibility = View.VISIBLE
-        }
-
-        // Close bottom sheet on drag line click
-        dragLine.setOnClickListener {
-            bottomSheetOverlay.visibility = View.GONE
-            bottomSheet.visibility = View.GONE
-        }
-
-        // Close when clicking outside the bottom sheet
-        bottomSheetOverlay.setOnClickListener {
-            bottomSheetOverlay.visibility = View.GONE
-            bottomSheet.visibility = View.GONE
-        }
-
-        // Prevent outside click closing when clicking on the bottom sheet itself
-        bottomSheet.setOnClickListener {
-            // Do nothing
-        }
-
-        // Handle back press to close the sheet
-        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (bottomSheetOverlay.visibility == View.VISIBLE) {
-                    bottomSheetOverlay.visibility = View.GONE
+            bottomSheet.animate()
+                .translationY(bottomSheet.height.toFloat())
+                .alpha(0f)
+                .setDuration(300)
+                .withEndAction {
                     bottomSheet.visibility = View.GONE
-                } else {
-                    isEnabled = false
-                    onBackPressedDispatcher.onBackPressed()
-                    finish()
+                    bottomSheetOverlay.visibility = View.GONE
                 }
-            }
-        })
+                .start()
+        }
+
+
+
 
 
 
@@ -339,11 +316,62 @@ class Home : AppCompatActivity() {
             finish()
         }
 
-
-
-
-
     }
+
+    private fun showBottomSheet() {
+        bottomSheetOverlay.visibility = View.VISIBLE
+        bottomSheet.visibility = View.VISIBLE
+
+        // Start from below screen
+        bottomSheet.translationY = bottomSheet.height.toFloat()
+        bottomSheet.alpha = 0f
+
+        // Animate up
+        bottomSheet.animate()
+            .translationY(0f)
+            .alpha(1f)
+            .setDuration(300)
+            .start()
+    }
+    private fun hideBottomSheet() {
+        // Animate down
+        bottomSheet.animate()
+            .translationY(bottomSheet.height.toFloat())
+            .alpha(0f)
+            .setDuration(300)
+            .withEndAction {
+                bottomSheet.visibility = View.GONE
+                bottomSheetOverlay.visibility = View.GONE
+            }
+            .start()
+    }
+    private fun setupBottomSheetListeners() {
+        // Open bottom sheet
+        filterSection.setOnClickListener { showBottomSheet() }
+
+        // Close bottom sheet on drag or outside overlay click
+        dragLine.setOnClickListener { hideBottomSheet() }
+        bottomSheetOverlay.setOnClickListener { hideBottomSheet() }
+
+        // Prevent closing when clicking inside the sheet
+        bottomSheet.setOnClickListener { /* Do nothing */ }
+
+        // Handle back button press
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+
+            override fun handleOnBackPressed() {
+                if (bottomSheetOverlay.visibility == View.VISIBLE) {
+                    hideBottomSheet()
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                    finish()
+                }
+            }
+
+        })
+    }
+
 
     private fun LoadInternshipPost() {
         val db2 = FirebaseFirestore.getInstance()
