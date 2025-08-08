@@ -146,8 +146,8 @@ class Home : AppCompatActivity() {
             if (checkHybrid.isChecked) selectedTypes.add("Hybrid")
 
             val result = internshipList.filter { post ->
-                (selectedTimes.isEmpty() || selectedTimes.contains(post.internshipTime)) &&
-                        (selectedTypes.isEmpty() || selectedTypes.contains(post.internshipType))
+                (selectedTimes.isEmpty() || selectedTimes.any { it.equals(post.internshipTime, ignoreCase = true) }) &&
+                        (selectedTypes.isEmpty() || selectedTypes.any { it.equals(post.internshipType, ignoreCase = true) })
             }
 
             filteredList.clear()

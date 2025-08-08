@@ -16,6 +16,8 @@ import com.bumptech.glide.Glide
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
 import java.util.*
+import com.google.firebase.firestore.Query
+
 
 class CompanyDetail : AppCompatActivity() {
 
@@ -139,6 +141,7 @@ class CompanyDetail : AppCompatActivity() {
 
         db.collection("internshipPostsData")
             .whereEqualTo("companyId", companyId)
+            .orderBy("postedDate", Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener { documents ->
                 val jobList = mutableListOf<InternshipPostData>()
@@ -150,15 +153,18 @@ class CompanyDetail : AppCompatActivity() {
                         internshipTime = doc.getString("internshipTime") ?: "N/A",
                         stipend = doc.getString("stipend") ?: "N/A",
                         applicationDeadline = doc.getString("applicationDeadline") ?: "N/A",
-
+                        postedDate = doc.getTimestamp("postedDate")  // ✅ This line is necessary
                     )
                     jobList.add(job)
                 }
 
                 jobPostsRecyclerView.adapter = JobPostAdapter(jobList)
             }
-            .addOnFailureListener {
-                Toast.makeText(this, "Failed to load job posts", Toast.LENGTH_SHORT).show()
+            .addOnFailureListener { e ->
+                Log.e("JobPosts", "Error loading job posts", e)
+                Toast.makeText(this, "Failed to load job posts: ${e.message}", Toast.LENGTH_LONG).show()
             }
+
     }
+
 }

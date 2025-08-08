@@ -190,14 +190,17 @@
                 android:orientation="horizontal"
                 android:paddingTop="10dp">
 
-                <Button
+
+                <TextView
                     android:id="@+id/btnOpenJobs"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:backgroundTint="@color/primary_color"
-                    android:text="Open Jobs" />
-
+                    android:background="@drawable/rounded_button"
+                    android:gravity="center"
+                    android:text="Active Jobs"
+                    android:textColor="@color/white"
+                    android:paddingVertical="10dp"/>
 
                 <TextView
                     android:id="@+id/textView4"
@@ -205,13 +208,16 @@
                     android:layout_height="match_parent"
                     android:layout_weight="0" />
 
-                <Button
+                <TextView
                     android:id="@+id/btnClosedJobs"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:backgroundTint="@color/primary_color"
-                    android:text="Closed Jobs" />
+                    android:background="@drawable/rounded_button"
+                    android:gravity="center"
+                    android:text="Closed Jobs"
+                    android:textColor="@color/white"
+                    android:paddingVertical="10dp"/>
             </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView

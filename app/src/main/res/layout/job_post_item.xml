@@ -29,6 +29,13 @@
             android:layout_height="wrap_content"
             android:text="Python Developer Internship"
             android:textColor="@color/black" />
+        <TextView
+            android:id="@+id/postedDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Python Developer Internship"
+            android:textColor="@color/black"
+            android:visibility="gone"/>
     </LinearLayout>
 
     <!-- Internship Type -->
@@ -102,6 +109,7 @@
 
     <!-- Deadline -->
     <LinearLayout
+        android:id="@+id/DeadlineLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">

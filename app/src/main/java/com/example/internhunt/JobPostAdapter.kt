@@ -3,8 +3,12 @@ package com.example.internhunt
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import java.util.Locale
+import java.text.SimpleDateFormat
+
 
 class JobPostAdapter(private val jobList: List<InternshipPostData>) :
     RecyclerView.Adapter<JobPostAdapter.JobViewHolder>() {
@@ -15,6 +19,7 @@ class JobPostAdapter(private val jobList: List<InternshipPostData>) :
         val internshipTimeText: TextView = itemView.findViewById(R.id.internshipTime)
         val stipendText: TextView = itemView.findViewById(R.id.Stipend)
         val deadlineText: TextView = itemView.findViewById(R.id.Deadline)
+        val DeadlineLayout: LinearLayout = itemView.findViewById(R.id.DeadlineLayout)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): JobViewHolder {
@@ -29,8 +34,31 @@ class JobPostAdapter(private val jobList: List<InternshipPostData>) :
         holder.internshipTypeText.text = job.internshipType
         holder.internshipTimeText.text = job.internshipTime
         holder.stipendText.text = job.stipend
-        holder.deadlineText.text = job.applicationDeadline
+
+        val deadlineStr = job.applicationDeadline
+
+        if (deadlineStr != "N/A") {
+            val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            try {
+                val deadlineDate = sdf.parse(deadlineStr)
+                val today = java.util.Calendar.getInstance().time
+
+                if (today.after(deadlineDate)) {
+                    // Hide deadline if it's expired
+                    holder.DeadlineLayout.visibility = View.GONE
+                } else {
+                    // Show deadline if it's still valid
+                    holder.DeadlineLayout.visibility = View.VISIBLE
+                }
+            } catch (e: Exception) {
+                // In case of parse error, just show the deadline as fallback
+                holder.DeadlineLayout.visibility = View.VISIBLE
+            }
+        } else {
+            holder.deadlineText.visibility = View.GONE
+        }
     }
+
 
     override fun getItemCount(): Int = jobList.size
 }
