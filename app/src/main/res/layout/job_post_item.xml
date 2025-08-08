@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    android:background="@drawable/round_border_without_color"
+    android:elevation="2dp"
+    android:orientation="vertical"
+    android:padding="12dp">
+
+    <!-- Title -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/textViewTitleLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Title:"
+            android:textColor="@color/light_color"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/JobTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Python Developer Internship"
+            android:textColor="@color/black" />
+    </LinearLayout>
+
+    <!-- Internship Type -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/textViewTypeLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Internship Type:"
+            android:textColor="@color/light_color"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/internshipType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hybrid"
+            android:textColor="@color/black" />
+    </LinearLayout>
+
+    <!-- Internship Timing -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/textViewTimingLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Internship Timing:"
+            android:textColor="@color/light_color"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/internshipTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Full-Time"
+            android:textColor="@color/black" />
+    </LinearLayout>
+
+    <!-- Stipend -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/textViewStipendLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Stipend:"
+            android:textColor="@color/light_color"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/Stipend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="₹1000"
+            android:textColor="@color/black" />
+    </LinearLayout>
+
+    <!-- Deadline -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/textViewDeadlineLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Deadline:"
+            android:textColor="#DE0404"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/Deadline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="30 Sep 2025"
+            android:textColor="@color/black" />
+    </LinearLayout>
+
+</LinearLayout>

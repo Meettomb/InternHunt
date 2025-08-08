@@ -1,5 +1,6 @@
 package com.example.internhunt
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -52,6 +53,20 @@ class InternshipAdapter(private val internship: List<InternshipPostData>):
                         Glide.with(holder.itemView.context)
                             .load(profileImageUrl)
                             .into(holder.companyImage)
+                    }
+
+                    // 💡 Now setup click listener to open detail
+                    holder.itemView.setOnClickListener {
+                        val context = holder.itemView.context
+                        val intent = Intent(context, CompanyDetail::class.java)
+                        intent.putExtra("title", item.title)
+                        intent.putExtra("location", item.location)
+                        intent.putExtra("companyId", item.companyId)
+                        intent.putExtra("companyName", companyName)
+                        intent.putExtra("internshipType", item.internshipType)
+                        intent.putExtra("internshipTime", item.internshipTime)
+                        intent.putExtra("profileImageUrl", profileImageUrl ?: "")
+                        context.startActivity(intent)
                     }
                 } else {
                     holder.companyName.text = "Company not found"

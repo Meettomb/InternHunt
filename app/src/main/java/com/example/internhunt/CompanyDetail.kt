@@ -2,53 +2,83 @@ package com.example.internhunt
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.firebase.firestore.FirebaseFirestore
-import org.eclipse.angus.mail.imap.protocol.ID
+import java.text.SimpleDateFormat
+import java.util.*
 
 class CompanyDetail : AppCompatActivity() {
 
     private lateinit var backButton: ImageView
     private lateinit var companyLogo: ImageView
     private lateinit var companyName: TextView
+    private lateinit var companyLocation: TextView
+    private lateinit var companyPhone: TextView
+    private lateinit var companyEmail: TextView
+    private lateinit var companyWebsite: TextView
+    private lateinit var companyDescription: TextView
+    private lateinit var signupDate: TextView
+    private lateinit var jobPostsRecyclerView: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_company_detail)
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             window.statusBarColor = ContextCompat.getColor(this, R.color.white)
             window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
         } else {
-            // For older versions, use a dark color with light icons
             window.statusBarColor = ContextCompat.getColor(this, R.color.black)
         }
 
+        // Bind views
         backButton = findViewById(R.id.backButton)
+        companyLogo = findViewById(R.id.CompanyLogo)
+        companyName = findViewById(R.id.companyName)
+        companyLocation = findViewById(R.id.companyLocation)
+        companyPhone = findViewById(R.id.companyPhone)
+        companyEmail = findViewById(R.id.companyEmail)
+        companyWebsite = findViewById(R.id.companyWebsite)
+        companyDescription = findViewById(R.id.companyDescription)
+        signupDate = findViewById(R.id.signupDate)
+        jobPostsRecyclerView = findViewById(R.id.recyclerViewJobs)
+
+        jobPostsRecyclerView.layoutManager = LinearLayoutManager(this)
+
+        // Handle back
         backButton.setOnClickListener {
             finish()
         }
 
-        companyLogo = findViewById(R.id.CompanyLogo)
-        companyName = findViewById(R.id.companyName)
+        // Get intent data
         val companyId = intent.getStringExtra("companyId")
+        val companyNameStr = intent.getStringExtra("companyName")
+        val profileImageUrl = intent.getStringExtra("profileImageUrl")
+
+        companyName.text = companyNameStr
+
+        Glide.with(this)
+            .load(profileImageUrl)
+            .into(companyLogo)
 
         if (companyId != null) {
             loadCompanyDetail(companyId)
+            loadJobPosts(companyId)
         } else {
             Toast.makeText(this, "Company ID not found", Toast.LENGTH_SHORT).show()
             finish()
         }
-
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -60,22 +90,40 @@ class CompanyDetail : AppCompatActivity() {
     private fun loadCompanyDetail(companyID: String) {
         val db = FirebaseFirestore.getInstance()
 
-        // Step 1: Fetch the company from "Users" collection using document ID
         db.collection("Users").document(companyID)
             .get()
             .addOnSuccessListener { document ->
                 if (document.exists()) {
                     val companyNameValue = document.getString("company_name") ?: "N/A"
                     val profileImageUrl = document.getString("profile_image_url") ?: ""
-                    val userUniqueId = document.getString("id") ?: ""
+                    val city = document.getString("city") ?: ""
+                    val state = document.getString("state") ?: ""
+                    val phone = document.getString("phone") ?: ""
+                    val email = document.getString("email") ?: ""
+                    val website = document.getString("company_url") ?: ""
+                    val description = document.getString("company_description") ?: ""
+                    val signupDateRaw = document.getString("signup_date") ?: ""
+
+                    val inputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                    val outputFormat = SimpleDateFormat("d-MMMM-yyyy", Locale.getDefault())
+                    val formattedDate = try {
+                        val date = inputFormat.parse(signupDateRaw)
+                        outputFormat.format(date!!)
+                    } catch (e: Exception) {
+                        signupDateRaw
+                    }
 
                     companyName.text = companyNameValue
                     Glide.with(this)
                         .load(profileImageUrl)
                         .into(companyLogo)
 
-                    // Step 2: Use the `id` to fetch more details from another collection
-
+                    companyLocation.text = "$city, $state"
+                    companyPhone.text = phone
+                    companyEmail.text = email
+                    companyWebsite.text = website
+                    companyDescription.text = description
+                    signupDate.text = "Joined on $formattedDate"
 
                 } else {
                     Toast.makeText(this, "Company not found", Toast.LENGTH_SHORT).show()
@@ -86,4 +134,31 @@ class CompanyDetail : AppCompatActivity() {
             }
     }
 
+    private fun loadJobPosts(companyId: String) {
+        val db = FirebaseFirestore.getInstance()
+
+        db.collection("internshipPostsData")
+            .whereEqualTo("companyId", companyId)
+            .get()
+            .addOnSuccessListener { documents ->
+                val jobList = mutableListOf<InternshipPostData>()
+
+                for (doc in documents) {
+                    val job = InternshipPostData(
+                        title = doc.getString("title") ?: "N/A",
+                        internshipType = doc.getString("internshipType") ?: "N/A",
+                        internshipTime = doc.getString("internshipTime") ?: "N/A",
+                        stipend = doc.getString("stipend") ?: "N/A",
+                        applicationDeadline = doc.getString("applicationDeadline") ?: "N/A",
+
+                    )
+                    jobList.add(job)
+                }
+
+                jobPostsRecyclerView.adapter = JobPostAdapter(jobList)
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "Failed to load job posts", Toast.LENGTH_SHORT).show()
+            }
+    }
 }
