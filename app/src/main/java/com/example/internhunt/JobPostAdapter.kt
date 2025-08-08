@@ -49,10 +49,12 @@ class JobPostAdapter(private val jobList: List<InternshipPostData>) :
                 } else {
                     // Show deadline if it's still valid
                     holder.DeadlineLayout.visibility = View.VISIBLE
+                    holder.deadlineText.text = deadlineStr
                 }
             } catch (e: Exception) {
                 // In case of parse error, just show the deadline as fallback
                 holder.DeadlineLayout.visibility = View.VISIBLE
+                holder.deadlineText.text = deadlineStr
             }
         } else {
             holder.deadlineText.visibility = View.GONE

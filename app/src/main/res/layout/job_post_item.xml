@@ -27,7 +27,7 @@
             android:id="@+id/JobTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Python Developer Internship"
+            android:text="Internship Title"
             android:textColor="@color/black" />
         <TextView
             android:id="@+id/postedDate"
@@ -57,7 +57,7 @@
             android:id="@+id/internshipType"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hybrid"
+            android:text="Internship Type"
             android:textColor="@color/black" />
     </LinearLayout>
 
@@ -80,7 +80,7 @@
             android:id="@+id/internshipTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Full-Time"
+            android:text="Internship Time"
             android:textColor="@color/black" />
     </LinearLayout>
 
@@ -103,7 +103,7 @@
             android:id="@+id/Stipend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="₹1000"
+            android:text="Stipend"
             android:textColor="@color/black" />
     </LinearLayout>
 
@@ -127,7 +127,7 @@
             android:id="@+id/Deadline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="30 Sep 2025"
+            android:text="Deadline Date"
             android:textColor="@color/black" />
     </LinearLayout>
 

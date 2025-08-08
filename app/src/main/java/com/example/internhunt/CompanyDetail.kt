@@ -30,7 +30,12 @@ class CompanyDetail : AppCompatActivity() {
     private lateinit var companyWebsite: TextView
     private lateinit var companyDescription: TextView
     private lateinit var signupDate: TextView
+    private lateinit var btnActiveJobs: TextView
+    private lateinit var btnClosedJobs: TextView
     private lateinit var jobPostsRecyclerView: RecyclerView
+
+    private lateinit var activeJobs: List<InternshipPostData>
+    private lateinit var closedJobs: List<InternshipPostData>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,11 +62,10 @@ class CompanyDetail : AppCompatActivity() {
         jobPostsRecyclerView = findViewById(R.id.recyclerViewJobs)
 
         jobPostsRecyclerView.layoutManager = LinearLayoutManager(this)
+        btnActiveJobs = findViewById(R.id.btnOpenJobs)
+        btnClosedJobs = findViewById(R.id.btnClosedJobs)
 
-        // Handle back
-        backButton.setOnClickListener {
-            finish()
-        }
+
 
         // Get intent data
         val companyId = intent.getStringExtra("companyId")
@@ -79,6 +83,29 @@ class CompanyDetail : AppCompatActivity() {
             loadJobPosts(companyId)
         } else {
             Toast.makeText(this, "Company ID not found", Toast.LENGTH_SHORT).show()
+            finish()
+        }
+
+
+        // Highlight Active, normal Closed
+        btnActiveJobs.setOnClickListener {
+            jobPostsRecyclerView.adapter = JobPostAdapter(activeJobs)
+
+
+            btnActiveJobs.setBackgroundResource(R.drawable.rounded_button_higlight)
+            btnClosedJobs.setBackgroundResource(R.drawable.rounded_button)
+        }
+
+        // Highlight Closed, normal Active
+        btnClosedJobs.setOnClickListener {
+            jobPostsRecyclerView.adapter = JobPostAdapter(closedJobs)
+
+            btnActiveJobs.setBackgroundResource(R.drawable.rounded_button)
+            btnClosedJobs.setBackgroundResource(R.drawable.rounded_button_higlight)
+        }
+
+        // Handle back
+        backButton.setOnClickListener {
             finish()
         }
 
@@ -144,27 +171,52 @@ class CompanyDetail : AppCompatActivity() {
             .orderBy("postedDate", Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener { documents ->
-                val jobList = mutableListOf<InternshipPostData>()
+                val activeList = mutableListOf<InternshipPostData>()
+                val closedList = mutableListOf<InternshipPostData>()
+
+                val sdf = SimpleDateFormat("d/M/yyyy", Locale.getDefault())
+                val today = Calendar.getInstance().time
 
                 for (doc in documents) {
+                    val deadlineStr = doc.getString("applicationDeadline") ?: "N/A"
+
                     val job = InternshipPostData(
                         title = doc.getString("title") ?: "N/A",
                         internshipType = doc.getString("internshipType") ?: "N/A",
                         internshipTime = doc.getString("internshipTime") ?: "N/A",
                         stipend = doc.getString("stipend") ?: "N/A",
-                        applicationDeadline = doc.getString("applicationDeadline") ?: "N/A",
-                        postedDate = doc.getTimestamp("postedDate")  // ✅ This line is necessary
+                        applicationDeadline = deadlineStr,
+                        postedDate = doc.getTimestamp("postedDate")
                     )
-                    jobList.add(job)
+
+                    // Decide active or closed
+                    try {
+                        if (deadlineStr != "N/A") {
+                            val deadlineDate = sdf.parse(deadlineStr)
+                            if (today.before(deadlineDate) || today == deadlineDate) {
+                                activeList.add(job)
+                            } else {
+                                closedList.add(job)
+                            }
+                        } else {
+                            closedList.add(job) // treat as closed if no deadline
+                        }
+                    } catch (e: Exception) {
+                        closedList.add(job) // treat as closed if parsing fails
+                    }
                 }
 
-                jobPostsRecyclerView.adapter = JobPostAdapter(jobList)
+                // Save lists
+                activeJobs = activeList
+                closedJobs = closedList
+
+                // Default show active jobs
+                jobPostsRecyclerView.adapter = JobPostAdapter(activeJobs)
             }
             .addOnFailureListener { e ->
                 Log.e("JobPosts", "Error loading job posts", e)
                 Toast.makeText(this, "Failed to load job posts: ${e.message}", Toast.LENGTH_LONG).show()
             }
-
     }
 
 }
