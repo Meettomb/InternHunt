@@ -434,19 +434,19 @@
                     android:textColor="#888888"
                     android:textSize="18sp" />
 
-                <TextView
-                    android:id="@+id/MyPosts"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="8dp"
-                    android:background="@drawable/nav_item_background"
-                    android:drawableStart="@drawable/list_alt"
-                    android:drawablePadding="12dp"
-                    android:paddingHorizontal="5dp"
-                    android:paddingVertical="10dp"
-                    android:text="My Posts"
-                    android:textColor="#888888"
-                    android:textSize="18sp" />
+<!--                <TextView-->
+<!--                    android:id="@+id/MyPosts"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginVertical="8dp"-->
+<!--                    android:background="@drawable/nav_item_background"-->
+<!--                    android:drawableStart="@drawable/list_alt"-->
+<!--                    android:drawablePadding="12dp"-->
+<!--                    android:paddingHorizontal="5dp"-->
+<!--                    android:paddingVertical="10dp"-->
+<!--                    android:text="My Posts"-->
+<!--                    android:textColor="#888888"-->
+<!--                    android:textSize="18sp" />-->
 
                 <TextView
                     android:id="@+id/history"
