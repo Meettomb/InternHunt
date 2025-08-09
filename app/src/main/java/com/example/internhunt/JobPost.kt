@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.MultiAutoCompleteTextView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
@@ -63,6 +64,39 @@ class JobPost : AppCompatActivity() {
     private lateinit var progressBar: ProgressBar
 
     private lateinit var postButton: TextView
+    private lateinit var degreeName: MultiAutoCompleteTextView
+
+
+    private val degrees = arrayOf(
+        "B.Tech (Bachelor of Technology)",
+        "B.E. (Bachelor of Engineering)",
+        "B.Sc (Bachelor of Science)",
+        "BCA (Bachelor of Computer Applications)",
+        "BBA (Bachelor of Business Administration)",
+        "B.Com (Bachelor of Commerce)",
+        "B.A. (Bachelor of Arts)",
+        "M.Tech (Master of Technology)",
+        "M.E. (Master of Engineering)",
+        "M.Sc (Master of Science)",
+        "MCA (Master of Computer Applications)",
+        "MBA (Master of Business Administration)",
+        "M.Com (Master of Commerce)",
+        "PhD (Doctor of Philosophy)",
+        "Diploma in Engineering",
+        "Polytechnic Diploma",
+        "B.Ed (Bachelor of Education)",
+        "M.Ed (Master of Education)",
+        "LLB (Bachelor of Laws)",
+        "LLM (Master of Laws)",
+        "MBBS (Bachelor of Medicine & Surgery)",
+        "BDS (Bachelor of Dental Surgery)",
+        "B.Pharm (Bachelor of Pharmacy)",
+        "M.Pharm (Master of Pharmacy)",
+        "B.Arch (Bachelor of Architecture)",
+        "M.Arch (Master of Architecture)"
+    )
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -109,6 +143,23 @@ class JobPost : AppCompatActivity() {
         progressBar = findViewById(R.id.progressBar)
 
         postButton = findViewById(R.id.PostButton)
+
+        degreeName = findViewById(R.id.DegreeName)
+
+        val adapter = ArrayAdapter(
+            this,
+            R.layout.dropdown_item,
+            R.id.text1,
+            degrees
+        )
+
+        degreeName = findViewById(R.id.DegreeName)
+        degreeName.setAdapter(adapter)
+
+        // Set tokenizer to comma (you can customize)
+        degreeName.setTokenizer(MultiAutoCompleteTextView.CommaTokenizer())
+
+        degreeName.threshold = 1
 
 
         backButton.setOnClickListener {
@@ -394,6 +445,8 @@ class JobPost : AppCompatActivity() {
         val opening = opening.text.toString().trim()
         val internshipTypeValue = internshipTypeDropdown.text.toString()
         val internshipTimeValue = internshipTimeDropdown.text.toString()
+        val degreesText = degreeName.text.toString().trim()
+        val degreesList = degreesText.split(",").map { it.trim() }.filter { it.isNotEmpty() }
 
 
         // Combine date fields into single string or store as Date object (optional)
@@ -417,6 +470,7 @@ class JobPost : AppCompatActivity() {
             "internshipType" to internshipTypeValue,
             "internshipTime" to internshipTimeValue,
             "perks" to selectedPerks,
+            "degreeEligibility" to degreesList,
             "status" to "open"
         )
 

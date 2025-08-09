@@ -18,6 +18,8 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import com.google.firebase.storage.FirebaseStorage
 import android.view.View
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import androidx.core.content.ContextCompat
 import java.util.Calendar
 import kotlin.concurrent.thread
@@ -56,6 +58,36 @@ class StudentSignUp : AppCompatActivity() {
     private lateinit var ImageUplodeError: TextView
 
 
+    private val degrees = arrayOf(
+        "B.Tech (Bachelor of Technology)",
+        "B.E. (Bachelor of Engineering)",
+        "B.Sc (Bachelor of Science)",
+        "BCA (Bachelor of Computer Applications)",
+        "BBA (Bachelor of Business Administration)",
+        "B.Com (Bachelor of Commerce)",
+        "B.A. (Bachelor of Arts)",
+        "M.Tech (Master of Technology)",
+        "M.E. (Master of Engineering)",
+        "M.Sc (Master of Science)",
+        "MCA (Master of Computer Applications)",
+        "MBA (Master of Business Administration)",
+        "M.Com (Master of Commerce)",
+        "PhD (Doctor of Philosophy)",
+        "Diploma in Engineering",
+        "Polytechnic Diploma",
+        "B.Ed (Bachelor of Education)",
+        "M.Ed (Master of Education)",
+        "LLB (Bachelor of Laws)",
+        "LLM (Master of Laws)",
+        "MBBS (Bachelor of Medicine & Surgery)",
+        "BDS (Bachelor of Dental Surgery)",
+        "B.Pharm (Bachelor of Pharmacy)",
+        "M.Pharm (Master of Pharmacy)",
+        "B.Arch (Bachelor of Architecture)",
+        "M.Arch (Master of Architecture)"
+    )
+
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,6 +106,18 @@ class StudentSignUp : AppCompatActivity() {
         collageName = findViewById(R.id.CollageName)
         collageNameError = findViewById(R.id.CollageNameError)
         degreeName = findViewById(R.id.DegreeName)
+
+        val adapter = ArrayAdapter(
+            this,
+            R.layout.dropdown_item,         // your LinearLayout layout
+            R.id.text1,                   // ID of TextView inside it
+            degrees
+        )
+        // ✅ custom layout
+        val autoCompleteTextView = findViewById<AutoCompleteTextView>(R.id.DegreeName)
+        autoCompleteTextView.setAdapter(adapter)
+        autoCompleteTextView.threshold = 1
+
         degreeError = findViewById(R.id.DegreeError)
         graduationStartYear = findViewById(R.id.GraduationStartYear)
         graduationStartYearError = findViewById(R.id.GraduationStartYearError)
@@ -146,11 +190,17 @@ class StudentSignUp : AppCompatActivity() {
 
             // Validate Degree Name
             if (degree.isEmpty()) {
+                degreeError.text = "Degree is required"
+                degreeError.visibility = TextView.VISIBLE
+                isValid = false
+            } else if (!degrees.contains(degree)) {
+                degreeError.text = "Please select your degree from the list provided."
                 degreeError.visibility = TextView.VISIBLE
                 isValid = false
             } else {
                 degreeError.visibility = TextView.GONE
             }
+
 
             // Validate Graduation Start Year
             if (gradStartYearStr.isEmpty()) {
@@ -183,11 +233,12 @@ class StudentSignUp : AppCompatActivity() {
             }
 
             if (selectedImageUri == null) {
-                ImageUplodeError.visibility = TextView.VISIBLE
+                ImageUplodeError.visibility = View.VISIBLE
                 isValid = false
             } else {
-                ImageUplodeError.visibility = TextView.GONE
+                ImageUplodeError.visibility = View.GONE
             }
+
             // If all is valid, proceed
             if (isValid) {
 

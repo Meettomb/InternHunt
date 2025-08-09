@@ -31,6 +31,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.firebase.firestore.firestoreSettings
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 
 class Home : AppCompatActivity() {
@@ -391,6 +394,8 @@ class Home : AppCompatActivity() {
 
     private fun LoadInternshipPost() {
         val db2 = FirebaseFirestore.getInstance()
+        val dateFormat = SimpleDateFormat("dd/M/yyyy", Locale.getDefault()) // matches your format
+        val today = Date()
 
         db2.collection("internshipPostsData")
             .get()
@@ -398,10 +403,20 @@ class Home : AppCompatActivity() {
                 internshipList.clear()
                 for (doc in documents) {
                     val post = doc.toObject(InternshipPostData::class.java)
-                    internshipList.add(post)
+
+                    try {
+                        // Parse and compare
+                        val deadlineDate = dateFormat.parse(post.applicationDeadline)
+                        if (deadlineDate != null && deadlineDate.after(today)) {
+                            internshipList.add(post)
+                        }
+                    } catch (e: Exception) {
+                        // If parsing fails, skip this post
+                        e.printStackTrace()
+                    }
                 }
 
-                // Show all initially
+                // Show only valid internships
                 filteredList.clear()
                 filteredList.addAll(internshipList)
                 adapter.notifyDataSetChanged()
@@ -411,6 +426,7 @@ class Home : AppCompatActivity() {
                 Toast.makeText(this, "Error: ${exception.message}", Toast.LENGTH_LONG).show()
             }
     }
+
 
 
 

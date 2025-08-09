@@ -55,6 +55,12 @@ class Login : AppCompatActivity() {
             window.statusBarColor = ContextCompat.getColor(this, R.color.black)
         }
 
+//        var tempButton = findViewById<Button>(R.id.button)
+//        tempButton.setOnClickListener {
+//            var intent = Intent(this, StudentSignUp::class.java)
+//            startActivity(intent)
+//        }
+
         textViewSignUp = findViewById(R.id.textViewSignUp)
         loginButton = findViewById(R.id.Login)
         emailEditText = findViewById(R.id.Email)
