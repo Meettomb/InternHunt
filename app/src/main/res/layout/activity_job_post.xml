@@ -208,10 +208,17 @@
                         android:textColor="@android:color/black"
                         android:textColorHint="#C43C3C3C"
                         android:drawableEnd="@drawable/verified" />
-
-
-
                 </LinearLayout>
+                <TextView
+                    android:id="@+id/degreeError"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="This field is required"
+                    android:textColor="#FF0000"
+                    android:textSize="14sp"
+                    android:visibility="gone" />
+
+
 
                 <EditText
                     android:id="@+id/CompanyId"

@@ -169,6 +169,7 @@ class StudentSignUp : AppCompatActivity() {
         signUpButton2.setOnClickListener {
             var isValid = true
             val currentYear = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR)
+            val educationList = mutableListOf<Map<String, String>>()
 
             val collage = collageName.text.toString().trim()
             val degree = degreeName.text.toString().trim()
@@ -176,6 +177,13 @@ class StudentSignUp : AppCompatActivity() {
             val gradYearStr = graduationYear.text.toString().trim()
             val imageUplode = ImageUplodeError.text.toString().trim()
 
+            val educationEntry = mapOf(
+                "collage_name" to collage,
+                "degree_name" to degree,
+                "graduation_start_year" to gradStartYearStr,
+                "graduation_end_year" to gradYearStr
+            )
+            educationList.add(educationEntry)
             val gradStartYear = gradStartYearStr.toIntOrNull()
             val gradYear = gradYearStr.toIntOrNull()
             val maxYear = currentYear + 5
@@ -271,12 +279,9 @@ class StudentSignUp : AppCompatActivity() {
                                 "id" to newUserRef.id,
                                 "date_of_birth" to dateOfBirth,
                                 "city" to city,
-                                "collage_name" to collage,
-                                "degree_name" to degree,
+                                "education" to educationList,
                                 "email" to userEmail,
                                 "gender" to selectedGender,
-                                "graduation_start_year" to gradStartYearStr,
-                                "graduation_end_year" to gradYearStr,
                                 "password" to userPassword,
                                 "phone" to userPhone,
                                 "role" to selectedUserType,

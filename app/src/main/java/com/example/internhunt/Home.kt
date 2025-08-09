@@ -9,6 +9,7 @@ import androidx.core.view.WindowInsetsCompat
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.CheckBox
@@ -138,7 +139,6 @@ class Home : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
 
-        LoadInternshipPost()
         setupBottomSheetListeners()
 
 
@@ -276,7 +276,7 @@ class Home : AppCompatActivity() {
 
 
 
-
+        var userDegrees: List<String> = emptyList()
         userRef.addSnapshotListener { doc, error ->
             if (error != null) {
                 Toast.makeText(this, "Error: ${error.localizedMessage}", Toast.LENGTH_LONG).show()
@@ -295,6 +295,11 @@ class Home : AppCompatActivity() {
                         .load(imageUrl)
                         .into(userImageView2)
                 }
+                // Get the education list as a List of Map<String, Any>
+                val educationList = doc.get("education") as? List<Map<String, Any>> ?: emptyList()
+                userDegrees = educationList.mapNotNull { it["degree_name"] as? String }
+                LoadInternshipPost(userDegrees)
+
                 val userName = doc.getString("username")
                 val companyName = doc.getString("company_name")
                 val role = doc.getString("role")
@@ -304,7 +309,6 @@ class Home : AppCompatActivity() {
                         usernameText.text = userName
                     }
                     findViewById<TextView>(R.id.nav_add_post).visibility = View.GONE
-//                    findViewById<TextView>(R.id.MyPosts).visibility = View.GONE
                 }
                 else if(role == "Company"){
                     if (!companyName.isNullOrEmpty()){
@@ -392,9 +396,9 @@ class Home : AppCompatActivity() {
     }
 
 
-    private fun LoadInternshipPost() {
+    private fun LoadInternshipPost(userDegrees: List<String>) {
         val db2 = FirebaseFirestore.getInstance()
-        val dateFormat = SimpleDateFormat("dd/M/yyyy", Locale.getDefault()) // matches your format
+        val dateFormat = SimpleDateFormat("dd/M/yyyy", Locale.getDefault())
         val today = Date()
 
         db2.collection("internshipPostsData")
@@ -405,18 +409,20 @@ class Home : AppCompatActivity() {
                     val post = doc.toObject(InternshipPostData::class.java)
 
                     try {
-                        // Parse and compare
                         val deadlineDate = dateFormat.parse(post.applicationDeadline)
-                        if (deadlineDate != null && deadlineDate.after(today)) {
+
+                        val matchesDegree = post.degreeEligibility.any { degree ->
+                            userDegrees.contains(degree)
+                        }
+
+                        if (deadlineDate != null && deadlineDate.after(today) && matchesDegree) {
                             internshipList.add(post)
                         }
                     } catch (e: Exception) {
-                        // If parsing fails, skip this post
                         e.printStackTrace()
                     }
                 }
 
-                // Show only valid internships
                 filteredList.clear()
                 filteredList.addAll(internshipList)
                 adapter.notifyDataSetChanged()
@@ -426,6 +432,7 @@ class Home : AppCompatActivity() {
                 Toast.makeText(this, "Error: ${exception.message}", Toast.LENGTH_LONG).show()
             }
     }
+
 
 
 

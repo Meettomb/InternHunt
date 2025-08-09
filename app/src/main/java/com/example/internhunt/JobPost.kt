@@ -65,6 +65,7 @@ class JobPost : AppCompatActivity() {
 
     private lateinit var postButton: TextView
     private lateinit var degreeName: MultiAutoCompleteTextView
+    private lateinit var degreeError: TextView
 
 
     private val degrees = arrayOf(
@@ -145,6 +146,7 @@ class JobPost : AppCompatActivity() {
         postButton = findViewById(R.id.PostButton)
 
         degreeName = findViewById(R.id.DegreeName)
+        degreeError = findViewById(R.id.degreeError)
 
         val adapter = ArrayAdapter(
             this,
@@ -230,6 +232,8 @@ class JobPost : AppCompatActivity() {
             var internshipType = internshipTypeDropdown.text.toString()
             var internshipTime = internshipTimeDropdown.text.toString()
 
+            val degreeInput = degreeName.text.toString().trim()
+
             if (jobtitle.isEmpty()) {
                 internshipTitleError.visibility = View.VISIBLE
                 internshipTitleError.text = "Field cannot be empty"
@@ -273,6 +277,26 @@ class JobPost : AppCompatActivity() {
                 skillsError.visibility = View.GONE
             }
 
+            // Validate Degree Name
+            if (degreeInput.isEmpty()) {
+                degreeError.text = "Degree is required"
+                degreeError.visibility = TextView.VISIBLE
+                isValid = false
+            } else {
+                // Split input by commas, trim spaces, filter out empty strings
+                val enteredDegrees = degreeInput.split(",").map { it.trim() }.filter { it.isNotEmpty() }
+
+                // Check if every entered degree is in the allowed degrees list
+                val invalidDegrees = enteredDegrees.filter { it !in degrees }
+
+                if (invalidDegrees.isNotEmpty()) {
+                    degreeError.text = "Please select degrees from the list provided."
+                    degreeError.visibility = TextView.VISIBLE
+                    isValid = false
+                } else {
+                    degreeError.visibility = TextView.GONE
+                }
+            }
 
 
 

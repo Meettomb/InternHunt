@@ -1,14 +1,18 @@
 package com.example.internhunt
 
+data class EducationEntry(
+    val collage_name: String = "",
+    val degree_name: String = "",
+    val graduation_start_year: String = "",
+    val graduation_end_year: String = ""
+)
+
 data class Users(
     val city: String = "",
-    val collage_name: String = "",
     val date_of_birth: String = "",
-    val degree_name: String = "",
     val email: String = "",
     val gender: String = "",
-    val graduation_end_year: String = "",
-    val graduation_start_year: String = "",
+    val education: List<EducationEntry> = emptyList(),
     val id: String = "",
     val isactive: Boolean = true,
     val password: String = "",
