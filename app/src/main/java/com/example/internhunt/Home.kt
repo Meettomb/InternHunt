@@ -90,7 +90,7 @@ class Home : AppCompatActivity() {
         logoutButton = findViewById(R.id.LogoutButton)
         usernameText = findViewById(R.id.UserName)
         profile_drawer = findViewById(R.id.profile_drawer)
-        recyclerView = findViewById(R.id.recyclerView)
+        recyclerView = findViewById(R.id.recyclerViewHome)
         bottomSheet = findViewById(R.id.bottom_sheet)
         dragLine = findViewById(R.id.drag_line)
         filterSection = findViewById(R.id.filter_section)
@@ -105,7 +105,6 @@ class Home : AppCompatActivity() {
         applyButton = findViewById(R.id.applyButton)
         clearButton = findViewById(R.id.clearButton)
         noDataText = findViewById(R.id.noDataText)
-
 
 
         // Get session
@@ -124,14 +123,20 @@ class Home : AppCompatActivity() {
         val db = FirebaseFirestore.getInstance()
         val userRef = db.collection("Users").document(userId)
 
-        adapter = InternshipAdapter(filteredList)
+
+
+
+        adapter = InternshipAdapter(filteredList) { post, companyName, imageUrl ->
+            val intent = Intent(this, InternshipDetails::class.java)
+            intent.putExtra("id", post.id)
+            startActivity(intent)
+        }
+
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
 
         LoadInternshipPost()
         setupBottomSheetListeners()
-
-
 
 
         applyButton.setOnClickListener {
@@ -314,9 +319,6 @@ class Home : AppCompatActivity() {
                 Toast.makeText(this, "User not found", Toast.LENGTH_SHORT).show()
             }
         }
-
-
-
 
         // Logout action
         logoutButton.setOnClickListener {

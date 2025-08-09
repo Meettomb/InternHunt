@@ -12,8 +12,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.firebase.firestore.FirebaseFirestore
 
-class InternshipAdapter(private val internship: List<InternshipPostData>):
+class InternshipAdapter(private val internship: List<InternshipPostData>,
+                        private val onItemClick: (InternshipPostData, String?, String?) -> Unit ):
     RecyclerView.Adapter<InternshipAdapter.InternshipViewHolder>() {
+
+    private val companyCache = mutableMapOf<String, Pair<String?, String?>>() // companyId -> (name, imageUrl)
+
     inner class InternshipViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         val companyImage: ImageView = itemView.findViewById(R.id.CompanyProfileImage)
         val title = itemView.findViewById<TextView>(R.id.JobTitle)
@@ -38,9 +42,8 @@ class InternshipAdapter(private val internship: List<InternshipPostData>):
         holder.internshipType.text = item.internshipType
         holder.internshipTime.text = item.internshipTime
 
-        // Fetch company details based on companyId and populate companyName
         val db = FirebaseFirestore.getInstance()
-        db.collection("Users").document(item.companyId)
+        db.collection("Users").document(item.companyId) // still fetch by companyId
             .get()
             .addOnSuccessListener { doc ->
                 if (doc.exists()) {
@@ -55,19 +58,8 @@ class InternshipAdapter(private val internship: List<InternshipPostData>):
                             .into(holder.companyImage)
                     }
 
-                    // 💡 Now setup click listener to open detail
-                    holder.itemView.setOnClickListener {
-                        val context = holder.itemView.context
-                        val intent = Intent(context, CompanyDetail::class.java)
-                        intent.putExtra("title", item.title)
-                        intent.putExtra("location", item.location)
-                        intent.putExtra("companyId", item.companyId)
-                        intent.putExtra("companyName", companyName)
-                        intent.putExtra("internshipType", item.internshipType)
-                        intent.putExtra("internshipTime", item.internshipTime)
-                        intent.putExtra("profileImageUrl", profileImageUrl ?: "")
-                        context.startActivity(intent)
-                    }
+                    // ✅ Save using internship post id, since that's what you want to pass later
+                    companyCache[item.id] = Pair(companyName, profileImageUrl)
                 } else {
                     holder.companyName.text = "Company not found"
                 }
@@ -76,9 +68,13 @@ class InternshipAdapter(private val internship: List<InternshipPostData>):
                 holder.companyName.text = "Error loading company"
             }
 
-
-
+        // ✅ Pass internship post id to click handler
+        holder.itemView.setOnClickListener {
+            val cachedData = companyCache[item.id]
+            onItemClick(item, cachedData?.first, cachedData?.second)
+        }
     }
+
 
     override fun getItemCount(): Int = internship.size
 }

@@ -23,8 +23,7 @@ class JobPostAdapter(private val jobList: List<InternshipPostData>) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): JobViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.job_post_item, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.job_post_item, parent, false)
         return JobViewHolder(view)
     }
 
