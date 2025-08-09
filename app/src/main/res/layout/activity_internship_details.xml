@@ -139,6 +139,24 @@
                 android:textColor="@color/light_color"
                 android:textSize="15sp"/>
 
+            <!-- Degree Eligibility-->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Degree Eligibility:"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginTop="12dp"/>
+            <LinearLayout
+                android:id="@+id/degreeEligibility"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="12dp">
+
+            </LinearLayout>
+
             <!-- Stipend -->
             <TextView
                 android:layout_width="match_parent"
@@ -192,19 +210,6 @@
                 android:orientation="vertical"
                 android:paddingStart="12dp">
 
-<!--                <TextView-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:text="• C#"-->
-<!--                    android:textColor="@color/light_color"-->
-<!--                    android:textSize="14sp"/>-->
-
-<!--                <TextView-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:text="• .NET Framework"-->
-<!--                    android:textColor="@color/light_color"-->
-<!--                    android:textSize="14sp"/>-->
             </LinearLayout>
 
             <!-- Responsibilities -->

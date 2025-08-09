@@ -41,6 +41,7 @@ class InternshipDetails : AppCompatActivity() {
     private lateinit var skillsContainer: LinearLayout
     private lateinit var responsibilitiesContainer: LinearLayout
     private lateinit var perksContainer: LinearLayout
+    private lateinit var degreeEligibilityContainer: LinearLayout
 
 
 
@@ -62,10 +63,7 @@ class InternshipDetails : AppCompatActivity() {
         tvLocation = findViewById(R.id.tvLocation)
         tvStipend = findViewById(R.id.tvStipend)
         tvDuration = findViewById(R.id.tvDuration)
-//        tvSkills = findViewById(R.id.skillsContainer)
-//        tvResponsibilities = findViewById(R.id.responsibilitiesContainer)
         tvDescription = findViewById(R.id.tvDescription)
-//        tvPerks = findViewById(R.id.perksContainer)
         tvDeadline = findViewById(R.id.tvDeadline)
         btnApply = findViewById(R.id.btnApply)
         tvCompanyName = findViewById(R.id.tvCompanyName)
@@ -76,6 +74,7 @@ class InternshipDetails : AppCompatActivity() {
         skillsContainer = findViewById(R.id.skillsContainer)
         responsibilitiesContainer = findViewById(R.id.responsibilitiesContainer)
         perksContainer = findViewById(R.id.perksContainer)
+        degreeEligibilityContainer = findViewById(R.id.degreeEligibility)
 
         val backButton = findViewById<ImageView>(R.id.backButton)
 
@@ -134,6 +133,7 @@ class InternshipDetails : AppCompatActivity() {
 
                         // Perks
                         populateBulletList(perksContainer, it.perks)
+                        populateBulletList(degreeEligibilityContainer, it.degreeEligibility)
 
                         // Company details
                         loadCompanyDetails(it.companyId)

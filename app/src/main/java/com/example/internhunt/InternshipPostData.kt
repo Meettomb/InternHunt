@@ -22,6 +22,7 @@ data class InternshipPostData(
     val internshipTime: String = "",
     val perks: List<String> = emptyList(),
     val status: String = "",
+    val degreeEligibility: List<String> = emptyList(),
     val otherFields: String = ""
 )
 
