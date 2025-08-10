@@ -244,7 +244,30 @@ class Profile : AppCompatActivity() {
         }
 
 
+        val sectionAddTextView = findViewById<TextView>(R.id.SectionAddId)
+        val newSectionLayout = findViewById<LinearLayout>(R.id.newSectionLayout)
 
+        sectionAddTextView.setOnClickListener {
+            if (newSectionLayout.visibility == View.GONE) {
+                newSectionLayout.visibility = View.VISIBLE
+            } else {
+                newSectionLayout.visibility = View.GONE
+            }
+        }
+
+        // Example: Handle click for each option
+        findViewById<TextView>(R.id.addProjects).setOnClickListener {
+            Toast.makeText(this, "Add Projects Clicked", Toast.LENGTH_SHORT).show()
+        }
+
+        findViewById<TextView>(R.id.addSkills).setOnClickListener {
+           val intent = Intent(this, add_skills::class.java)
+            startActivity(intent)
+        }
+
+        findViewById<TextView>(R.id.addExperience).setOnClickListener {
+            Toast.makeText(this, "Add Experience Clicked", Toast.LENGTH_SHORT).show()
+        }
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
         val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -610,7 +633,6 @@ class Profile : AppCompatActivity() {
                     val back_cover = doc.getString("background_cover_url")
 
                     if (!back_cover.isNullOrEmpty()) {
-                        // Hide TextView, show ImageView and load image
                         coverImage.visibility = View.GONE
                         coverImageView.visibility = View.VISIBLE
                         profile_background_edit_icon.visibility = View.GONE
@@ -660,6 +682,12 @@ class Profile : AppCompatActivity() {
                         }
                         internshipPostListLayout.visibility = View.GONE
 
+                        var skillList = doc.getString("skill")
+                        if (!skillList.isNullOrEmpty()){
+
+                        }
+
+
                     } else if (role == "Company") {
                         if (!companyName.isNullOrEmpty()) {
                             username.text = companyName
@@ -667,6 +695,10 @@ class Profile : AppCompatActivity() {
                             collage_name.visibility = View.GONE
                             internshipPostListLayout.visibility = View.VISIBLE
                         }
+
+                        var SectionAddSection = findViewById<LinearLayout>(R.id.SectionAddSection)
+                        SectionAddSection.visibility = View.GONE
+
                     } else {
                         username.text = "Guest"
                     }

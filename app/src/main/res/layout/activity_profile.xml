@@ -186,6 +186,75 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <LinearLayout
+                android:id="@+id/SectionAddSection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="10dp"
+                android:background="@color/white"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:id="@+id/SectionAddId"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="@drawable/plus"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="15dp"
+                    android:paddingHorizontal="10dp"
+                    android:text="Add New Section"
+                    android:textColor="@color/primary_text"
+                    android:textSize="16sp" />
+
+
+                <!-- Hidden Section -->
+                <LinearLayout
+                    android:id="@+id/newSectionLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    android:padding="10dp"
+                    android:background="@color/white">
+
+                    <TextView
+                        android:id="@+id/addProjects"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        android:text="Add Projects"
+                        android:textSize="14sp"
+                        android:drawableStart="@drawable/plus"
+                        android:textColor="@color/primary_text"
+                        android:background="@drawable/nav_item_background"/>
+
+                    <TextView
+                        android:id="@+id/addSkills"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        android:text="Add Skills"
+                        android:textSize="14sp"
+                        android:drawableStart="@drawable/plus"
+                        android:textColor="@color/primary_text"
+                        android:background="@drawable/nav_item_background"/>
+
+                    <TextView
+                        android:id="@+id/addExperience"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        android:text="Add Experience"
+                        android:textSize="14sp"
+                        android:drawableStart="@drawable/plus"
+                        android:textColor="@color/primary_text"
+                        android:background="@drawable/nav_item_background"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+
                 <LinearLayout
                     android:id="@+id/InternshipPostListLayout"
                     android:layout_width="match_parent"

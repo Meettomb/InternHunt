@@ -15,6 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.InternHunt">
         <activity
+            android:name=".add_skills"
+            android:exported="false" />
+        <activity
             android:name=".InternshipDetails"
             android:exported="false" />
         <activity
