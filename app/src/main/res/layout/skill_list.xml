@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <!-- Line above -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider_color" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/skills"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="15dp"
+            android:text="TextView"
+            android:textColor="@color/secondary_text"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/edit_skills"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:contentDescription="Edit icon"
+            app:srcCompat="@drawable/edit"
+            app:tint="@color/primary_color" />
+    </LinearLayout>
+</LinearLayout>

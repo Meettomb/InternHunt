@@ -1,5 +1,6 @@
 package com.example.internhunt
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -27,7 +28,6 @@ class add_skills : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_add_skills)
-        setContentView(R.layout.activity_profile)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             window.statusBarColor = ContextCompat.getColor(this, R.color.white)
             window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
@@ -101,7 +101,7 @@ class add_skills : AppCompatActivity() {
         }
     }
 
-    private fun saveSkills(skillsList: List<String>) {
+    private fun saveSkills(newSkillsList: List<String>) {
         val prefs = getSharedPreferences("UserSession", MODE_PRIVATE)
         val userId = prefs.getString("userid", null)
 
@@ -112,14 +112,45 @@ class add_skills : AppCompatActivity() {
         }
 
         val db = FirebaseFirestore.getInstance()
-        db.collection("Users").document(userId)
-            .set(mapOf("skill" to skillsList), SetOptions.merge())
-            .addOnSuccessListener {
-                Toast.makeText(this, "Skills saved successfully!", Toast.LENGTH_SHORT).show()
-                finish()
+        val userDocRef = db.collection("Users").document(userId)
+
+        userDocRef.get()
+            .addOnSuccessListener { document ->
+                if (document != null && document.exists()) {
+                    // Get existing skills or empty list
+                    val existingSkills = document.get("skill") as? List<String> ?: emptyList()
+
+                    // Combine existing skills with new skills, avoiding duplicates
+                    val combinedSkills = (existingSkills + newSkillsList).distinct()
+
+                    // Update Firestore with combined skills list
+                    userDocRef.set(mapOf("skill" to combinedSkills), SetOptions.merge())
+                        .addOnSuccessListener {
+                            Toast.makeText(this, "Skills saved successfully!", Toast.LENGTH_SHORT).show()
+                            hideKeyboard()
+                            var intent = Intent(this, Profile::class.java)
+                            startActivity(intent)
+                            finish()
+                        }
+                        .addOnFailureListener { e ->
+                            hideKeyboard()
+                            Toast.makeText(this, "Error saving skills: ${e.message}", Toast.LENGTH_LONG).show()
+                        }
+
+                } else {
+                    // If user doc doesn't exist, just set new skills list
+                    userDocRef.set(mapOf("skill" to newSkillsList), SetOptions.merge())
+                        .addOnSuccessListener {
+                            Toast.makeText(this, "Skills saved successfully!", Toast.LENGTH_SHORT).show()
+                            finish()
+                        }
+                        .addOnFailureListener { e ->
+                            Toast.makeText(this, "Error saving skills: ${e.message}", Toast.LENGTH_LONG).show()
+                        }
+                }
             }
             .addOnFailureListener { e ->
-                Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Error fetching user data: ${e.message}", Toast.LENGTH_LONG).show()
             }
     }
 
@@ -146,6 +177,15 @@ class add_skills : AppCompatActivity() {
 
     // Extension function to convert dp to px
     private fun Int.toPx(): Int = (this * resources.displayMetrics.density).toInt()
+
+
+    private fun hideKeyboard() {
+        val view = this.currentFocus
+        if (view != null) {
+            val imm = getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
+        }
+    }
 
 
 

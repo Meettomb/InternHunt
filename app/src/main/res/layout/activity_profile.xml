@@ -168,13 +168,6 @@
                             android:orientation="vertical">
 
                             <TextView
-                                android:id="@+id/collage_name"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Collage Name"
-                                android:textColor="@color/secondary_text" />
-
-                            <TextView
                                 android:id="@+id/Location"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -201,11 +194,12 @@
                     android:layout_height="wrap_content"
                     android:drawableEnd="@drawable/plus"
                     android:gravity="center_vertical"
-                    android:paddingVertical="15dp"
                     android:paddingHorizontal="10dp"
+                    android:paddingVertical="15dp"
                     android:text="Add New Section"
                     android:textColor="@color/primary_text"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
 
                 <!-- Hidden Section -->
@@ -253,6 +247,58 @@
                 </LinearLayout>
 
             </LinearLayout>
+
+
+                <LinearLayout
+                    android:id="@+id/SkillSection"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@color/white"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="15dp"
+                    android:paddingVertical="15dp"
+                    >
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp">
+
+                        <TextView
+                            android:id="@+id/textView10"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical"
+                            android:text="Skills"
+                            android:textColor="@color/primary_text"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <ImageView
+                            android:id="@+id/addMoreSkills"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="Add icon"
+                            app:srcCompat="@drawable/plus"
+                            app:tint="@color/primary_color" />
+
+                    </LinearLayout>
+
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/SkillrecyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:padding="0dp" />
+                </LinearLayout>
+
 
 
                 <LinearLayout

@@ -30,6 +30,9 @@ import com.google.firebase.firestore.Query
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import androidx.appcompat.app.AlertDialog
+import com.google.firebase.firestore.SetOptions
+
 
 class Profile : AppCompatActivity() {
 
@@ -47,7 +50,6 @@ class Profile : AppCompatActivity() {
     private lateinit var profile_background_edit_icon2: TextView
     private lateinit var upload_cover_text: TextView
     private lateinit var update_cover_text: TextView
-    private lateinit var collage_name: TextView
     private lateinit var backButton: ImageView
 
     private lateinit var headLineEdit: EditText
@@ -77,6 +79,11 @@ class Profile : AppCompatActivity() {
     private lateinit var activeJobs: List<InternshipPostData>
     private lateinit var closedJobs: List<InternshipPostData>
     private lateinit var internshipPostListLayout: LinearLayout
+
+    private lateinit var skillsRecyclerView: RecyclerView
+    private lateinit var skillsAdapter: SkillsAdapter
+    private val skillsList = mutableListOf<String>()
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -120,7 +127,6 @@ class Profile : AppCompatActivity() {
         progressBar = findViewById(R.id.progressBar)
         upload_cover_text = findViewById(R.id.upload_cover_text)
         update_cover_text = findViewById(R.id.update_cover_text)
-        collage_name = findViewById(R.id.collage_name)
         backButton = findViewById(R.id.backButton)
 
         headLineEdit = findViewById(R.id.headLine)
@@ -148,6 +154,17 @@ class Profile : AppCompatActivity() {
         btnActiveJobs = findViewById(R.id.btnOpenJobs)
         btnClosedJobs = findViewById(R.id.btnClosedJobs)
         internshipPostListLayout = findViewById(R.id.InternshipPostListLayout)
+
+        skillsRecyclerView = findViewById(R.id.SkillrecyclerView)
+        skillsRecyclerView.layoutManager = LinearLayoutManager(this)
+
+        skillsAdapter = SkillsAdapter(skillsList) { position, skill ->
+            Toast.makeText(this, "Edit skill: $skill", Toast.LENGTH_SHORT).show()
+            editSkillAtPosition(position)
+        }
+
+        skillsRecyclerView.adapter = skillsAdapter
+
 
 
         // Back Button
@@ -264,10 +281,18 @@ class Profile : AppCompatActivity() {
            val intent = Intent(this, add_skills::class.java)
             startActivity(intent)
         }
+        findViewById<ImageView>(R.id.addMoreSkills).setOnClickListener {
+            var intent = Intent(this, add_skills::class.java)
+            startActivity(intent)
+        }
 
         findViewById<TextView>(R.id.addExperience).setOnClickListener {
             Toast.makeText(this, "Add Experience Clicked", Toast.LENGTH_SHORT).show()
         }
+
+
+
+
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
         val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -673,31 +698,26 @@ class Profile : AppCompatActivity() {
                             username.text = userName
                             usernameEdit.setText(userName)
 
-                            val collageName = doc.getString("collage_name") ?: ""
-                            val collageView = findViewById<TextView>(R.id.collage_name)
-                            collageView.text = collageName.split(" ").joinToString(" ") { word ->
-                                word.replaceFirstChar { it.uppercase() }
-                            }
+
 
                         }
                         internshipPostListLayout.visibility = View.GONE
 
-                        var skillList = doc.getString("skill")
-                        if (!skillList.isNullOrEmpty()){
-
-                        }
+                        loadUserSkills(userId)
 
 
                     } else if (role == "Company") {
                         if (!companyName.isNullOrEmpty()) {
                             username.text = companyName
                             usernameEdit.setText(companyName)
-                            collage_name.visibility = View.GONE
                             internshipPostListLayout.visibility = View.VISIBLE
                         }
 
                         var SectionAddSection = findViewById<LinearLayout>(R.id.SectionAddSection)
                         SectionAddSection.visibility = View.GONE
+
+                        var SkillSection = findViewById<LinearLayout>(R.id.SkillSection)
+                        SkillSection.visibility = View.GONE
 
                     } else {
                         username.text = "Guest"
@@ -822,5 +842,100 @@ class Profile : AppCompatActivity() {
                 Toast.makeText(this, "Failed to load job posts: ${e.message}", Toast.LENGTH_LONG).show()
             }
     }
+
+    private fun loadUserSkills(userId: String) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("Users").document(userId).get()
+            .addOnSuccessListener { document ->
+                if (document != null && document.exists()) {
+                    val skills = document.get("skill") as? List<String> ?: emptyList()
+                    Log.d("loadUserSkills", "Skills from Firestore: $skills")
+
+                    skillsList.clear()
+                    skillsList.addAll(skills)
+                    Log.d("loadUserSkills", "skillsList after update: $skillsList")
+
+                    skillsRecyclerView.visibility = View.VISIBLE
+                    skillsAdapter.notifyDataSetChanged()
+                } else {
+                    Log.d("loadUserSkills", "No skills found in document.")
+                    Toast.makeText(this, "No skills found", Toast.LENGTH_SHORT).show()
+                    skillsRecyclerView.visibility = View.GONE
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e("loadUserSkills", "Error loading skills: ${e.message}")
+                Toast.makeText(this, "Failed to load skills: ${e.message}", Toast.LENGTH_SHORT).show()
+                skillsRecyclerView.visibility = View.GONE
+            }
+    }
+
+    private fun editSkillAtPosition(position: Int) {
+        val skillToEdit = skillsList[position]
+
+        val dialogView = layoutInflater.inflate(R.layout.custom_dialog, null)
+        val editTextSkill = dialogView.findViewById<EditText>(R.id.editTextSkill)
+        val cancelTextView = dialogView.findViewById<TextView>(R.id.cancelTextView)
+        val saveTextView = dialogView.findViewById<TextView>(R.id.saveTextView)
+        val deleteTextView = dialogView.findViewById<TextView>(R.id.deleteTextView)
+
+        editTextSkill.setText(skillToEdit) // pre-fill current skill
+
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .create()
+
+        dialog.show()
+
+        cancelTextView.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        saveTextView.setOnClickListener {
+            val newSkill = editTextSkill.text.toString().trim()
+            if (newSkill.isNotEmpty()) {
+                skillsList[position] = newSkill
+                skillsAdapter.notifyItemChanged(position)
+
+                // Update Firestore database with the updated list
+                saveSkills(skillsList)
+                dialog.dismiss()
+            } else {
+                editTextSkill.error = "Skill cannot be empty"
+            }
+        }
+
+        deleteTextView.setOnClickListener {
+            skillsList.removeAt(position)
+            skillsAdapter.notifyItemRemoved(position)
+            saveSkills(skillsList)
+            dialog.dismiss()
+        }
+    }
+
+    private fun saveSkills(updatedSkillsList: List<String>) {
+        val prefs = getSharedPreferences("UserSession", MODE_PRIVATE)
+        val userId = prefs.getString("userid", null)
+
+        if (userId == null) {
+            Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        }
+
+        val db = FirebaseFirestore.getInstance()
+        val userDocRef = db.collection("Users").document(userId)
+
+        userDocRef.set(mapOf("skill" to updatedSkillsList), SetOptions.merge())
+            .addOnSuccessListener {
+                Toast.makeText(this, "Skills updated successfully!", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Error updating skills: ${e.message}", Toast.LENGTH_LONG).show()
+            }
+    }
+
+
+
 
 }

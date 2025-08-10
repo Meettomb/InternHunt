@@ -1,0 +1,52 @@
+package com.example.internhunt
+
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+
+class SkillsAdapter(
+    private val skills: MutableList<String>,
+    private val onEditClick: (position: Int, skill: String) -> Unit
+) : RecyclerView.Adapter<SkillsAdapter.SkillViewHolder>() {
+
+    inner class SkillViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val skillTextView: TextView = itemView.findViewById(R.id.skills)
+        val editIcon: ImageView = itemView.findViewById(R.id.edit_skills)
+
+        init {
+            editIcon.setOnClickListener {
+                val pos = adapterPosition
+                if (pos != RecyclerView.NO_POSITION) {
+                    onEditClick(pos, skills[pos])
+                }
+            }
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SkillViewHolder {
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.skill_list, parent, false)
+        return SkillViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: SkillViewHolder, position: Int) {
+        val skill = skills[position]
+        holder.skillTextView.text = skill
+
+        holder.editIcon.setOnClickListener {
+            onEditClick(position, skill)
+        }
+    }
+
+    override fun getItemCount(): Int = skills.size
+
+    fun updateSkills(newSkills: List<String>) {
+        skills.clear()
+        skills.addAll(newSkills)
+        notifyDataSetChanged()
+    }
+}
+
