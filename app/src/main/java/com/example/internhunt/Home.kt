@@ -287,6 +287,7 @@ class Home : AppCompatActivity() {
 
 
         var userDegrees: List<String> = emptyList()
+        var userSkills: List<String> = emptyList()
         userRef.addSnapshotListener { doc, error ->
             if (error != null) {
                 Toast.makeText(this, "Error: ${error.localizedMessage}", Toast.LENGTH_LONG).show()
@@ -308,7 +309,10 @@ class Home : AppCompatActivity() {
                 // Get the education list as a List of Map<String, Any>
                 val educationList = doc.get("education") as? List<Map<String, Any>> ?: emptyList()
                 userDegrees = educationList.mapNotNull { it["degree_name"] as? String }
-                LoadInternshipPost(userDegrees)
+
+                val skillList = doc.get("skill") as? List<String> ?: emptyList()
+                LoadInternshipPost(userDegrees, skillList)
+
 
                 val userName = doc.getString("username")
                 val companyName = doc.getString("company_name")
@@ -406,10 +410,13 @@ class Home : AppCompatActivity() {
     }
 
 
-    private fun LoadInternshipPost(userDegrees: List<String>) {
+    private fun LoadInternshipPost(userDegrees: List<String>, userSkills: List<String>) {
         val db2 = FirebaseFirestore.getInstance()
         val dateFormat = SimpleDateFormat("dd/M/yyyy", Locale.getDefault())
         val today = Date()
+
+        val lowerUserDegrees = userDegrees.map { it.lowercase() }
+        val lowerUserSkills = userSkills.map { it.lowercase() }
 
         db2.collection("internshipPostsData")
             .get()
@@ -419,13 +426,14 @@ class Home : AppCompatActivity() {
                     val post = doc.toObject(InternshipPostData::class.java)
 
                     try {
-                         val deadlineDate = dateFormat.parse(post.applicationDeadline)
+                        val deadlineDate = dateFormat.parse(post.applicationDeadline)
+                        val postDegreesLower = post.degreeEligibility.map { it.lowercase() }
+                        val postSkillsLower = post.skillsRequired.map { it.lowercase() }  // <-- here is the fix
 
-                        val matchesDegree = post.degreeEligibility.any { degree ->
-                            userDegrees.contains(degree)
-                        }
+                        val matchesDegree = postDegreesLower.any { it in lowerUserDegrees }
+                        val matchesSkill = postSkillsLower.any { it in lowerUserSkills }
 
-                        if (deadlineDate != null && deadlineDate.after(today) && matchesDegree) {
+                        if (deadlineDate != null && deadlineDate.after(today) && (matchesDegree || matchesSkill)) {
                             internshipList.add(post)
                         }
                     } catch (e: Exception) {
@@ -443,11 +451,10 @@ class Home : AppCompatActivity() {
             }
     }
 
-    fun refreshHomePage() {
-        // Scroll RecyclerView to the top
-        recyclerView.scrollToPosition(0)
 
-        // Reload data from Firestore
+
+    fun refreshHomePage() {
+        recyclerView.scrollToPosition(0)
         val prefs = getSharedPreferences("UserSession", Context.MODE_PRIVATE)
         val userId = prefs.getString("userid", null)
 
@@ -460,13 +467,13 @@ class Home : AppCompatActivity() {
                     if (doc != null && doc.exists()) {
                         val educationList = doc.get("education") as? List<Map<String, Any>> ?: emptyList()
                         val userDegrees = educationList.mapNotNull { it["degree_name"] as? String }
-                        LoadInternshipPost(userDegrees) // This refreshes the data
+                        val skillList = doc.get("skill") as? List<String> ?: emptyList() // fetch skillList here
+
+                        LoadInternshipPost(userDegrees, skillList) // now skillList is defined
                     }
                 }
         }
     }
-
-
 
 
 
