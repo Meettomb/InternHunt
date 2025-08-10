@@ -20,6 +20,7 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.text.InputType
 import android.view.MotionEvent
+import android.view.inputmethod.InputMethodManager
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Spinner
@@ -161,15 +162,25 @@ class SignUp : AppCompatActivity() {
 
 
         var selectedState = ""
+        var isFirstSelection = true
+
+        stateSpinner.setOnTouchListener { _, _ ->
+            hideKeyboard()
+            false
+        }
 
         stateSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                selectedState = parent?.getItemAtPosition(position).toString()
-                Toast.makeText(this@SignUp, "Selected: $selectedState", Toast.LENGTH_SHORT).show()
+                if (!isFirstSelection) {
+                    selectedState = parent?.getItemAtPosition(position).toString()
+                    Toast.makeText(this@SignUp, "Selected: $selectedState", Toast.LENGTH_SHORT).show()
+                }
+                isFirstSelection = false
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
+
 
 
 
@@ -579,6 +590,15 @@ class SignUp : AppCompatActivity() {
             }
         })
     }
+
+    private fun hideKeyboard() {
+        val view = currentFocus
+        if (view != null) {
+            val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
+        }
+    }
+
 
 }
 
