@@ -11,8 +11,10 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.CheckBox
+import android.widget.EditText
 import android.widget.FrameLayout
 import androidx.gridlayout.widget.GridLayout
 import android.widget.TextView
@@ -48,7 +50,7 @@ class Home : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var bottomSheet: LinearLayout
     private lateinit var dragLine: View
-    private lateinit var filterSection: LinearLayout
+    private lateinit var filterSection: FrameLayout
     private lateinit var bottomSheetOverlay : FrameLayout
 
     // Define checkbox variables at class level
@@ -241,16 +243,6 @@ class Home : AppCompatActivity() {
             // Handle navigation to Update Details screen
         }
 
-//        findViewById<TextView>(R.id.MyPosts).setOnClickListener {
-//            val intent = Intent(this, CompanyPosts::class.java)
-//            startActivity(intent)
-//        }
-
-        findViewById<LinearLayout>(R.id.company_section).setOnClickListener {
-            val intent = Intent(this, CompanyLists::class.java)
-            startActivity(intent)
-        }
-
         findViewById<TextView>(R.id.notification).setOnClickListener {
             // Handle navigation to Update Details screen
         }
@@ -261,6 +253,24 @@ class Home : AppCompatActivity() {
 
         findViewById<TextView>(R.id.help).setOnClickListener {
             // Handle navigation to Update Details screen
+        }
+
+        findViewById<LinearLayout>(R.id.BottomHomeButton).setOnClickListener {
+            refreshHomePage()
+        }
+
+        findViewById<LinearLayout>(R.id.BottomCompanyButton).setOnClickListener {
+            var intent = Intent(this, CompanyLists::class.java)
+            startActivity(intent)
+        }
+
+        findViewById<LinearLayout>(R.id.BottomSearchButton).setOnClickListener {
+            val searchBar = findViewById<EditText>(R.id.search_bar)
+            searchBar.requestFocus()
+
+            // Open the keyboard
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.showSoftInput(searchBar, InputMethodManager.SHOW_IMPLICIT)
         }
 
 
@@ -409,7 +419,7 @@ class Home : AppCompatActivity() {
                     val post = doc.toObject(InternshipPostData::class.java)
 
                     try {
-                        val deadlineDate = dateFormat.parse(post.applicationDeadline)
+                         val deadlineDate = dateFormat.parse(post.applicationDeadline)
 
                         val matchesDegree = post.degreeEligibility.any { degree ->
                             userDegrees.contains(degree)
@@ -431,6 +441,29 @@ class Home : AppCompatActivity() {
             .addOnFailureListener { exception ->
                 Toast.makeText(this, "Error: ${exception.message}", Toast.LENGTH_LONG).show()
             }
+    }
+
+    fun refreshHomePage() {
+        // Scroll RecyclerView to the top
+        recyclerView.scrollToPosition(0)
+
+        // Reload data from Firestore
+        val prefs = getSharedPreferences("UserSession", Context.MODE_PRIVATE)
+        val userId = prefs.getString("userid", null)
+
+        if (userId != null) {
+            FirebaseFirestore.getInstance()
+                .collection("Users")
+                .document(userId)
+                .get()
+                .addOnSuccessListener { doc ->
+                    if (doc != null && doc.exists()) {
+                        val educationList = doc.get("education") as? List<Map<String, Any>> ?: emptyList()
+                        val userDegrees = educationList.mapNotNull { it["degree_name"] as? String }
+                        LoadInternshipPost(userDegrees) // This refreshes the data
+                    }
+                }
+        }
     }
 
 
