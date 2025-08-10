@@ -28,6 +28,6 @@
         android:layout_weight="1"
         android:gravity="center_vertical"
         android:text="Company Name"
-        android:textColor="@color/black"
+        android:textColor="@color/primary_text"
         android:textSize="20sp" />
 </LinearLayout>

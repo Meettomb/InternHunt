@@ -1,12 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Basic -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="my_status_color">#CECECE</color>
-    <color name="primary_color">#0E64D2</color>
-    <color name="light_color">#979797</color>
-    <color name="background">#E7E3D9</color>
-    <color name="second_text_color">#2F2F2F</color>
-    <color name="third_text_color">#979797</color>
+
+    <!-- Brand Colors -->
+    <color name="primary_color">#0A66C2</color> <!-- Main brand blue -->
+    <color name="primary_dark">#004182</color> <!-- Darker blue for status bar, headers -->
+    <color name="primary_light">#EAF4FE</color> <!-- Light background tint for cards -->
+
+    <!-- Secondary & Accent -->
+    <color name="secondary_color">#5C6F82</color> <!-- For secondary buttons, labels -->
+    <color name="accent_color">#FFC107</color> <!-- Highlighted actions like 'Apply Now' -->
+    <color name="success_color">#2E7D32</color> <!-- For success messages -->
+    <color name="error_color">#D32F2F</color> <!-- For error states -->
+    <color name="warning_color">#FF9800</color> <!-- For warnings -->
+
+    <!-- Backgrounds -->
+    <color name="background_light">#F3F2EF</color> <!-- App background -->
+    <color name="background_dark">#1E1E1E</color> <!-- Dark mode background -->
+    <color name="card_background">#FFFFFF</color> <!-- Card views and panels -->
+    <color name="secondary_background">#F8F9FA</color> <!-- Search bars, filters -->
+
+    <!-- Borders & Dividers -->
+    <color name="border_color">#DADCE0</color> <!-- Card, input borders -->
+    <color name="divider_color">#E0E0E0</color> <!-- Divider lines -->
+
+    <!-- Text Colors -->
+    <color name="primary_text">#212121</color> <!-- Main text -->
+    <color name="secondary_text">#5F6368</color> <!-- Secondary text -->
+    <color name="hint_text">#9E9E9E</color> <!-- Placeholder, hints -->
+
+    <!-- Icon Colors -->
+    <color name="icon_primary">#0A66C2</color> <!-- Primary action icons -->
+    <color name="icon_secondary">#5F6368</color> <!-- Secondary icons -->
+    <color name="icon_bg_primary">#E6F0FF</color> <!-- Soft blue background for primary icons -->
+    <color name="icon_bg_secondary">#F0F0F0</color> <!-- Neutral light gray for secondary icons -->
+
+    <!-- Click & Press States -->
+    <color name="primary_click">#084E99</color> <!-- Slightly darker than primary_color -->
+    <color name="secondary_click">#4B5C6D</color> <!-- Slightly darker than secondary_color -->
+    <color name="icon_click_bg">#D6E8FA</color> <!-- Slightly darker than icon_bg_primary -->
+    <color name="neutral_click_bg">#E0E0E0</color> <!-- Slightly darker than icon_bg_secondary -->
 
 </resources>

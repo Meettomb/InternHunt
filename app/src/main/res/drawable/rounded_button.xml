@@ -5,7 +5,7 @@
     <!-- Default state -->
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="#0E64D2"/> <!-- normal blue -->
+            <solid android:color="@color/primary_color"/> <!-- normal blue -->
             <corners android:radius="5dp"/>
         </shape>
     </item>

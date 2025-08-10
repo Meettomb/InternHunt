@@ -48,7 +48,7 @@
                     android:layout_marginTop="20dp"
                     android:gravity="center"
                     android:text="Post Internship"
-                    android:textColor="@color/primary_color"
+                    android:textColor="@color/primary_text"
                     android:textSize="34sp"
                     android:textStyle="bold" />
 
@@ -63,8 +63,8 @@
                     android:drawableEnd="@drawable/work"
                     android:hint="Internship Title"
                     android:padding="15dp"
-                    android:textColor="#000000"
-                    android:textColorHint="#C43C3C3C"
+                    android:textColor="@color/primary_text"
+                    android:textColorHint="@color/hint_text"
                     android:textSize="18sp" />
 
                 <TextView
@@ -91,8 +91,8 @@
                     android:maxLines="10"
                     android:minLines="4"
                     android:padding="15dp"
-                    android:textColor="#000000"
-                    android:textColorHint="#C43C3C3C"
+                    android:textColor="@color/primary_text"
+                    android:textColorHint="@color/hint_text"
                     android:textSize="18sp" />
 
                 <TextView
@@ -111,8 +111,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Internship Location"
-                    android:textColor="#C43C3C3C"
-                    android:textColorHint="#C43C3C3C"
+                    android:textColor="@color/secondary_text"
+                    android:textColorHint="@color/hint_text"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
@@ -126,8 +126,8 @@
                     android:drawableEnd="@drawable/location_on"
                     android:hint="Location"
                     android:padding="15dp"
-                    android:textColor="#000000"
-                    android:textColorHint="#C43C3C3C"
+                    android:textColor="@color/primary_text"
+                    android:textColorHint="@color/hint_text"
                     android:textSize="18sp" />
 
                 <TextView
@@ -150,8 +150,8 @@
                     android:hint="Stipend"
                     android:inputType="number"
                     android:padding="15dp"
-                    android:textColor="#000000"
-                    android:textColorHint="#C43C3C3C"
+                    android:textColor="@color/primary_text"
+                    android:textColorHint="@color/hint_text"
                     android:textSize="18sp" />
 
                 <TextView
@@ -174,8 +174,8 @@
                     android:hint="Duration in Month(6)"
                     android:inputType="number"
                     android:padding="15dp"
-                    android:textColor="#000000"
-                    android:textColorHint="#C43C3C3C"
+                    android:textColor="@color/primary_text"
+                    android:textColorHint="@color/hint_text"
                     android:textSize="18sp" />
 
                 <TextView
@@ -205,8 +205,8 @@
                         android:hint="Select Degree Eligibility"
                         android:inputType="text"
                         android:padding="15dp"
-                        android:textColor="@android:color/black"
-                        android:textColorHint="#C43C3C3C"
+                        android:textColor="@color/primary_text"
+                        android:textColorHint="@color/hint_text"
                         android:drawableEnd="@drawable/verified" />
                 </LinearLayout>
                 <TextView
@@ -245,8 +245,8 @@
                     android:maxLines="10"
                     android:minLines="4"
                     android:padding="15dp"
-                    android:textColor="#000000"
-                    android:textColorHint="#C43C3C3C"
+                    android:textColor="@color/primary_text"
+                    android:textColorHint="@color/hint_text"
                     android:textSize="14sp" />
 
                 <TextView
@@ -272,8 +272,8 @@
                     android:maxLines="10"
                     android:minLines="4"
                     android:padding="15dp"
-                    android:textColor="#000000"
-                    android:textColorHint="#C43C3C3C"
+                    android:textColor="@color/primary_text"
+                    android:textColorHint="@color/hint_text"
                     android:textSize="14sp" />
 
 
@@ -285,8 +285,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
                     android:text="Application Deadline"
-                    android:textColor="#C43C3C3C"
-                    android:textColorHint="#C43C3C3C"
+
+                    android:textColor="@color/secondary_text"
+                    android:textColorHint="@color/hint_text"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
@@ -307,8 +308,8 @@
                         android:inputType="number"
                         android:maxLength="2"
                         android:padding="15dp"
-                        android:textColor="#000000"
-                        android:textColorHint="#C43C3C3C"
+                        android:textColor="@color/primary_text"
+                        android:textColorHint="@color/hint_text"
                         android:textSize="18sp" />
 
                     <EditText
@@ -322,8 +323,8 @@
                         android:inputType="number"
                         android:maxLength="2"
                         android:padding="15dp"
-                        android:textColor="#000000"
-                        android:textColorHint="#C43C3C3C"
+                        android:textColor="@color/primary_text"
+                        android:textColorHint="@color/hint_text"
                         android:textSize="18sp" />
 
                     <EditText
@@ -336,8 +337,8 @@
                         android:inputType="number"
                         android:maxLength="4"
                         android:padding="15dp"
-                        android:textColor="#000000"
-                        android:textColorHint="#C43C3C3C"
+                        android:textColor="@color/primary_text"
+                        android:textColorHint="@color/hint_text"
                         android:textSize="18sp" />
                 </LinearLayout>
 
@@ -380,8 +381,8 @@
                     android:hint="Openings (10) "
                     android:inputType="number"
                     android:padding="15dp"
-                    android:textColor="#000000"
-                    android:textColorHint="#C43C3C3C"
+                    android:textColor="@color/primary_text"
+                    android:textColorHint="@color/hint_text"
                     android:textSize="18sp" />
 
                 <TextView
@@ -409,9 +410,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="none"
-                        android:textColor="@android:color/black"
                         android:textSize="16sp"
-                        android:textColorHint="#C43C3C3C"
+                        android:textColor="@color/primary_text"
+                        android:textColorHint="@color/hint_text"
                         android:background="@drawable/border_all_sides"/>
                 </com.google.android.material.textfield.TextInputLayout>
                 <TextView
@@ -440,9 +441,9 @@
                         android:layout_height="wrap_content"
                         android:inputType="none"
                         android:padding="15dp"
-                        android:textColor="#000000"
                         android:textSize="16sp"
-                        android:textColorHint="#C43C3C3C"
+                        android:textColor="@color/primary_text"
+                        android:textColorHint="@color/hint_text"
                         android:background="@drawable/border_all_sides"/>
                 </com.google.android.material.textfield.TextInputLayout>
                 <TextView
@@ -464,8 +465,8 @@
                     android:drawableEnd="@drawable/outline_arrow_drop_down_24"
                     android:hint="Select Perks"
                     android:padding="15dp"
-                    android:textColor="#000000"
-                    android:textColorHint="#C43C3C3C"
+                    android:textColor="@color/primary_text"
+                    android:textColorHint="@color/hint_text"
                     android:textSize="16sp"
                     android:layout_marginBottom="10dp" />
 

@@ -12,13 +12,13 @@
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/background"
+        android:background="@color/background_light"
         tools:context=".Profile">
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#E7E3D9"
+            android:background="@color/background_light"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -109,7 +109,7 @@
                             android:layout_height="120dp"
                             android:layout_marginStart="16dp"
                             android:layout_marginTop="30dp"
-                            android:background="@color/light_color"
+                            android:background="@color/secondary_background"
                             android:scaleType="centerCrop"
                             android:visibility="visible"
                             app:layout_column="0"
@@ -149,7 +149,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
                             android:text="Meet"
-                            android:textColor="#070707"
+                            android:textColor="@color/primary_text"
                             android:textSize="30sp"
                             android:textStyle="bold" />
 
@@ -158,7 +158,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="HeadLine"
-                            android:textColor="@color/second_text_color"
+                            android:textColor="@color/secondary_text"
                             android:textSize="16dp" />
 
                         <LinearLayout
@@ -172,14 +172,14 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:text="Collage Name"
-                                android:textColor="@color/second_text_color" />
+                                android:textColor="@color/secondary_text" />
 
                             <TextView
                                 android:id="@+id/Location"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:text="Location"
-                                android:textColor="@color/third_text_color" />
+                                android:textColor="@color/secondary_text" />
                         </LinearLayout>
                     </LinearLayout>
 
@@ -277,8 +277,9 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="Update your personal details"
-                    android:textColor="@color/black"
-                    android:textSize="20sp" />
+                    android:textColor="@color/primary_text"
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -300,8 +301,8 @@
                         android:maxLines="10"
                         android:minLines="4"
                         android:padding="15dp"
-                        android:textColor="#000000"
-                        android:textColorHint="#C43C3C3C"
+                        android:textColor="@color/primary_text"
+                        android:textColorHint="@color/hint_text"
                         android:textSize="18sp" />
 
                     <EditText
@@ -314,8 +315,8 @@
                         android:hint="Username"
                         android:padding="15dp"
                         android:singleLine="true"
-                        android:textColor="#000000"
-                        android:textColorHint="#C43C3C3C"
+                        android:textColor="@color/primary_text"
+                        android:textColorHint="@color/hint_text"
                         android:textSize="18sp" />
 
                     <TextView
@@ -334,8 +335,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
                         android:text="Date of Birth"
-                        android:textColor="#C43C3C3C"
-                        android:textColorHint="#C43C3C3C"
+                        android:textColor="@color/primary_text"
+                        android:textColorHint="@color/hint_text"
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
@@ -357,8 +358,8 @@
                             android:inputType="number"
                             android:maxLength="2"
                             android:padding="15dp"
-                            android:textColor="#000000"
-                            android:textColorHint="#C43C3C3C"
+                            android:textColor="@color/primary_text"
+                            android:textColorHint="@color/hint_text"
                             android:textSize="18sp" />
 
                         <EditText
@@ -372,8 +373,8 @@
                             android:inputType="number"
                             android:maxLength="2"
                             android:padding="15dp"
-                            android:textColor="#000000"
-                            android:textColorHint="#C43C3C3C"
+                            android:textColor="@color/primary_text"
+                            android:textColorHint="@color/hint_text"
                             android:textSize="18sp" />
 
                         <EditText
@@ -386,8 +387,8 @@
                             android:inputType="number"
                             android:maxLength="4"
                             android:padding="15dp"
-                            android:textColor="#000000"
-                            android:textColorHint="#C43C3C3C"
+                            android:textColor="@color/primary_text"
+                            android:textColorHint="@color/hint_text"
                             android:textSize="18sp" />
                     </LinearLayout>
 
@@ -426,7 +427,7 @@
                         android:background="@drawable/border_all_sides"
                         android:hint="State"
                         android:padding="15dp"
-                        android:textColor="#000000"
+                        android:textColor="@color/primary_text"
                         android:textSize="18sp" />
 
                     <TextView
@@ -446,8 +447,8 @@
                         android:background="@drawable/border_all_sides"
                         android:hint="City"
                         android:padding="15dp"
-                        android:textColor="#000000"
-                        android:textColorHint="#C43C3C3C"
+                        android:textColor="@color/primary_text"
+                        android:textColorHint="@color/hint_text"
                         android:textSize="18sp" />
 
                     <TextView
@@ -467,7 +468,7 @@
                         android:layout_marginTop="10dp"
                         android:layout_marginBottom="0dp"
                         android:text="Select your Gender"
-                        android:textColor="#C43C3C3C"
+                        android:textColor="@color/secondary_text"
                         android:textColorHint="#C43C3C3C"
                         android:textSize="18sp"
                         android:textStyle="bold" />
@@ -483,9 +484,9 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:backgroundTint="#FB1212"
+                            android:backgroundTint="@color/primary_color"
                             android:text="Male"
-                            android:textColor="@color/black"
+                            android:textColor="@color/primary_text"
                             android:textSize="18sp" />
 
                         <RadioButton
@@ -494,7 +495,8 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="Female"
-                            android:textColor="@color/black"
+                            android:backgroundTint="@color/primary_color"
+                            android:textColor="@color/primary_text"
                             android:textSize="18sp" />
                     </RadioGroup>
 
@@ -533,7 +535,7 @@
             android:id="@+id/upload_back_cover_overlay"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#66000000"
+            android:background="@color/background_light"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -576,7 +578,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:text="Upload background cover"
-                        android:textColor="#000000"
+                        android:textColor="@color/primary_text"
                         android:textSize="16sp" />
 
                     <TextView
@@ -585,7 +587,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:text="Update background cover"
-                        android:textColor="#000000"
+                        android:textColor="@color/primary_text"
                         android:textSize="16sp" />
                 </LinearLayout>
 

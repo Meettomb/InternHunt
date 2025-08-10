@@ -14,7 +14,7 @@
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/background"
+        android:background="@color/background_light"
         tools:context=".Home">
 
         <!-- Header -->
@@ -35,7 +35,7 @@
             android:id="@+id/Header"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@color/white"
+            android:background="@color/card_background"
             android:paddingHorizontal="10dp"
             android:paddingVertical="8dp"
             app:columnCount="2"
@@ -68,8 +68,8 @@
                 android:imeOptions="actionSearch"
                 android:inputType="text"
                 android:paddingHorizontal="15dp"
-                android:textColor="@color/black"
-                android:textColorHint="#C43C3C3C"
+                android:textColor="@color/primary_text"
+                android:textColorHint="@color/hint_text"
                 android:textSize="18sp"
                 app:layout_column="1"
                 app:layout_columnWeight="1"
@@ -78,19 +78,21 @@
         </androidx.gridlayout.widget.GridLayout>
 
         <!-- RecyclerView -->
+
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewHome"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_marginHorizontal="5dp"
             android:layout_marginTop="3dp"
             android:clipToPadding="false"
-            android:layout_marginHorizontal="5dp"
             app:layout_constraintBottom_toTopOf="@id/bottom_nav"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/Header" />
-
-
+            app:layout_constraintTop_toBottomOf="@id/Header"
+            app:layout_constraintVertical_bias="0.0" />
 
         <FrameLayout
             android:id="@+id/filter_section"
@@ -155,7 +157,7 @@
                     android:layout_height="wrap_content"
                     android:buttonTint="@color/primary_color"
                     android:text="Part Time"
-                    android:textColor="@color/black" />
+                    android:textColor="@color/primary_text" />
 
                 <CheckBox
                     android:id="@+id/checkFullTime"
@@ -163,7 +165,7 @@
                     android:layout_height="wrap_content"
                     android:buttonTint="@color/primary_color"
                     android:text="Full Time"
-                    android:textColor="@color/black" />
+                    android:textColor="@color/primary_text" />
 
                 <CheckBox
                     android:id="@+id/checkOnSite"
@@ -171,7 +173,7 @@
                     android:layout_height="wrap_content"
                     android:buttonTint="@color/primary_color"
                     android:text="On Site"
-                    android:textColor="@color/black" />
+                    android:textColor="@color/primary_text" />
 
                 <CheckBox
                     android:id="@+id/checkWorkFromHome"
@@ -179,7 +181,7 @@
                     android:layout_height="wrap_content"
                     android:buttonTint="@color/primary_color"
                     android:text="Work from Home"
-                    android:textColor="@color/black" />
+                    android:textColor="@color/primary_text" />
 
                 <CheckBox
                     android:id="@+id/checkHybrid"
@@ -187,7 +189,7 @@
                     android:layout_height="wrap_content"
                     android:buttonTint="@color/primary_color"
                     android:text="Hybrid"
-                    android:textColor="@color/black" />
+                    android:textColor="@color/primary_text" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -256,14 +258,14 @@
                     android:layout_height="40dp"
                     android:background="@drawable/bottom_nav_icon_design"
                     android:padding="8dp"
-                    android:tint="#003366 "
+                    app:tint="@color/icon_primary"
                     app:srcCompat="@drawable/home" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Home"
-                    android:textColor="@color/black"
+                    android:textColor="@color/primary_text"
                     android:textSize="12sp" />
             </LinearLayout>
 
@@ -281,14 +283,14 @@
                     android:layout_height="40dp"
                     android:background="@drawable/bottom_nav_icon_design"
                     android:padding="8dp"
-                    android:tint="#003366"
+                    app:tint="@color/icon_primary"
                     app:srcCompat="@drawable/apartment" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Company"
-                    android:textColor="@color/black"
+                    android:textColor="@color/primary_text"
                     android:textSize="12sp" />
             </LinearLayout>
 
@@ -306,14 +308,14 @@
                     android:layout_height="40dp"
                     android:background="@drawable/bottom_nav_icon_design"
                     android:padding="8dp"
-                    android:tint="#003366"
+                    app:tint="@color/icon_primary"
                     app:srcCompat="@drawable/search" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Search"
-                    android:textColor="@color/black"
+                    android:textColor="@color/primary_text"
                     android:textSize="12sp" />
             </LinearLayout>
 
@@ -332,14 +334,14 @@
                     android:layout_height="40dp"
                     android:background="@drawable/bottom_nav_icon_design"
                     android:padding="8dp"
-                    android:tint="#003366 "
+                    app:tint="@color/icon_primary"
                     app:srcCompat="@drawable/bookmark" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Bookmark"
-                    android:textColor="@color/black"
+                    android:textColor="@color/primary_text"
                     android:textSize="12sp" />
             </LinearLayout>
 
@@ -357,7 +359,7 @@
         android:layout_width="280dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="#FFFFFF"
+        android:background="@color/card_background"
         android:orientation="vertical"
         android:padding="16dp">
 
@@ -395,7 +397,7 @@
                             android:id="@+id/UserProfileImage2"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:background="@android:color/white"
+                            android:background="@android:color/background_light"
                             android:scaleType="centerCrop"
                             app:shapeAppearanceOverlay="@style/CircleImage" />
 
@@ -440,7 +442,7 @@
                     android:layout_height="1dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"
-                    android:background="#CCCCCC" />
+                    android:background="@color/divider_color" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -449,7 +451,7 @@
                     android:paddingStart="0dp"
                     android:paddingTop="20dp"
                     android:text="Account"
-                    android:textColor="#000000"
+                    android:textColor="@color/primary_text"
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
@@ -465,7 +467,7 @@
                     android:paddingHorizontal="5dp"
                     android:paddingVertical="10dp"
                     android:text="Home"
-                    android:textColor="#888888"
+                    android:textColor="@color/secondary_text"
                     android:textSize="18sp" />
 
                 <TextView
@@ -479,7 +481,7 @@
                     android:paddingHorizontal="5dp"
                     android:paddingVertical="10dp"
                     android:text="Security"
-                    android:textColor="#888888"
+                    android:textColor="@color/secondary_text"
                     android:textSize="18sp" />
 
                 <TextView
@@ -493,7 +495,7 @@
                     android:paddingHorizontal="5dp"
                     android:paddingVertical="10dp"
                     android:text="Add Post / Job"
-                    android:textColor="#888888"
+                    android:textColor="@color/secondary_text"
                     android:textSize="18sp" />
 
                 <TextView
@@ -507,22 +509,9 @@
                     android:paddingHorizontal="5dp"
                     android:paddingVertical="10dp"
                     android:text="Saved Jobs / Bookmarks"
-                    android:textColor="#888888"
+                    android:textColor="@color/secondary_text"
                     android:textSize="18sp" />
 
-<!--                <TextView-->
-<!--                    android:id="@+id/MyPosts"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginVertical="8dp"-->
-<!--                    android:background="@drawable/nav_item_background"-->
-<!--                    android:drawableStart="@drawable/list_alt"-->
-<!--                    android:drawablePadding="12dp"-->
-<!--                    android:paddingHorizontal="5dp"-->
-<!--                    android:paddingVertical="10dp"-->
-<!--                    android:text="My Posts"-->
-<!--                    android:textColor="#888888"-->
-<!--                    android:textSize="18sp" />-->
 
                 <TextView
                     android:id="@+id/history"
@@ -535,7 +524,7 @@
                     android:paddingHorizontal="5dp"
                     android:paddingVertical="10dp"
                     android:text="Applied Jobs"
-                    android:textColor="#888888"
+                    android:textColor="@color/secondary_text"
                     android:textSize="18sp" />
 
                 <TextView
@@ -549,7 +538,7 @@
                     android:paddingHorizontal="5dp"
                     android:paddingVertical="10dp"
                     android:text="Notifications"
-                    android:textColor="#888888"
+                    android:textColor="@color/secondary_text"
                     android:textSize="18sp" />
 
                 <TextView
@@ -563,7 +552,7 @@
                     android:paddingHorizontal="5dp"
                     android:paddingVertical="10dp"
                     android:text="Settings"
-                    android:textColor="#888888"
+                    android:textColor="@color/secondary_text"
                     android:textSize="18sp" />
 
                 <TextView
@@ -577,7 +566,7 @@
                     android:paddingHorizontal="5dp"
                     android:paddingVertical="10dp"
                     android:text="Help / Support"
-                    android:textColor="#888888"
+                    android:textColor="@color/secondary_text"
                     android:textSize="18sp" />
 
             </LinearLayout>
@@ -591,20 +580,21 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/border_all_sides"
-            android:backgroundTint="#E03737"
+            android:backgroundTint="@color/error_color"
             android:drawableStart="@drawable/logout"
             android:drawablePadding="12dp"
             android:elevation="4dp"
             android:gravity="center"
             android:padding="10dp"
             android:text="Log out"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold" />
 
 
 
     </LinearLayout>
+
 
 
 

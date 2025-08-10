@@ -23,7 +23,7 @@
             android:layout_marginTop="50dp"
             android:gravity="center"
             android:text="Verify OTP"
-            android:textColor="@color/black"
+            android:textColor="@color/primary_text"
             android:textSize="34sp"
             android:textStyle="bold"/>
 
@@ -41,8 +41,8 @@
                 android:hint="Enter OTP"
                 android:inputType="number"
                 android:padding="15dp"
-                android:textColor="@color/black"
-                android:textColorHint="#C43C3C3C"/>
+                android:textColor="@color/primary_text"
+                android:textColorHint="@color/hint_text"/>
 
             <TextView
                 android:id="@+id/timerText"
@@ -50,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:text="02:00"
-                android:textColor="#2F89FC"
+                android:textColor="@color/warning_color"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -73,7 +73,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text=""
-                android:textColor="#FF0000"
+                android:textColor="@color/error_color"
                 android:textSize="16sp" />
 
             <TextView

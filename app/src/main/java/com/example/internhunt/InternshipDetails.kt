@@ -194,7 +194,7 @@ class InternshipDetails : AppCompatActivity() {
         items.forEach { item ->
             val tv = TextView(this)
             tv.text = "• $item"
-            tv.setTextColor(ContextCompat.getColor(this, R.color.light_color))
+            tv.setTextColor(ContextCompat.getColor(this, R.color.secondary_text))
             tv.textSize = 14f
             container.addView(tv)
         }

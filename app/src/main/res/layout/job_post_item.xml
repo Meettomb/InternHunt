@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Title:"
-            android:textColor="@color/light_color"
+            android:textColor="@color/secondary_text"
             android:textStyle="bold" />
 
         <TextView
@@ -28,7 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Internship Title"
-            android:textColor="@color/black" />
+            android:textColor="@color/primary_text" />
         <TextView
             android:id="@+id/postedDate"
             android:layout_width="wrap_content"
@@ -50,7 +50,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Internship Type:"
-            android:textColor="@color/light_color"
+            android:textColor="@color/secondary_text"
             android:textStyle="bold" />
 
         <TextView
@@ -58,7 +58,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Internship Type"
-            android:textColor="@color/black" />
+            android:textColor="@color/primary_text" />
     </LinearLayout>
 
     <!-- Internship Timing -->
@@ -73,7 +73,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Internship Timing:"
-            android:textColor="@color/light_color"
+            android:textColor="@color/secondary_text"
             android:textStyle="bold" />
 
         <TextView
@@ -81,7 +81,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Internship Time"
-            android:textColor="@color/black" />
+            android:textColor="@color/primary_text" />
     </LinearLayout>
 
     <!-- Stipend -->
@@ -96,7 +96,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Stipend:"
-            android:textColor="@color/light_color"
+            android:textColor="@color/secondary_text"
             android:textStyle="bold" />
 
         <TextView
@@ -104,7 +104,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Stipend"
-            android:textColor="@color/black" />
+            android:textColor="@color/primary_text" />
     </LinearLayout>
 
     <!-- Deadline -->
@@ -120,7 +120,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Deadline:"
-            android:textColor="#DE0404"
+            android:textColor="@color/error_color"
             android:textStyle="bold" />
 
         <TextView
@@ -128,7 +128,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Deadline Date"
-            android:textColor="@color/black" />
+            android:textColor="@color/primary_text" />
     </LinearLayout>
 
 </LinearLayout>

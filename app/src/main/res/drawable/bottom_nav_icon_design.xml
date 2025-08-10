@@ -4,7 +4,7 @@
     <!-- Selected state -->
     <item android:state_selected="true">
         <shape android:shape="rectangle">
-            <solid android:color="@color/light_color" /> <!-- background color -->
+            <solid android:color="@color/icon_bg_primary" /> <!-- background color -->
             <corners android:radius="50dp" /> <!-- rounded corners -->
         </shape>
     </item>
@@ -13,7 +13,7 @@
     <item>
         <shape android:shape="rectangle">
             <solid android:color="#D3D3D3" /> <!-- no fill -->
-            <stroke android:width="2dp" android:color="@color/light_color" /> <!-- border -->
+            <stroke android:width="2dp" android:color="@color/icon_bg_primary" /> <!-- border -->
             <corners android:radius="10dp" />
         </shape>
     </item>

@@ -45,7 +45,7 @@
                     android:layout_marginBottom="16dp"
                     android:gravity="center"
                     android:text="Sign Up"
-                    android:textColor="#000000"
+                    android:textColor="@color/primary_text"
                     android:textSize="48sp"
                     android:textStyle="bold" />
 
@@ -59,8 +59,8 @@
                     android:drawableEnd="@drawable/ic_user"
                     android:hint="Enter Your Username"
                     android:padding="15dp"
-                    android:textColor="#000000"
-                    android:textColorHint="#C43C3C3C"
+                    android:textColor="@color/primary_text"
+                    android:textColorHint="@color/hint_text"
                     android:textSize="18sp" />
 
                 <TextView
@@ -83,8 +83,8 @@
                     android:hint="Enter Your Email"
                     android:inputType="textWebEmailAddress"
                     android:padding="15dp"
-                    android:textColor="#000000"
-                    android:textColorHint="#C43C3C3C"
+                    android:textColor="@color/primary_text"
+                    android:textColorHint="@color/hint_text"
                     android:textSize="18sp" />
 
                 <TextView
@@ -107,8 +107,8 @@
                     android:hint="Enter Your Phone Number"
                     android:inputType="phone"
                     android:padding="15dp"
-                    android:textColor="#000000"
-                    android:textColorHint="#C43C3C3C"
+                    android:textColor="@color/primary_text"
+                    android:textColorHint="@color/hint_text"
                     android:textSize="18sp"
                     android:maxLength="10"/>
 
@@ -128,8 +128,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
                     android:text="Date of Birth"
-                    android:textColor="#C43C3C3C"
-                    android:textColorHint="#C43C3C3C"
+                    android:textColor="@color/secondary_text"
+                    android:textColorHint="@color/secondary_text"
                     android:textSize="18sp"
                     android:textStyle="bold"/>
 
@@ -150,8 +150,8 @@
                         android:hint="30"
                         android:inputType="number"
                         android:padding="15dp"
-                        android:textColor="#000000"
-                        android:textColorHint="#C43C3C3C"
+                        android:textColor="@color/primary_text"
+                        android:textColorHint="@color/hint_text"
                         android:textSize="18sp"
                         android:maxLength="2"/>
 
@@ -165,8 +165,8 @@
                         android:hint="12"
                         android:inputType="number"
                         android:padding="15dp"
-                        android:textColor="#000000"
-                        android:textColorHint="#C43C3C3C"
+                        android:textColor="@color/primary_text"
+                        android:textColorHint="@color/hint_text"
                         android:textSize="18sp"
                         android:maxLength="2"/>
 
@@ -179,8 +179,8 @@
                         android:hint="2000"
                         android:inputType="number"
                         android:padding="15dp"
-                        android:textColor="#000000"
-                        android:textColorHint="#C43C3C3C"
+                        android:textColor="@color/primary_text"
+                        android:textColorHint="@color/hint_text"
                         android:textSize="18sp"
                         android:maxLength="4"/>
                 </LinearLayout>
@@ -240,9 +240,9 @@
                     android:background="@drawable/border_all_sides"
                     android:hint="City"
                     android:padding="15dp"
-                    android:textColor="#000000"
-                    android:textSize="18sp"
-                    android:textColorHint="#C43C3C3C"/>
+                    android:textColor="@color/primary_text"
+                    android:textColorHint="@color/hint_text"
+                    android:textSize="18sp"/>
                 <TextView
                     android:id="@+id/CityError"
                     android:layout_width="match_parent"
@@ -264,8 +264,8 @@
                     android:hint="Enter Password"
                     android:inputType="textPassword"
                     android:padding="15dp"
-                    android:textColor="#000000"
-                    android:textColorHint="#C43C3C3C"
+                    android:textColor="@color/primary_text"
+                    android:textColorHint="@color/hint_text"
                     android:textSize="18sp" />
 
                 <TextView
@@ -288,8 +288,8 @@
                     android:hint="Enter Confirm Password"
                     android:inputType="textPassword"
                     android:padding="15dp"
-                    android:textColor="#000000"
-                    android:textColorHint="#C43C3C3C"
+                    android:textColor="@color/primary_text"
+                    android:textColorHint="@color/hint_text"
                     android:textSize="18sp" />
 
                 <TextView
@@ -308,8 +308,8 @@
                     android:layout_height="wrap_content"
                     android:text="Select your Gender"
                     android:layout_marginBottom="0dp"
-                    android:textColor="#C43C3C3C"
-                    android:textColorHint="#C43C3C3C"
+                    android:textColor="@color/secondary_text"
+                    android:textColorHint="@color/hint_text"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:layout_marginTop="10dp"/>
@@ -327,7 +327,7 @@
                         android:layout_weight="1"
                         android:backgroundTint="#FB1212"
                         android:text="Male"
-                        android:textColor="@color/black"
+                        android:textColor="@color/primary_text"
                         android:textSize="18sp" />
 
                     <RadioButton
@@ -336,7 +336,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Female"
-                        android:textColor="@color/black"
+                        android:textColor="@color/primary_text"
                         android:textSize="18sp" />
                 </RadioGroup>
                 <TextView
@@ -377,7 +377,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:text="Already have an account?"
-                        android:textColor="#C43C3C3C" />
+                        android:textColor="@color/secondary_text" />
 
                     <TextView
                         android:id="@+id/textViewLogin"
@@ -385,7 +385,7 @@
                         android:layout_height="match_parent"
                         android:paddingStart="5dp"
                         android:text="Login"
-                        android:textColor="#2F89FC"
+                        android:textColor="@color/primary_color"
                         android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>

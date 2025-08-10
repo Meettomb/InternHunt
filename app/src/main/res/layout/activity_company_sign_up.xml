@@ -35,6 +35,7 @@
                     android:layout_marginBottom="16dp"
                     android:src="@drawable/internhunt" />
 
+                <!-- Company Name -->
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
@@ -45,7 +46,6 @@
                     android:textSize="48sp"
                     android:textStyle="bold" />
 
-                <!-- Company Name -->
                 <EditText
                     android:id="@+id/CompanyName"
                     android:layout_width="match_parent"
@@ -54,8 +54,8 @@
                     android:background="@drawable/border_all_sides"
                     android:hint="Company Name"
                     android:padding="15dp"
-                    android:textColor="#000000"
-                    android:textColorHint="#C43C3C3C"
+                    android:textColor="@color/primary_text"
+                    android:textColorHint="@color/hint_text"
                     android:textSize="18sp" />
 
                 <TextView
@@ -77,8 +77,8 @@
                     android:background="@drawable/border_all_sides"
                     android:hint="Company Link"
                     android:padding="15dp"
-                    android:textColor="#000000"
-                    android:textColorHint="#C43C3C3C"
+                    android:textColor="@color/primary_text"
+                    android:textColorHint="@color/hint_text"
                     android:textSize="18sp" />
 
                 <TextView
@@ -104,8 +104,8 @@
                     android:maxLines="10"
                     android:minLines="4"
                     android:padding="15dp"
-                    android:textColor="#000000"
-                    android:textColorHint="#C43C3C3C"
+                    android:textColor="@color/primary_text"
+                    android:textColorHint="@color/hint_text"
                     android:textSize="18sp" />
 
                 <TextView
@@ -130,8 +130,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    android:text="Tap to upload Logo"
-                    android:textColor="#000000" />
+                    android:text="Tap to upload Company Logo"
+                    android:textColor="@color/primary_text" />
 
                 <TextView
                     android:id="@+id/ImageUplodeError"

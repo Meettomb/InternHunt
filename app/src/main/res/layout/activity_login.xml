@@ -44,7 +44,7 @@
                 android:layout_marginBottom="16dp"
                 android:gravity="center"
                 android:text="Login"
-                android:textColor="#000000"
+                android:textColor="@color/primary_text"
                 android:textSize="48sp"
                 android:textStyle="bold" />
 
@@ -58,8 +58,8 @@
                 android:drawableEnd="@drawable/ic_email"
                 android:hint="Enter Email Id"
                 android:padding="15dp"
-                android:textColor="#000000"
-                android:textColorHint="#C43C3C3C"
+                android:textColor="@color/primary_text"
+                android:textColorHint="@color/hint_text"
                 android:textSize="18sp"
                 android:singleLine="true"
                 android:inputType="textEmailAddress" />
@@ -86,8 +86,8 @@
                 android:hint="Enter Password"
                 android:inputType="textPassword"
                 android:padding="15dp"
-                android:textColor="#000000"
-                android:textColorHint="#C43C3C3C"
+                android:textColor="@color/primary_text"
+                android:textColorHint="@color/hint_text"
                 android:textSize="18sp" />
 
             <TextView
@@ -120,7 +120,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="Forgot Password?"
-                android:textColor="#FB5190E9"
+                android:textColor="@color/primary_color"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -135,7 +135,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:text="If You don't have an account?"
-                    android:textColor="#C43C3C3C" />
+                    android:textColor="@color/secondary_text" />
 
                 <TextView
                     android:id="@+id/textViewSignUp"
@@ -143,7 +143,7 @@
                     android:layout_height="match_parent"
                     android:paddingStart="5dp"
                     android:text="Sign Up"
-                    android:textColor="#2F89FC"
+                    android:textColor="@color/primary_color"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -160,7 +160,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:indeterminateTint="#0E64D2"
+    android:indeterminateTint="@color/primary_color"
     android:visibility="gone" />
 
 </FrameLayout>

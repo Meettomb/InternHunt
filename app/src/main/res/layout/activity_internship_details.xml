@@ -26,7 +26,8 @@
                 android:id="@+id/backButton"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                app:srcCompat="@drawable/back" />
+                app:srcCompat="@drawable/back"
+                app:tint="@color/icon_primary"/>
 
             <LinearLayout
                 android:id="@+id/companySection"
@@ -67,7 +68,7 @@
                         android:text="Company Name"
                         android:textSize="18sp"
                         android:textStyle="bold"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/primary_text" />
 
                     <TextView
                         android:id="@+id/tvCompanyEmail"
@@ -75,7 +76,7 @@
                         android:layout_height="wrap_content"
                         android:text="Email"
                         android:textSize="14sp"
-                        android:textColor="@color/light_color" />
+                        android:textColor="@color/secondary_text" />
 
                     <TextView
                         android:id="@+id/tvCompanyUrl"
@@ -98,7 +99,7 @@
                 android:layout_height="1dp"
                 android:layout_marginTop="10dp"
                 android:layout_weight="1"
-                android:background="@color/light_color" />
+                android:background="@color/divider_color" />
 
             <TextView
                 android:id="@+id/tvTitle"
@@ -107,7 +108,7 @@
                 android:text="C# Developer"
                 android:textStyle="bold"
                 android:textSize="24sp"
-                android:textColor="@color/black"
+                android:textColor="@color/primary_text"
                 android:layout_marginTop="16dp" />
 
             <!-- Company -->
@@ -125,7 +126,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black"
+                android:textColor="@color/primary_text"
                 android:textSize="15sp"
                 android:textStyle="bold"
                 android:text="Location: "
@@ -136,7 +137,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Ahmedabad, Gujarat"
-                android:textColor="@color/light_color"
+                android:textColor="@color/secondary_text"
                 android:textSize="15sp"/>
 
             <!-- Degree Eligibility-->
@@ -144,7 +145,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Degree Eligibility:"
-                android:textColor="@color/black"
+                android:textColor="@color/primary_text"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:layout_marginTop="12dp"/>
@@ -162,7 +163,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Stipend:"
-                android:textColor="@color/black"
+                android:textColor="@color/primary_text"
                 android:textSize="15sp"
                 android:textStyle="bold"
                 android:layout_marginTop="8dp"/>
@@ -172,7 +173,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="₹6000/month"
-                android:textColor="@color/light_color"
+                android:textColor="@color/secondary_text"
                 android:textSize="15sp"/>
 
             <!-- Duration -->
@@ -180,7 +181,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Duration:"
-                android:textColor="@color/black"
+                android:textColor="@color/primary_text"
                 android:textSize="15sp"
                 android:textStyle="bold"
                 android:layout_marginTop="8dp"/>
@@ -190,7 +191,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="6 Months"
-                android:textColor="@color/light_color"
+                android:textColor="@color/secondary_text"
                 android:textSize="15sp"/>
 
             <!-- Skills -->
@@ -198,7 +199,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Skills:"
-                android:textColor="@color/black"
+                android:textColor="@color/primary_text"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:layout_marginTop="12dp"/>
@@ -218,7 +219,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Responsibilities:"
-                android:textColor="@color/black"
+                android:textColor="@color/primary_text"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:layout_marginTop="12dp"/>
@@ -236,7 +237,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Job Description:"
-                android:textColor="@color/black"
+                android:textColor="@color/primary_text"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:layout_marginTop="12dp"/>
@@ -246,7 +247,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="We are looking for..."
-                android:textColor="@color/light_color"
+                android:textColor="@color/secondary_text"
                 android:textSize="14sp"/>
 
             <!-- Perks -->
@@ -254,7 +255,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Perks:"
-                android:textColor="@color/black"
+                android:textColor="@color/primary_text"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:layout_marginTop="12dp"/>
@@ -274,7 +275,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Deadline:"
-                android:textColor="@android:color/holo_red_dark"
+                android:textColor="@color/warning_color"
                 android:textSize="15sp"
                 android:textStyle="bold"
                 android:layout_marginTop="12dp"/>
@@ -284,7 +285,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="10/8/2025"
-                android:textColor="@android:color/holo_red_light"
+                android:textColor="@color/warning_color"
                 android:textSize="15sp"/>
 
             <!-- Apply Button -->
