@@ -1,5 +1,6 @@
 package com.example.internhunt
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -59,9 +60,9 @@ class CompanyDetail : AppCompatActivity() {
         companyWebsite = findViewById(R.id.companyWebsite)
         companyDescription = findViewById(R.id.companyDescription)
         signupDate = findViewById(R.id.signupDate)
-        jobPostsRecyclerView = findViewById(R.id.recyclerViewJobs)
+//        jobPostsRecyclerView = findViewById(R.id.recyclerViewJobs)
 
-        jobPostsRecyclerView.layoutManager = LinearLayoutManager(this)
+//        jobPostsRecyclerView.layoutManager = LinearLayoutManager(this)
         btnActiveJobs = findViewById(R.id.btnOpenJobs)
         btnClosedJobs = findViewById(R.id.btnClosedJobs)
 
@@ -87,27 +88,34 @@ class CompanyDetail : AppCompatActivity() {
         }
 
 
-        // Highlight Active, normal Closed
         btnActiveJobs.setOnClickListener {
-            jobPostsRecyclerView.adapter = JobPostAdapter(activeJobs)
-
-
+            jobPostsRecyclerView.adapter = JobPostAdapter(activeJobs) { job ->
+                val intent = Intent(this, InternshipDetails::class.java)
+                intent.putExtra("id", job.id) // ✅ Pass internship post ID
+                startActivity(intent)
+            }
             btnActiveJobs.setBackgroundResource(R.drawable.rounded_button_higlight)
             btnClosedJobs.setBackgroundResource(R.drawable.rounded_button)
         }
 
-        // Highlight Closed, normal Active
         btnClosedJobs.setOnClickListener {
-            jobPostsRecyclerView.adapter = JobPostAdapter(closedJobs)
-
+            jobPostsRecyclerView.adapter = JobPostAdapter(closedJobs) { job ->
+                val intent = Intent(this, InternshipDetails::class.java)
+                intent.putExtra("id", job.id) // ✅ Pass internship post ID
+                startActivity(intent)
+            }
             btnActiveJobs.setBackgroundResource(R.drawable.rounded_button)
             btnClosedJobs.setBackgroundResource(R.drawable.rounded_button_higlight)
         }
+
+
 
         // Handle back
         backButton.setOnClickListener {
             finish()
         }
+
+
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -165,15 +173,14 @@ class CompanyDetail : AppCompatActivity() {
 
     private fun loadJobPosts(companyId: String) {
         val db = FirebaseFirestore.getInstance()
+        val jobPostsContainer = findViewById<LinearLayout>(R.id.jobPostsContainer)
+        jobPostsContainer.removeAllViews() // clear previous items
 
         db.collection("internshipPostsData")
             .whereEqualTo("companyId", companyId)
             .orderBy("postedDate", Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener { documents ->
-                val activeList = mutableListOf<InternshipPostData>()
-                val closedList = mutableListOf<InternshipPostData>()
-
                 val sdf = SimpleDateFormat("d/M/yyyy", Locale.getDefault())
                 val today = Calendar.getInstance().time
 
@@ -181,6 +188,8 @@ class CompanyDetail : AppCompatActivity() {
                     val deadlineStr = doc.getString("applicationDeadline") ?: "N/A"
 
                     val job = InternshipPostData(
+                        id = doc.id,
+                        companyId = doc.getString("companyId") ?: "",
                         title = doc.getString("title") ?: "N/A",
                         internshipType = doc.getString("internshipType") ?: "N/A",
                         internshipTime = doc.getString("internshipTime") ?: "N/A",
@@ -189,29 +198,26 @@ class CompanyDetail : AppCompatActivity() {
                         postedDate = doc.getTimestamp("postedDate")
                     )
 
-                    // Decide active or closed
-                    try {
-                        if (deadlineStr != "N/A") {
-                            val deadlineDate = sdf.parse(deadlineStr)
-                            if (today.before(deadlineDate) || today == deadlineDate) {
-                                activeList.add(job)
-                            } else {
-                                closedList.add(job)
-                            }
-                        } else {
-                            closedList.add(job) // treat as closed if no deadline
-                        }
-                    } catch (e: Exception) {
-                        closedList.add(job) // treat as closed if parsing fails
+                    // Inflate your custom job view
+                    val jobView = layoutInflater.inflate(R.layout.job_post_item, jobPostsContainer, false)
+
+                    // Bind data
+                    jobView.findViewById<TextView>(R.id.JobTitle).text = job.title
+                    jobView.findViewById<TextView>(R.id.internshipType).text = job.internshipType
+                    jobView.findViewById<TextView>(R.id.internshipTime).text = job.internshipTime
+                    jobView.findViewById<TextView>(R.id.Stipend).text = job.stipend
+                    jobView.findViewById<TextView>(R.id.Deadline).text = deadlineStr
+
+                    // OnClick to open InternshipDetails
+                    jobView.setOnClickListener {
+                        val intent = Intent(this, InternshipDetails::class.java)
+                        intent.putExtra("id", job.id)
+                        startActivity(intent)
                     }
+
+                    // Add the view to the container
+                    jobPostsContainer.addView(jobView)
                 }
-
-                // Save lists
-                activeJobs = activeList
-                closedJobs = closedList
-
-                // Default show active jobs
-                jobPostsRecyclerView.adapter = JobPostAdapter(activeJobs)
             }
             .addOnFailureListener { e ->
                 Log.e("JobPosts", "Error loading job posts", e)

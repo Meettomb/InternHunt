@@ -104,7 +104,6 @@ class Profile : AppCompatActivity() {
 
         if (UserId != null){
             loadUserProfile(UserId)
-            loadJobPosts(UserId)
         }
         else{
             Toast.makeText(this, "Please Login Again", Toast.LENGTH_SHORT).show()
@@ -148,12 +147,7 @@ class Profile : AppCompatActivity() {
         detailEditIcon = findViewById(R.id.detail_edit_icon)
         closeUpdateDetail = findViewById(R.id.closeUpdatedetail)
 
-        jobPostsRecyclerView = findViewById(R.id.recyclerViewJobs)
 
-        jobPostsRecyclerView.layoutManager = LinearLayoutManager(this)
-        btnActiveJobs = findViewById(R.id.btnOpenJobs)
-        btnClosedJobs = findViewById(R.id.btnClosedJobs)
-        internshipPostListLayout = findViewById(R.id.InternshipPostListLayout)
 
         skillsRecyclerView = findViewById(R.id.SkillrecyclerView)
         skillsRecyclerView.layoutManager = LinearLayoutManager(this)
@@ -243,23 +237,6 @@ class Profile : AppCompatActivity() {
         }
 
 
-        // Highlight Active, normal Closed
-        btnActiveJobs.setOnClickListener {
-            jobPostsRecyclerView.adapter = JobPostAdapter(activeJobs)
-
-
-            btnActiveJobs.setBackgroundResource(R.drawable.rounded_button_higlight)
-            btnClosedJobs.setBackgroundResource(R.drawable.rounded_button)
-        }
-
-        // Highlight Closed, normal Active
-        btnClosedJobs.setOnClickListener {
-            jobPostsRecyclerView.adapter = JobPostAdapter(closedJobs)
-
-            btnActiveJobs.setBackgroundResource(R.drawable.rounded_button)
-            btnClosedJobs.setBackgroundResource(R.drawable.rounded_button_higlight)
-        }
-
 
         val sectionAddTextView = findViewById<TextView>(R.id.SectionAddId)
         val newSectionLayout = findViewById<LinearLayout>(R.id.newSectionLayout)
@@ -278,7 +255,7 @@ class Profile : AppCompatActivity() {
         }
 
         findViewById<TextView>(R.id.addSkills).setOnClickListener {
-           val intent = Intent(this, add_skills::class.java)
+            val intent = Intent(this, add_skills::class.java)
             startActivity(intent)
         }
         findViewById<ImageView>(R.id.addMoreSkills).setOnClickListener {
@@ -295,9 +272,9 @@ class Profile : AppCompatActivity() {
 
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-        val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-        v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-        insets
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
         }
     }
 
@@ -595,52 +572,52 @@ class Profile : AppCompatActivity() {
             else -> ""
         }
 
-       if (isValid){
-           progressBar.visibility = View.VISIBLE
-           val prefs = getSharedPreferences("UserSession", MODE_PRIVATE)
-           val UserId = prefs.getString("userid", null)
+        if (isValid){
+            progressBar.visibility = View.VISIBLE
+            val prefs = getSharedPreferences("UserSession", MODE_PRIVATE)
+            val UserId = prefs.getString("userid", null)
 
-           if (UserId != null){
-               val db = FirebaseFirestore.getInstance()
-               val updateMap = hashMapOf<String, Any>(
-                   "headline" to headLineEdit.text.toString(),
-                   "username" to username,
-                   "birth_date" to dobDate,
-                   "birth_month" to dobMonth,
-                   "birth_year" to dobYear,
-                   "state" to state,
-                   "city" to city,
-                   "gender" to gender
-               )
-               db.collection("Users").document(UserId)
-                   .update(updateMap)
-                   .addOnSuccessListener {
-                       progressBar.visibility = View.GONE
-                       Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_SHORT).show()
+            if (UserId != null){
+                val db = FirebaseFirestore.getInstance()
+                val updateMap = hashMapOf<String, Any>(
+                    "headline" to headLineEdit.text.toString(),
+                    "username" to username,
+                    "birth_date" to dobDate,
+                    "birth_month" to dobMonth,
+                    "birth_year" to dobYear,
+                    "state" to state,
+                    "city" to city,
+                    "gender" to gender
+                )
+                db.collection("Users").document(UserId)
+                    .update(updateMap)
+                    .addOnSuccessListener {
+                        progressBar.visibility = View.GONE
+                        Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_SHORT).show()
 
-                       // Update views after saving data
-                       var username = findViewById<TextView>(R.id.username)
-                       username.text = usernameEdit.text.toString()
-                       headline.text = headLineEdit.text.toString()
-                       Location.text = "${cityEdit.text.toString()}, ${stateEdit.text.toString()}"
+                        // Update views after saving data
+                        var username = findViewById<TextView>(R.id.username)
+                        username.text = usernameEdit.text.toString()
+                        headline.text = headLineEdit.text.toString()
+                        Location.text = "${cityEdit.text.toString()}, ${stateEdit.text.toString()}"
 
-                       val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-                       imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
+                        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+                        imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
 
-                       // Hide detail update form
-                       detailScrollView.visibility = View.GONE
-                   }
+                        // Hide detail update form
+                        detailScrollView.visibility = View.GONE
+                    }
 
-                   .addOnFailureListener { e ->
-                       progressBar.visibility = View.GONE
-                       Toast.makeText(this, "Update failed: ${e.message}", Toast.LENGTH_SHORT).show()
-                   }
+                    .addOnFailureListener { e ->
+                        progressBar.visibility = View.GONE
+                        Toast.makeText(this, "Update failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
 
-           } else {
-               progressBar.visibility = View.GONE
-               Toast.makeText(this, "User ID not found in session", Toast.LENGTH_SHORT).show()
-           }
-       }
+            } else {
+                progressBar.visibility = View.GONE
+                Toast.makeText(this, "User ID not found in session", Toast.LENGTH_SHORT).show()
+            }
+        }
 
         return isValid
     }
@@ -675,7 +652,7 @@ class Profile : AppCompatActivity() {
                         profile_background_edit_icon.visibility = View.VISIBLE
                         profile_background_edit_icon2.visibility = View.GONE
                         update_cover_text.visibility = View.GONE
-                                upload_cover_text.visibility = View.VISIBLE
+                        upload_cover_text.visibility = View.VISIBLE
                     }
 
 
@@ -701,7 +678,7 @@ class Profile : AppCompatActivity() {
 
 
                         }
-                        internshipPostListLayout.visibility = View.GONE
+
 
                         loadUserSkills(userId)
 
@@ -810,61 +787,6 @@ class Profile : AppCompatActivity() {
     }
 
 
-    private fun loadJobPosts(companyId: String) {
-        val db = FirebaseFirestore.getInstance()
-
-        db.collection("internshipPostsData")
-            .whereEqualTo("companyId", companyId)
-            .orderBy("postedDate", Query.Direction.DESCENDING)
-            .get()
-            .addOnSuccessListener { documents ->
-                val activeList = mutableListOf<InternshipPostData>()
-                val closedList = mutableListOf<InternshipPostData>()
-
-                val sdf = SimpleDateFormat("d/M/yyyy", Locale.getDefault())
-                val today = Calendar.getInstance().time
-
-                for (doc in documents) {
-                    val deadlineStr = doc.getString("applicationDeadline") ?: "N/A"
-
-                    val job = InternshipPostData(
-                        title = doc.getString("title") ?: "N/A",
-                        internshipType = doc.getString("internshipType") ?: "N/A",
-                        internshipTime = doc.getString("internshipTime") ?: "N/A",
-                        stipend = doc.getString("stipend") ?: "N/A",
-                        applicationDeadline = deadlineStr,
-                        postedDate = doc.getTimestamp("postedDate")
-                    )
-
-                    // Decide active or closed
-                    try {
-                        if (deadlineStr != "N/A") {
-                            val deadlineDate = sdf.parse(deadlineStr)
-                            if (today.before(deadlineDate) || today == deadlineDate) {
-                                activeList.add(job)
-                            } else {
-                                closedList.add(job)
-                            }
-                        } else {
-                            closedList.add(job) // treat as closed if no deadline
-                        }
-                    } catch (e: Exception) {
-                        closedList.add(job) // treat as closed if parsing fails
-                    }
-                }
-
-                // Save lists
-                activeJobs = activeList
-                closedJobs = closedList
-
-                // Default show active jobs
-                jobPostsRecyclerView.adapter = JobPostAdapter(activeJobs)
-            }
-            .addOnFailureListener { e ->
-                Log.e("JobPosts", "Error loading job posts", e)
-                Toast.makeText(this, "Failed to load job posts: ${e.message}", Toast.LENGTH_LONG).show()
-            }
-    }
 
     private fun loadUserSkills(userId: String) {
         val db = FirebaseFirestore.getInstance()
@@ -911,6 +833,7 @@ class Profile : AppCompatActivity() {
         dialog.show()
 
         cancelTextView.setOnClickListener {
+            hideKeyboard(editTextSkill)
             dialog.dismiss()
         }
 
@@ -922,6 +845,7 @@ class Profile : AppCompatActivity() {
 
                 // Update Firestore database with the updated list
                 saveSkills(skillsList)
+                hideKeyboard(editTextSkill)
                 dialog.dismiss()
             } else {
                 editTextSkill.error = "Skill cannot be empty"
@@ -932,6 +856,7 @@ class Profile : AppCompatActivity() {
             skillsList.removeAt(position)
             skillsAdapter.notifyItemRemoved(position)
             saveSkills(skillsList)
+            hideKeyboard(editTextSkill)
             dialog.dismiss()
         }
     }
@@ -959,6 +884,10 @@ class Profile : AppCompatActivity() {
     }
 
 
+    private fun hideKeyboard(view: View) {
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
+    }
 
 
 }

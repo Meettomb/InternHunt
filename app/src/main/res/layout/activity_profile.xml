@@ -302,62 +302,6 @@
 
 
 
-                <LinearLayout
-                    android:id="@+id/InternshipPostListLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:paddingHorizontal="10dp"
-                    android:background="@color/white"
-                    android:layout_marginTop="10dp">
-
-                    <LinearLayout
-                        android:id="@+id/jobPostTabs"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="15dp"
-                        android:gravity="center"
-                        android:orientation="horizontal"
-                        android:paddingTop="10dp">
-
-
-                        <TextView
-                            android:id="@+id/btnOpenJobs"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:background="@drawable/rounded_button"
-                            android:gravity="center"
-                            android:paddingVertical="10dp"
-                            android:text="Active Jobs"
-                            android:textColor="@color/white" />
-
-                        <TextView
-                            android:id="@+id/textView4"
-                            android:layout_width="10dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="0" />
-
-                        <TextView
-                            android:id="@+id/btnClosedJobs"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:background="@drawable/rounded_button"
-                            android:gravity="center"
-                            android:paddingVertical="10dp"
-                            android:text="Closed Jobs"
-                            android:textColor="@color/white" />
-                    </LinearLayout>
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recyclerViewJobs"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginTop="10dp"
-                        android:padding="0dp" />
-                </LinearLayout>
-
 
             </LinearLayout>
         </ScrollView>

@@ -6,12 +6,17 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.firestore.FirebaseFirestore
 import java.util.Locale
 import java.text.SimpleDateFormat
+import java.util.Calendar
+import kotlin.collections.set
 
 
-class JobPostAdapter(private val jobList: List<InternshipPostData>) :
-    RecyclerView.Adapter<JobPostAdapter.JobViewHolder>() {
+class JobPostAdapter(
+    private val jobList: List<InternshipPostData>,
+    private val onItemClick: (InternshipPostData) -> Unit
+) : RecyclerView.Adapter<JobPostAdapter.JobViewHolder>() {
 
     inner class JobViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val titleText: TextView = itemView.findViewById(R.id.JobTitle)
@@ -23,7 +28,8 @@ class JobPostAdapter(private val jobList: List<InternshipPostData>) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): JobViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.job_post_item, parent, false)
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.job_post_item, parent, false)
         return JobViewHolder(view)
     }
 
@@ -35,31 +41,29 @@ class JobPostAdapter(private val jobList: List<InternshipPostData>) :
         holder.stipendText.text = job.stipend
 
         val deadlineStr = job.applicationDeadline
-
         if (deadlineStr != "N/A") {
             val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
             try {
                 val deadlineDate = sdf.parse(deadlineStr)
-                val today = java.util.Calendar.getInstance().time
-
+                val today = Calendar.getInstance().time
                 if (today.after(deadlineDate)) {
-                    // Hide deadline if it's expired
                     holder.DeadlineLayout.visibility = View.GONE
                 } else {
-                    // Show deadline if it's still valid
                     holder.DeadlineLayout.visibility = View.VISIBLE
                     holder.deadlineText.text = deadlineStr
                 }
             } catch (e: Exception) {
-                // In case of parse error, just show the deadline as fallback
                 holder.DeadlineLayout.visibility = View.VISIBLE
                 holder.deadlineText.text = deadlineStr
             }
         } else {
             holder.deadlineText.visibility = View.GONE
         }
-    }
 
+        holder.itemView.setOnClickListener {
+            onItemClick(job)
+        }
+    }
 
     override fun getItemCount(): Int = jobList.size
 }
