@@ -705,6 +705,29 @@ class Profile : AppCompatActivity() {
 
                         loadUserSkills(userId)
 
+                        val sectionAddSection = findViewById<LinearLayout>(R.id.SectionAddSection)
+                        val addProjects = findViewById<TextView>(R.id.addProjects)
+                        val addSkills = findViewById<TextView>(R.id.addSkills)
+                        val addExperience = findViewById<TextView>(R.id.addExperience)
+
+                        val skillList = doc.get("skill") as? List<String> ?: emptyList()
+                        val projectList = doc.get("project") as? List<String> ?: emptyList()
+                        val experienceList = doc.get("experience") as? List<String> ?: emptyList()
+
+                        // Hide the entire section if all three have data
+                        if (skillList.isNotEmpty() && projectList.isNotEmpty() && experienceList.isNotEmpty()) {
+                            sectionAddSection.visibility = View.GONE
+                        } else {
+                            sectionAddSection.visibility = View.VISIBLE
+                        }
+
+                        // Hide individual buttons if that data already exists
+                        addProjects.visibility = if (projectList.isNotEmpty()) View.GONE else View.VISIBLE
+                        addSkills.visibility = if (skillList.isNotEmpty()) View.GONE else View.VISIBLE
+                        addExperience.visibility = if (experienceList.isNotEmpty()) View.GONE else View.VISIBLE
+
+
+
 
                     } else if (role == "Company") {
                         if (!companyName.isNullOrEmpty()) {

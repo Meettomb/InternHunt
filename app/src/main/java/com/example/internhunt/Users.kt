@@ -22,6 +22,8 @@ data class Users(
     val signup_date: String = "",
     val state: String = "",
     val skill: List<String> = emptyList(),
+    val project: List<String> = emptyList(),
+    val experience: List<String> = emptyList(),
     val username: String = "",
     val company_name: String = "",
     val company_url: String = "",

@@ -27,6 +27,7 @@
             app:layout_constraintVertical_bias="0.5">
 
             <LinearLayout
+                android:id="@+id/addNewSectionLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">

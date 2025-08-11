@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:paddingHorizontal="10dp"
-            android:paddingVertical="15dp"
+            android:paddingVertical="10dp"
             android:text="TextView"
             android:textColor="@color/secondary_text"
             android:textSize="18sp" />
