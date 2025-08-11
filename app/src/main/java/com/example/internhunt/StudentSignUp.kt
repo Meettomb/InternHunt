@@ -109,8 +109,8 @@ class StudentSignUp : AppCompatActivity() {
 
         val adapter = ArrayAdapter(
             this,
-            R.layout.dropdown_item,         // your LinearLayout layout
-            R.id.text1,                   // ID of TextView inside it
+            R.layout.dropdown_item,
+            R.id.text1,
             degrees
         )
         // ✅ custom layout

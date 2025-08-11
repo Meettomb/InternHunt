@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -31,6 +33,8 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import androidx.appcompat.app.AlertDialog
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.SetOptions
 
 
@@ -83,6 +87,42 @@ class Profile : AppCompatActivity() {
     private lateinit var skillsRecyclerView: RecyclerView
     private lateinit var skillsAdapter: SkillsAdapter
     private val skillsList = mutableListOf<String>()
+
+    private lateinit var educationContainer: LinearLayout
+//    private lateinit var educationAdapter: EducationAdapter
+//    private val educationList = mutableListOf<String>()
+
+    private lateinit var addMoreEducation: ImageView
+    private val degrees = arrayOf(
+        "B.Tech (Bachelor of Technology)",
+        "B.E. (Bachelor of Engineering)",
+        "B.Sc (Bachelor of Science)",
+        "BCA (Bachelor of Computer Applications)",
+        "BBA (Bachelor of Business Administration)",
+        "B.Com (Bachelor of Commerce)",
+        "B.A. (Bachelor of Arts)",
+        "M.Tech (Master of Technology)",
+        "M.E. (Master of Engineering)",
+        "M.Sc (Master of Science)",
+        "MCA (Master of Computer Applications)",
+        "MBA (Master of Business Administration)",
+        "M.Com (Master of Commerce)",
+        "PhD (Doctor of Philosophy)",
+        "Diploma in Engineering",
+        "Polytechnic Diploma",
+        "B.Ed (Bachelor of Education)",
+        "M.Ed (Master of Education)",
+        "LLB (Bachelor of Laws)",
+        "LLM (Master of Laws)",
+        "MBBS (Bachelor of Medicine & Surgery)",
+        "BDS (Bachelor of Dental Surgery)",
+        "B.Pharm (Bachelor of Pharmacy)",
+        "M.Pharm (Master of Pharmacy)",
+        "B.Arch (Bachelor of Architecture)",
+        "M.Arch (Master of Architecture)"
+    )
+
+
 
 
 
@@ -148,16 +188,97 @@ class Profile : AppCompatActivity() {
         closeUpdateDetail = findViewById(R.id.closeUpdatedetail)
 
 
-
         skillsRecyclerView = findViewById(R.id.SkillrecyclerView)
         skillsRecyclerView.layoutManager = LinearLayoutManager(this)
-
         skillsAdapter = SkillsAdapter(skillsList) { position, skill ->
             Toast.makeText(this, "Edit skill: $skill", Toast.LENGTH_SHORT).show()
             editSkillAtPosition(position)
         }
-
         skillsRecyclerView.adapter = skillsAdapter
+
+
+        educationContainer = findViewById(R.id.edu_layout)
+
+        addMoreEducation = findViewById(R.id.addMoreEducation)
+
+        addMoreEducation.setOnClickListener {
+            val dialogView = layoutInflater.inflate(R.layout.dialog_add_education, null)
+
+            val etCollageName = dialogView.findViewById<EditText>(R.id.etCollageName)
+            val etDegreeName = dialogView.findViewById<AutoCompleteTextView>(R.id.etDegreeName) // Change this in your XML
+            val etStartYear = dialogView.findViewById<EditText>(R.id.etStartYear)
+            val etEndYear = dialogView.findViewById<EditText>(R.id.etEndYear)
+
+            // Set up AutoCompleteTextView adapter for degrees
+            val adapter = ArrayAdapter(this, R.layout.dropdown_item, degrees)
+            etDegreeName.setAdapter(adapter)
+            etDegreeName.threshold = 1
+
+
+            val alertDialog = AlertDialog.Builder(this)
+                .setView(dialogView)
+            .create()
+
+            alertDialog.show()
+
+            val saveButton = dialogView.findViewById<TextView>(R.id.saveTextView)
+            val cancelButton = dialogView.findViewById<TextView>(R.id.cancelTextView)
+
+            saveButton.setOnClickListener {
+                val collageName = etCollageName.text.toString().trim()
+                val degreeName = etDegreeName.text.toString().trim()
+                val startYearStr = etStartYear.text.toString().trim()
+                val endYearStr = etEndYear.text.toString().trim()
+
+                // Basic empty checks
+                if (collageName.isEmpty() || degreeName.isEmpty() || startYearStr.isEmpty() || endYearStr.isEmpty()) {
+                    Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                // Validate degree is in the predefined list
+                if (!degrees.contains(degreeName)) {
+                    Toast.makeText(this, "Please select a valid degree from the list", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                // Check if years are valid numbers
+                val startYear = startYearStr.toIntOrNull()
+                val endYear = endYearStr.toIntOrNull()
+
+                if (startYear == null || endYear == null) {
+                    Toast.makeText(this, "Start Year and End Year must be valid numbers", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                // Check year length (usually 4 digits)
+                if (startYearStr.length != 4 || endYearStr.length != 4) {
+                    Toast.makeText(this, "Please enter valid 4-digit years", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                // Check logical order of years
+                if (startYear > endYear) {
+                    Toast.makeText(this, "Start Year cannot be after End Year", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                val prefs = getSharedPreferences("UserSession", MODE_PRIVATE)
+                val currentUserId = prefs.getString("userid", null)
+
+                if (!currentUserId.isNullOrEmpty()) {
+                    saveEducationToFirestore(collageName, degreeName, startYearStr, endYearStr, currentUserId)
+                    alertDialog.dismiss()
+                } else {
+                    Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            cancelButton.setOnClickListener {
+                alertDialog.dismiss()
+            }
+        }
+
 
 
 
@@ -681,6 +802,7 @@ class Profile : AppCompatActivity() {
 
 
                         loadUserSkills(userId)
+                        loadEducation(userId)
 
                         val sectionAddSection = findViewById<LinearLayout>(R.id.SectionAddSection)
                         val addProjects = findViewById<TextView>(R.id.addProjects)
@@ -833,7 +955,7 @@ class Profile : AppCompatActivity() {
         dialog.show()
 
         cancelTextView.setOnClickListener {
-            hideKeyboard(editTextSkill)
+            hideKeyboard()
             dialog.dismiss()
         }
 
@@ -845,7 +967,7 @@ class Profile : AppCompatActivity() {
 
                 // Update Firestore database with the updated list
                 saveSkills(skillsList)
-                hideKeyboard(editTextSkill)
+                hideKeyboard()
                 dialog.dismiss()
             } else {
                 editTextSkill.error = "Skill cannot be empty"
@@ -856,7 +978,7 @@ class Profile : AppCompatActivity() {
             skillsList.removeAt(position)
             skillsAdapter.notifyItemRemoved(position)
             saveSkills(skillsList)
-            hideKeyboard(editTextSkill)
+            hideKeyboard()
             dialog.dismiss()
         }
     }
@@ -884,10 +1006,102 @@ class Profile : AppCompatActivity() {
     }
 
 
-    private fun hideKeyboard(view: View) {
+    private fun loadEducation(userId: String) {
+        val db = FirebaseFirestore.getInstance()
+        educationContainer = findViewById(R.id.edu_layout)
+
+        // Clear old views before adding new ones
+        educationContainer.removeAllViews()
+
+        db.collection("Users").document(userId).get()
+            .addOnSuccessListener { document ->
+                if (document != null && document.exists()) {
+                    // Get the education list from the user document
+                    val educationList = document.get("education") as? List<Map<String, Any>>
+
+                    if (educationList != null) {
+                        for (eduMap in educationList) {
+                            val education = EducationEntry(
+                                collage_name = eduMap["collage_name"] as? String ?: "N/A",
+                                degree_name = eduMap["degree_name"] as? String ?: "N/A",
+                                graduation_start_year = eduMap["graduation_start_year"] as? String ?: "N/A",
+                                graduation_end_year = eduMap["graduation_end_year"] as? String ?: "N/A"
+                            )
+
+                            // Inflate your education item layout
+                            val educationView = layoutInflater.inflate(
+                                R.layout.education_list, educationContainer, false
+                            )
+
+                            // Bind data to layout
+                            educationView.findViewById<TextView>(R.id.collageName).text = education.collage_name
+                            educationView.findViewById<TextView>(R.id.degreeName).text = education.degree_name
+                            educationView.findViewById<TextView>(R.id.academicYear).text =
+                                "${education.graduation_start_year} - ${education.graduation_end_year}"
+
+                            // Handle edit click
+                            educationView.findViewById<ImageView>(R.id.editIcon).setOnClickListener {
+                                Toast.makeText(
+                                    this,
+                                    "Edit education: ${education.degree_name}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+
+                            // Add the view to the container
+                            educationContainer.addView(educationView)
+                        }
+                    } else {
+                        Toast.makeText(this, "No education data found", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(this, "User document not found", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e("Education", "Error loading education", e)
+                Toast.makeText(this, "Failed to load education: ${e.message}", Toast.LENGTH_LONG).show()
+            }
+    }
+
+
+    private fun saveEducationToFirestore(
+        collageName: String,
+        degreeName: String,
+        startYear: String,
+        endYear: String,
+        userId: String
+    ) {
+        val db = FirebaseFirestore.getInstance()
+
+        val newEducationMap = hashMapOf(
+            "collage_name" to collageName,
+            "degree_name" to degreeName,
+            "graduation_start_year" to startYear,
+            "graduation_end_year" to endYear
+        )
+
+        db.collection("Users").document(userId)
+            .update("education", FieldValue.arrayUnion(newEducationMap))
+            .addOnSuccessListener {
+                Toast.makeText(this, "Education added successfully", Toast.LENGTH_SHORT).show()
+                // Optionally reload your education list here
+                hideKeyboard()
+                loadEducation(userId)
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Failed to add education: ${e.message}", Toast.LENGTH_LONG).show()
+            }
+    }
+
+
+
+    private fun hideKeyboard() {
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        val view = currentFocus ?: View(this)
         imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
+
 
 
 }
