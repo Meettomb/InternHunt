@@ -275,10 +275,10 @@ class Profile : AppCompatActivity() {
             }
 
             cancelButton.setOnClickListener {
+                hideKeyboard()
                 alertDialog.dismiss()
             }
         }
-
 
 
 
@@ -1020,7 +1020,7 @@ class Profile : AppCompatActivity() {
                     val educationList = document.get("education") as? List<Map<String, Any>>
 
                     if (educationList != null) {
-                        for (eduMap in educationList) {
+                        for ((index, eduMap) in educationList.withIndex()) {
                             val education = EducationEntry(
                                 collage_name = eduMap["collage_name"] as? String ?: "N/A",
                                 degree_name = eduMap["degree_name"] as? String ?: "N/A",
@@ -1028,32 +1028,25 @@ class Profile : AppCompatActivity() {
                                 graduation_end_year = eduMap["graduation_end_year"] as? String ?: "N/A"
                             )
 
-                            // Inflate your education item layout
                             val educationView = layoutInflater.inflate(
                                 R.layout.education_list, educationContainer, false
                             )
 
-                            // Bind data to layout
                             educationView.findViewById<TextView>(R.id.collageName).text = education.collage_name
                             educationView.findViewById<TextView>(R.id.degreeName).text = education.degree_name
                             educationView.findViewById<TextView>(R.id.academicYear).text =
                                 "${education.graduation_start_year} - ${education.graduation_end_year}"
 
-                            // Handle edit click
                             educationView.findViewById<ImageView>(R.id.editIcon).setOnClickListener {
-                                Toast.makeText(
-                                    this,
-                                    "Edit education: ${education.degree_name}",
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                                openEditEducationDialog(education, index, userId)
                             }
 
-                            // Add the view to the container
                             educationContainer.addView(educationView)
                         }
                     } else {
                         Toast.makeText(this, "No education data found", Toast.LENGTH_SHORT).show()
                     }
+
                 } else {
                     Toast.makeText(this, "User document not found", Toast.LENGTH_SHORT).show()
                 }
@@ -1094,6 +1087,144 @@ class Profile : AppCompatActivity() {
             }
     }
 
+    private fun openEditEducationDialog(
+        education: EducationEntry,
+        position: Int,
+        userId: String
+    ) {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_edit_education, null)
+
+        val etCollegeName = dialogView.findViewById<EditText>(R.id.etCollageName)
+        val etDegreeName = dialogView.findViewById<AutoCompleteTextView>(R.id.etDegreeName)
+        val etStartYear = dialogView.findViewById<EditText>(R.id.etStartYear)
+        val etEndYear = dialogView.findViewById<EditText>(R.id.etEndYear)
+
+        // Pre-fill data
+        etCollegeName.setText(education.collage_name)
+        etDegreeName.setText(education.degree_name)
+        etStartYear.setText(education.graduation_start_year)
+        etEndYear.setText(education.graduation_end_year)
+
+        val adapter = ArrayAdapter(this, R.layout.dropdown_item, degrees)
+        etDegreeName.setAdapter(adapter)
+        etDegreeName.threshold = 1
+
+        val alertDialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .create()
+
+        alertDialog.show()
+
+        dialogView.findViewById<TextView>(R.id.saveTextView).setOnClickListener {
+            val newCollegeName = etCollegeName.text.toString().trim()
+            val newDegreeName = etDegreeName.text.toString().trim()
+            val newStartYear = etStartYear.text.toString().trim()
+            val newEndYear = etEndYear.text.toString().trim()
+
+            // Add your validations here...
+
+            val updatedEducation = EducationEntry(
+                collage_name = newCollegeName,
+                degree_name = newDegreeName,
+                graduation_start_year = newStartYear,
+                graduation_end_year = newEndYear
+            )
+
+            updateEducationList(userId, updatedEducation, position) { success ->
+                if (success) {
+                    Toast.makeText(this, "Education updated", Toast.LENGTH_SHORT).show()
+                    alertDialog.dismiss()
+                    loadEducation(userId)  // reload to update UI
+                } else {
+                    Toast.makeText(this, "Update failed", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        dialogView.findViewById<TextView>(R.id.deleteTextView)?.setOnClickListener {
+            deleteEducationEntry(userId, position) { success ->
+                if (success) {
+                    Toast.makeText(this, "Education deleted", Toast.LENGTH_SHORT).show()
+                    alertDialog.dismiss()
+                    loadEducation(userId)
+                } else {
+                    Toast.makeText(this, "Delete failed", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        dialogView.findViewById<TextView>(R.id.cancelTextView).setOnClickListener {
+            alertDialog.dismiss()
+        }
+    }
+
+
+    private fun updateEducationList(
+        userId: String,
+        updatedEducation: EducationEntry,
+        position: Int,
+        callback: (Boolean) -> Unit
+    ) {
+        val db = FirebaseFirestore.getInstance()
+        val userDocRef = db.collection("Users").document(userId)
+
+        userDocRef.get()
+            .addOnSuccessListener { doc ->
+                if (doc.exists()) {
+                    val user = doc.toObject(Users::class.java)
+                    if (user != null) {
+                        val eduList = user.education.toMutableList()
+                        if (position in eduList.indices) {
+                            eduList[position] = updatedEducation
+
+                            userDocRef.update("education", eduList)
+                                .addOnSuccessListener { callback(true) }
+                                .addOnFailureListener { callback(false) }
+                        } else {
+                            callback(false)
+                        }
+                    } else {
+                        callback(false)
+                    }
+                } else {
+                    callback(false)
+                }
+            }
+            .addOnFailureListener { callback(false) }
+    }
+
+    private fun deleteEducationEntry(
+        userId: String,
+        position: Int,
+        callback: (Boolean) -> Unit
+    ) {
+        val db = FirebaseFirestore.getInstance()
+        val userDocRef = db.collection("Users").document(userId)
+
+        userDocRef.get()
+            .addOnSuccessListener { doc ->
+                if (doc.exists()) {
+                    val user = doc.toObject(Users::class.java)
+                    if (user != null) {
+                        val eduList = user.education.toMutableList()
+                        if (position in eduList.indices) {
+                            eduList.removeAt(position)
+
+                            userDocRef.update("education", eduList)
+                                .addOnSuccessListener { callback(true) }
+                                .addOnFailureListener { callback(false) }
+                        } else {
+                            callback(false)
+                        }
+                    } else {
+                        callback(false)
+                    }
+                } else {
+                    callback(false)
+                }
+            }
+            .addOnFailureListener { callback(false) }
+    }
 
 
     private fun hideKeyboard() {
