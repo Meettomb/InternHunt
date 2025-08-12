@@ -72,13 +72,13 @@ class InternshipAdapter(private val internship: List<InternshipPostData>,
                 holder.companyName.text = "Error loading company"
             }
 
-        // ✅ Click on entire item
+        //  Click on entire item
         holder.itemView.setOnClickListener {
             val cachedData = companyCache[item.id]
             onItemClick(item, cachedData?.first, cachedData?.second)
         }
 
-        // ✅ Click on hidePost icon
+        //  Click on hidePost icon
         holder.hidePost.setOnClickListener {
             val prefs = holder.itemView.context.getSharedPreferences("UserSession", Context.MODE_PRIVATE)
             val currentUserId = prefs.getString("userid", null)
@@ -96,21 +96,58 @@ class InternshipAdapter(private val internship: List<InternshipPostData>,
             }
         }
 
-        holder.bookmark.setOnClickListener {
-            val prefs = holder.itemView.context.getSharedPreferences("UserSession", Context.MODE_PRIVATE)
-            val currentUserId = prefs.getString("userid", null)
-            if (currentUserId != null) {
-                db.collection("Users")
-                    .document(currentUserId)
-                    .update("bookmark", com.google.firebase.firestore.FieldValue.arrayUnion(item.id))
-                    .addOnSuccessListener {
-                        Toast.makeText(holder.itemView.context, "Post bookmarked", Toast.LENGTH_SHORT).show()
+        // Inside onBindViewHolder, after setting other fields
+        val prefs = holder.itemView.context.getSharedPreferences("UserSession", Context.MODE_PRIVATE)
+        val currentUserId = prefs.getString("userid", null)
+
+        if (currentUserId != null) {
+            val userRef = db.collection("Users").document(currentUserId)
+
+            //  Check bookmark status for this internship and update icon
+            userRef.get()
+                .addOnSuccessListener { doc ->
+                    if (doc.exists()) {
+                        val bookmarks = doc.get("bookmark") as? List<String> ?: emptyList()
+                        if (bookmarks.contains(item.id)) {
+                            holder.bookmark.setImageResource(R.drawable.bookmark_fill)
+                        } else {
+                            holder.bookmark.setImageResource(R.drawable.bookmark)
+                        }
                     }
-                    .addOnFailureListener { e ->
-                        Toast.makeText(holder.itemView.context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+
+            //  Toggle on click
+            holder.bookmark.setOnClickListener {
+                userRef.get().addOnSuccessListener { doc ->
+                    if (doc.exists()) {
+                        val bookmarks = doc.get("bookmark") as? List<String> ?: emptyList()
+
+                        if (bookmarks.contains(item.id)) {
+                            // Remove
+                            userRef.update("bookmark", com.google.firebase.firestore.FieldValue.arrayRemove(item.id))
+                                .addOnSuccessListener {
+                                    holder.bookmark.setImageResource(R.drawable.bookmark)
+                                    Toast.makeText(holder.itemView.context, "Bookmark removed", Toast.LENGTH_SHORT).show()
+                                }
+                                .addOnFailureListener { e ->
+                                    Toast.makeText(holder.itemView.context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                                }
+                        } else {
+                            // Add
+                            userRef.update("bookmark", com.google.firebase.firestore.FieldValue.arrayUnion(item.id))
+                                .addOnSuccessListener {
+                                    holder.bookmark.setImageResource(R.drawable.bookmark_fill)
+                                    Toast.makeText(holder.itemView.context, "Bookmark added", Toast.LENGTH_SHORT).show()
+                                }
+                                .addOnFailureListener { e ->
+                                    Toast.makeText(holder.itemView.context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                                }
+                        }
                     }
+                }
             }
         }
+
     }
 
 

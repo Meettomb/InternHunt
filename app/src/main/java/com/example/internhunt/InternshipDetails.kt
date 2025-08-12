@@ -1,5 +1,6 @@
 package com.example.internhunt
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -18,6 +19,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.Glide
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 
 class InternshipDetails : AppCompatActivity() {
@@ -43,6 +45,8 @@ class InternshipDetails : AppCompatActivity() {
     private lateinit var perksContainer: LinearLayout
     private lateinit var degreeEligibilityContainer: LinearLayout
 
+    private lateinit var bookmark: ImageView
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,6 +59,17 @@ class InternshipDetails : AppCompatActivity() {
         } else {
             // For older versions, use a dark color with light icons
             window.statusBarColor = ContextCompat.getColor(this, R.color.black)
+        }
+
+        val prefs = getSharedPreferences("UserSession", Context.MODE_PRIVATE)
+        val userId = prefs.getString("userid", null)
+
+        // Check if session exists
+        if (userId == null) {
+            Toast.makeText(this, "Please login again", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, Login::class.java))
+            finish()
+            return
         }
 
         // Bind Views
@@ -78,6 +93,7 @@ class InternshipDetails : AppCompatActivity() {
         responsibilitiesContainer = findViewById(R.id.responsibilitiesContainer)
         perksContainer = findViewById(R.id.perksContainer)
         degreeEligibilityContainer = findViewById(R.id.degreeEligibility)
+        bookmark = findViewById(R.id.bookmark)
 
         val backButton = findViewById<ImageView>(R.id.backButton)
 
@@ -88,12 +104,73 @@ class InternshipDetails : AppCompatActivity() {
 
         val internshipId = intent.getStringExtra("id") ?: ""
 
-
-
         if (internshipId.isNotEmpty()) {
             loadInternshipDetails(internshipId)
         }
 
+
+        if (userId != null) {
+            val db = FirebaseFirestore.getInstance()
+            val userRef = db.collection("Users").document(userId)
+
+            userRef.get()
+                .addOnSuccessListener { document ->
+                    if (document.exists()) {
+                        val bookmarks = document.get("bookmark") as? List<String> ?: emptyList()
+                        if (bookmarks.contains(internshipId)) {
+                            bookmark.setImageResource(R.drawable.bookmark_fill)
+                        } else {
+                            bookmark.setImageResource(R.drawable.bookmark)
+                        }
+                    }
+                }
+        }
+
+
+        bookmark.setOnClickListener {
+            val postId = internshipId
+            val prefs = getSharedPreferences("UserSession", Context.MODE_PRIVATE)
+            val userId = prefs.getString("userid", null)
+
+            if (userId != null) {
+                val db = FirebaseFirestore.getInstance()
+                val userRef = db.collection("Users").document(userId)
+
+                userRef.get()
+                    .addOnSuccessListener { document ->
+                        if (document.exists()) {
+                            val bookmarks = document.get("bookmark") as? List<String> ?: emptyList()
+
+                            if (bookmarks.contains(postId)) {
+                                // Remove bookmark
+                                userRef.update("bookmark", FieldValue.arrayRemove(postId))
+                                    .addOnSuccessListener {
+                                        bookmark.setImageResource(R.drawable.bookmark) // change to empty icon
+                                        Toast.makeText(this, "Bookmark removed", Toast.LENGTH_SHORT).show()
+                                    }
+                                    .addOnFailureListener {
+                                        Toast.makeText(this, "Failed to remove bookmark", Toast.LENGTH_SHORT).show()
+                                    }
+                            } else {
+                                // Add bookmark
+                                userRef.update("bookmark", FieldValue.arrayUnion(postId))
+                                    .addOnSuccessListener {
+                                        bookmark.setImageResource(R.drawable.bookmark_fill) // change to filled icon
+                                        Toast.makeText(this, "Bookmark added", Toast.LENGTH_SHORT).show()
+                                    }
+                                    .addOnFailureListener {
+                                        Toast.makeText(this, "Failed to add bookmark", Toast.LENGTH_SHORT).show()
+                                    }
+                            }
+                        }
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(this, "Failed to fetch user data", Toast.LENGTH_SHORT).show()
+                    }
+            } else {
+                Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show()
+            }
+        }
 
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -193,6 +270,21 @@ class InternshipDetails : AppCompatActivity() {
                 Toast.makeText(this, "Error loading company details", Toast.LENGTH_SHORT).show()
             }
     }
+
+    private fun addBookMark(userId: String, postId: String) {
+        val db = FirebaseFirestore.getInstance()
+        val userRef = db.collection("Users").document(userId)
+
+        // Add the postId to the 'bookmark' array field
+        userRef.update("bookmark", FieldValue.arrayUnion(postId))
+            .addOnSuccessListener {
+                Toast.makeText(this, "Bookmark added", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Error: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
 
 
     private fun populateBulletList(container: LinearLayout, items: List<String>) {
