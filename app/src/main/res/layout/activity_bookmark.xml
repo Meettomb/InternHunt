@@ -6,7 +6,7 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Home"
+    tools:context=".Bookmark"
     android:fitsSystemWindows="true">
 
     <!-- Main Content (Right Side) -->
@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/background_light"
-        tools:context=".Home">
+        tools:context=".Bookmark">
 
         <!-- Header -->
         <TextView
@@ -75,13 +75,14 @@
                 app:layout_columnWeight="1"
                 app:layout_gravity="center_vertical"
                 app:layout_row="0" />
+
         </androidx.gridlayout.widget.GridLayout>
+
 
         <!-- RecyclerView -->
 
-
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewHome"
+            android:id="@+id/recyclerViewBookmark"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginHorizontal="5dp"
@@ -93,28 +94,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/Header"
             app:layout_constraintVertical_bias="0.0" />
-
-        <FrameLayout
-            android:id="@+id/filter_section"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_margin="16dp"
-            android:background="@drawable/full_round_border"
-            android:backgroundTint="@color/primary_color"
-            android:padding="10dp"
-            app:layout_constraintBottom_toTopOf="@id/bottom_nav"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:elevation="8dp">
-
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/FilterIcon"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/filter"
-                android:scaleType="centerCrop"
-                app:shapeAppearanceOverlay="@style/CircleImage"
-                android:backgroundTint="@color/white"/>
-        </FrameLayout>
 
         <FrameLayout
             android:id="@+id/bottom_sheet_overlay"
@@ -258,9 +237,8 @@
                     android:layout_height="40dp"
                     android:background="@drawable/bottom_nav_icon_design"
                     android:padding="8dp"
-                    app:srcCompat="@drawable/home"
-                    android:backgroundTint="@color/primary_dark"
-                    app:tint="@color/white"/>
+                    app:tint="@color/icon_primary"
+                    app:srcCompat="@drawable/home" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -309,8 +287,8 @@
                     android:layout_height="40dp"
                     android:background="@drawable/bottom_nav_icon_design"
                     android:padding="8dp"
-                    app:tint="@color/icon_primary"
-                    app:srcCompat="@drawable/search" />
+                    app:srcCompat="@drawable/search"
+                    app:tint="@color/icon_primary" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -335,8 +313,9 @@
                     android:layout_height="40dp"
                     android:background="@drawable/bottom_nav_icon_design"
                     android:padding="8dp"
-                    app:tint="@color/icon_primary"
-                    app:srcCompat="@drawable/bookmark" />
+                    app:srcCompat="@drawable/bookmark"
+                    android:backgroundTint="@color/primary_dark"
+                    app:tint="@color/white"/>
 
                 <TextView
                     android:layout_width="wrap_content"

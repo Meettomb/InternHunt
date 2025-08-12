@@ -15,6 +15,7 @@ data class Users(
     val headline: String = "",
     val hide_post: List<String> = emptyList(),
     val education: List<EducationEntry> = emptyList(),
+    val bookmark: List<String> = emptyList(),
     val id: String = "",
     val isactive: Boolean = true,
     val password: String = "",

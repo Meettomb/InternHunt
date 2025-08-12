@@ -132,8 +132,9 @@
                     android:layout_height="40dp"
                     android:background="@drawable/bottom_nav_icon_design"
                     android:padding="8dp"
-                    app:tint="@color/icon_primary"
-                    app:srcCompat="@drawable/apartment" />
+                    app:srcCompat="@drawable/apartment"
+                    android:backgroundTint="@color/primary_dark"
+                    app:tint="@color/white"/>
 
                 <TextView
                     android:layout_width="wrap_content"
