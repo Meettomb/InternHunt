@@ -275,7 +275,7 @@ class Profile : AppCompatActivity() {
             }
 
             cancelButton.setOnClickListener {
-                hideKeyboard()
+                hideKeyboard(dialogView)
                 alertDialog.dismiss()
             }
         }
@@ -325,11 +325,13 @@ class Profile : AppCompatActivity() {
             detailScrollView.visibility = View.VISIBLE
         }
         closeUpdateDetail.setOnClickListener {
+            hideKeyboard(detailScrollView)
             detailScrollView.visibility = View.GONE
         }
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (detailScrollView.visibility == View.VISIBLE) {
+                    hideKeyboard(detailScrollView)
                     detailScrollView.visibility = View.GONE
                 } else {
                     // Default behavior (finish the activity or go back)
@@ -955,7 +957,7 @@ class Profile : AppCompatActivity() {
         dialog.show()
 
         cancelTextView.setOnClickListener {
-            hideKeyboard()
+            hideKeyboard(dialogView)
             dialog.dismiss()
         }
 
@@ -967,7 +969,7 @@ class Profile : AppCompatActivity() {
 
                 // Update Firestore database with the updated list
                 saveSkills(skillsList)
-                hideKeyboard()
+                hideKeyboard(dialogView)
                 dialog.dismiss()
             } else {
                 editTextSkill.error = "Skill cannot be empty"
@@ -978,7 +980,7 @@ class Profile : AppCompatActivity() {
             skillsList.removeAt(position)
             skillsAdapter.notifyItemRemoved(position)
             saveSkills(skillsList)
-            hideKeyboard()
+            hideKeyboard(dialogView)
             dialog.dismiss()
         }
     }
@@ -998,6 +1000,7 @@ class Profile : AppCompatActivity() {
 
         userDocRef.set(mapOf("skill" to updatedSkillsList), SetOptions.merge())
             .addOnSuccessListener {
+
                 Toast.makeText(this, "Skills updated successfully!", Toast.LENGTH_SHORT).show()
             }
             .addOnFailureListener { e ->
@@ -1079,7 +1082,10 @@ class Profile : AppCompatActivity() {
             .addOnSuccessListener {
                 Toast.makeText(this, "Education added successfully", Toast.LENGTH_SHORT).show()
                 // Optionally reload your education list here
-                hideKeyboard()
+//                educationContainer.post {
+//                    hideKeyboard(educationContainer)
+//                }
+                hideKeyboard(educationContainer)
                 loadEducation(userId)
             }
             .addOnFailureListener { e ->
@@ -1133,10 +1139,12 @@ class Profile : AppCompatActivity() {
             updateEducationList(userId, updatedEducation, position) { success ->
                 if (success) {
                     Toast.makeText(this, "Education updated", Toast.LENGTH_SHORT).show()
+                    hideKeyboard(dialogView)
                     alertDialog.dismiss()
                     loadEducation(userId)  // reload to update UI
                 } else {
                     Toast.makeText(this, "Update failed", Toast.LENGTH_SHORT).show()
+                    hideKeyboard(dialogView)
                 }
             }
         }
@@ -1145,15 +1153,18 @@ class Profile : AppCompatActivity() {
             deleteEducationEntry(userId, position) { success ->
                 if (success) {
                     Toast.makeText(this, "Education deleted", Toast.LENGTH_SHORT).show()
+                    hideKeyboard(dialogView)
                     alertDialog.dismiss()
                     loadEducation(userId)
                 } else {
                     Toast.makeText(this, "Delete failed", Toast.LENGTH_SHORT).show()
+                    hideKeyboard(dialogView)
                 }
             }
         }
 
         dialogView.findViewById<TextView>(R.id.cancelTextView).setOnClickListener {
+            hideKeyboard(dialogView)
             alertDialog.dismiss()
         }
     }
@@ -1227,11 +1238,11 @@ class Profile : AppCompatActivity() {
     }
 
 
-    private fun hideKeyboard() {
+    private fun hideKeyboard(view: View) {
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        val view = currentFocus ?: View(this)
         imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
+
 
 
 

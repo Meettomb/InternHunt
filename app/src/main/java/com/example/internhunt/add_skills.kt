@@ -42,7 +42,10 @@ class add_skills : AppCompatActivity() {
         val saveSkillsBtn = findViewById<Button>(R.id.saveSkillsBtn)
 
         // Close Activity
-        closeBtn.setOnClickListener { finish() }
+        closeBtn.setOnClickListener {
+            hideKeyboard()
+            finish()
+        }
 
         // Add More Skill
         addMoreSkillBtn.setOnClickListener {
@@ -142,6 +145,7 @@ class add_skills : AppCompatActivity() {
                     userDocRef.set(mapOf("skill" to newSkillsList), SetOptions.merge())
                         .addOnSuccessListener {
                             Toast.makeText(this, "Skills saved successfully!", Toast.LENGTH_SHORT).show()
+                            hideKeyboard()
                             finish()
                         }
                         .addOnFailureListener { e ->
@@ -150,6 +154,7 @@ class add_skills : AppCompatActivity() {
                 }
             }
             .addOnFailureListener { e ->
+                hideKeyboard()
                 Toast.makeText(this, "Error fetching user data: ${e.message}", Toast.LENGTH_LONG).show()
             }
     }
