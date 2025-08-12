@@ -12,6 +12,8 @@ data class Users(
     val date_of_birth: String = "",
     val email: String = "",
     val gender: String = "",
+    val headline: String = "",
+    val hide_post: List<String> = emptyList(),
     val education: List<EducationEntry> = emptyList(),
     val id: String = "",
     val isactive: Boolean = true,

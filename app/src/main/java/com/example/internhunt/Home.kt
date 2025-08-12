@@ -288,6 +288,7 @@ class Home : AppCompatActivity() {
 
         var userDegrees: List<String> = emptyList()
         var userSkills: List<String> = emptyList()
+
         userRef.addSnapshotListener { doc, error ->
             if (error != null) {
                 Toast.makeText(this, "Error: ${error.localizedMessage}", Toast.LENGTH_LONG).show()
@@ -311,7 +312,11 @@ class Home : AppCompatActivity() {
                 userDegrees = educationList.mapNotNull { it["degree_name"] as? String }
 
                 val skillList = doc.get("skill") as? List<String> ?: emptyList()
-                LoadInternshipPost(userDegrees, skillList)
+
+                val hide_post = doc.get("hide_post") as? List<String> ?: emptyList()
+                Log.d("hide_post", hide_post.toString())
+
+                LoadInternshipPost(userDegrees, skillList, hide_post)
 
 
                 val userName = doc.getString("username")
@@ -410,7 +415,7 @@ class Home : AppCompatActivity() {
     }
 
 
-    private fun LoadInternshipPost(userDegrees: List<String>, userSkills: List<String>) {
+    private fun LoadInternshipPost(userDegrees: List<String>, userSkills: List<String>, hiddenIds: List<String>) {
         val db2 = FirebaseFirestore.getInstance()
         val dateFormat = SimpleDateFormat("dd/M/yyyy", Locale.getDefault())
         val today = Date()
@@ -424,6 +429,7 @@ class Home : AppCompatActivity() {
                 internshipList.clear()
                 for (doc in documents) {
                     val post = doc.toObject(InternshipPostData::class.java)
+                    if (hiddenIds.contains(post.id)) continue
 
                     try {
                         val deadlineDate = dateFormat.parse(post.applicationDeadline)
@@ -467,9 +473,10 @@ class Home : AppCompatActivity() {
                     if (doc != null && doc.exists()) {
                         val educationList = doc.get("education") as? List<Map<String, Any>> ?: emptyList()
                         val userDegrees = educationList.mapNotNull { it["degree_name"] as? String }
-                        val skillList = doc.get("skill") as? List<String> ?: emptyList() // fetch skillList here
+                        val skillList = doc.get("skill") as? List<String> ?: emptyList()
+                        val hide_post = doc.get("hide_post") as? List<String> ?: emptyList()
 
-                        LoadInternshipPost(userDegrees, skillList) // now skillList is defined
+                        LoadInternshipPost(userDegrees, skillList, hide_post) // now skillList is defined
                     }
                 }
         }

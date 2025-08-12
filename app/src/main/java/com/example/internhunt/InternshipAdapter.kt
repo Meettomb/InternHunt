@@ -7,10 +7,13 @@ import android.view.ViewGroup
 import android.view.ViewParent
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.view.menu.MenuView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.firebase.firestore.FirebaseFirestore
+import android.content.Context
+
 
 class InternshipAdapter(private val internship: List<InternshipPostData>,
                         private val onItemClick: (InternshipPostData, String?, String?) -> Unit ):
@@ -26,6 +29,8 @@ class InternshipAdapter(private val internship: List<InternshipPostData>,
         val location = itemView.findViewById<TextView>(R.id.Location)
         val internshipType = itemView.findViewById<TextView>(R.id.internshipType)
         val internshipTime = itemView.findViewById<TextView>(R.id.internshipTime)
+        val hidePost = itemView.findViewById<ImageView>(R.id.hidePost)
+        val bookmark = itemView.findViewById<ImageView>(R.id.bookmark)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): InternshipViewHolder {
@@ -43,7 +48,7 @@ class InternshipAdapter(private val internship: List<InternshipPostData>,
         holder.internshipTime.text = item.internshipTime
 
         val db = FirebaseFirestore.getInstance()
-        db.collection("Users").document(item.companyId) // still fetch by companyId
+        db.collection("Users").document(item.companyId)
             .get()
             .addOnSuccessListener { doc ->
                 if (doc.exists()) {
@@ -58,7 +63,6 @@ class InternshipAdapter(private val internship: List<InternshipPostData>,
                             .into(holder.companyImage)
                     }
 
-                    // ✅ Save using internship post id, since that's what you want to pass later
                     companyCache[item.id] = Pair(companyName, profileImageUrl)
                 } else {
                     holder.companyName.text = "Company not found"
@@ -68,12 +72,47 @@ class InternshipAdapter(private val internship: List<InternshipPostData>,
                 holder.companyName.text = "Error loading company"
             }
 
-        // ✅ Pass internship post id to click handler
+        // ✅ Click on entire item
         holder.itemView.setOnClickListener {
             val cachedData = companyCache[item.id]
             onItemClick(item, cachedData?.first, cachedData?.second)
         }
+
+        // ✅ Click on hidePost icon
+        holder.hidePost.setOnClickListener {
+            val prefs = holder.itemView.context.getSharedPreferences("UserSession", Context.MODE_PRIVATE)
+            val currentUserId = prefs.getString("userid", null)
+
+            if (currentUserId != null) {
+                db.collection("Users")
+                    .document(currentUserId)
+                    .update("hide_post", com.google.firebase.firestore.FieldValue.arrayUnion(item.id))
+                    .addOnSuccessListener {
+                        Toast.makeText(holder.itemView.context, "Post hidden", Toast.LENGTH_SHORT).show()
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(holder.itemView.context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
+            }
+        }
+
+        holder.bookmark.setOnClickListener {
+            val prefs = holder.itemView.context.getSharedPreferences("UserSession", Context.MODE_PRIVATE)
+            val currentUserId = prefs.getString("userid", null)
+            if (currentUserId != null) {
+                db.collection("Users")
+                    .document(currentUserId)
+                    .update("bookmark", com.google.firebase.firestore.FieldValue.arrayUnion(item.id))
+                    .addOnSuccessListener {
+                        Toast.makeText(holder.itemView.context, "Post bookmarked", Toast.LENGTH_SHORT).show()
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(holder.itemView.context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
+            }
+        }
     }
+
 
 
     override fun getItemCount(): Int = internship.size
