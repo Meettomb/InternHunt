@@ -5,7 +5,9 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.CheckBox
 import android.widget.EditText
@@ -40,6 +42,8 @@ class CompanyLists : AppCompatActivity() {
     private lateinit var adapter: UsersAdapter
     private val companyLists = ArrayList<Users>()
 
+    private lateinit var search_bar: EditText
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //        enableEdgeToEdge()
@@ -61,6 +65,7 @@ class CompanyLists : AppCompatActivity() {
         usernameText = findViewById(R.id.UserName)
         profile_drawer = findViewById(R.id.profile_drawer)
         drawerLayout = findViewById(R.id.drawer_layout)
+        search_bar = findViewById(R.id.search_bar)
 
         recyclerView = findViewById(R.id.recyclerView)
         adapter = UsersAdapter(companyLists) { selectedCompany ->
@@ -147,12 +152,12 @@ class CompanyLists : AppCompatActivity() {
         }
 
         findViewById<LinearLayout>(R.id.BottomSearchButton).setOnClickListener {
-            val searchBar = findViewById<EditText>(R.id.search_bar)
-            searchBar.requestFocus()
+            search_bar = findViewById(R.id.search_bar)
+            search_bar.requestFocus()
 
             // Open the keyboard
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.showSoftInput(searchBar, InputMethodManager.SHOW_IMPLICIT)
+            imm.showSoftInput(search_bar, InputMethodManager.SHOW_IMPLICIT)
         }
 
         onBackPressedDispatcher.addCallback(this) {
@@ -228,6 +233,21 @@ class CompanyLists : AppCompatActivity() {
             finish()
         }
 
+        search_bar.setOnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH ||
+                (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)) {
+
+                val query = search_bar.text.toString().trim()
+                if (query.isNotEmpty()) {
+                    val intent = Intent(this, SearchResult::class.java)
+                    intent.putExtra("searchQuery", query)
+                    startActivity(intent)
+                }
+                true
+            } else {
+                false
+            }
+        }
 
 
 
