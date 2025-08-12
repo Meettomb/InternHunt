@@ -10,7 +10,9 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.util.Log
+import android.view.KeyEvent
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.CheckBox
@@ -68,6 +70,7 @@ class Home : AppCompatActivity() {
     private val filteredList = ArrayList<InternshipPostData>()    // list to show on RecyclerView
 
     private lateinit var noDataText: TextView
+    private lateinit var search_bar: EditText
 
 
 
@@ -111,6 +114,7 @@ class Home : AppCompatActivity() {
         applyButton = findViewById(R.id.applyButton)
         clearButton = findViewById(R.id.clearButton)
         noDataText = findViewById(R.id.noDataText)
+        search_bar = findViewById(R.id.search_bar)
 
 
         // Get session
@@ -265,12 +269,12 @@ class Home : AppCompatActivity() {
         }
 
         findViewById<LinearLayout>(R.id.BottomSearchButton).setOnClickListener {
-            val searchBar = findViewById<EditText>(R.id.search_bar)
-            searchBar.requestFocus()
+            search_bar = findViewById(R.id.search_bar)
+            search_bar.requestFocus()
 
             // Open the keyboard
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.showSoftInput(searchBar, InputMethodManager.SHOW_IMPLICIT)
+            imm.showSoftInput(search_bar, InputMethodManager.SHOW_IMPLICIT)
         }
 
 
@@ -357,6 +361,25 @@ class Home : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
+
+
+        search_bar.setOnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH ||
+                (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)) {
+
+                val query = search_bar.text.toString().trim()
+                if (query.isNotEmpty()) {
+                    val intent = Intent(this, SearchResult::class.java)
+                    intent.putExtra("searchQuery", query)
+                    startActivity(intent)
+                }
+                true
+            } else {
+                false
+            }
+        }
+
+
 
     }
 
@@ -481,7 +504,4 @@ class Home : AppCompatActivity() {
                 }
         }
     }
-
-
-
 }

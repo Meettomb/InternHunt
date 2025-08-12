@@ -25,12 +25,12 @@ class InternshipDetails : AppCompatActivity() {
     private lateinit var tvTitle: TextView
     private lateinit var tvCompany: TextView
     private lateinit var tvLocation: TextView
+    private lateinit var tvTiming: TextView
+    private lateinit var tvInternshipType: TextView
+    private lateinit var tvOpening: TextView
     private lateinit var tvStipend: TextView
     private lateinit var tvDuration: TextView
-//    private lateinit var tvSkills: TextView
-//    private lateinit var tvResponsibilities: TextView
     private lateinit var tvDescription: TextView
-//    private lateinit var tvPerks: TextView
     private lateinit var tvDeadline: TextView
     private lateinit var btnApply: Button
     private lateinit var tvCompanyName: TextView
@@ -64,6 +64,9 @@ class InternshipDetails : AppCompatActivity() {
         tvStipend = findViewById(R.id.tvStipend)
         tvDuration = findViewById(R.id.tvDuration)
         tvDescription = findViewById(R.id.tvDescription)
+        tvTiming = findViewById(R.id.tvTiming)
+        tvOpening = findViewById(R.id.tvOpening)
+        tvInternshipType = findViewById(R.id.tvInternshipType)
         tvDeadline = findViewById(R.id.tvDeadline)
         btnApply = findViewById(R.id.btnApply)
         tvCompanyName = findViewById(R.id.tvCompanyName)
@@ -114,6 +117,9 @@ class InternshipDetails : AppCompatActivity() {
                         tvLocation.text = "${it.location}"
                         tvStipend.text = "${it.stipend}"
                         tvDuration.text = "${it.duration}"
+                        tvInternshipType.text = "${it.internshipType}"
+                        tvTiming.text = "${it.internshipTime}"
+                        tvOpening.text = "${it.openings}"
                         tvDescription.text = it.description
                         tvDeadline.text = "${it.applicationDeadline}"
 

@@ -122,6 +122,24 @@
                 android:layout_marginTop="4dp"
                 android:visibility="gone"/>
 
+            <!-- Job Description -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Job Description:"
+                android:textColor="@color/primary_text"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginTop="12dp"/>
+
+            <TextView
+                android:id="@+id/tvDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="We are looking for..."
+                android:textColor="@color/secondary_text"
+                android:textSize="14sp"/>
+
             <!-- Location -->
             <TextView
                 android:layout_width="match_parent"
@@ -194,6 +212,66 @@
                 android:textColor="@color/secondary_text"
                 android:textSize="15sp"/>
 
+
+
+            <!-- Timing -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Timing:"
+                android:textColor="@color/primary_text"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:layout_marginTop="8dp"/>
+
+            <TextView
+                android:id="@+id/tvTiming"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Full Time/Part Time"
+                android:textColor="@color/secondary_text"
+                android:textSize="15sp"/>
+
+
+            <!-- Internship Type -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Internship Type:"
+                android:textColor="@color/primary_text"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:layout_marginTop="8dp"/>
+
+            <TextView
+                android:id="@+id/tvInternshipType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="On site"
+                android:textColor="@color/secondary_text"
+                android:textSize="15sp"/>
+
+
+            <!-- Opening -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Opening:"
+                android:textColor="@color/primary_text"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:layout_marginTop="8dp"/>
+
+            <TextView
+                android:id="@+id/tvOpening"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="3"
+                android:textColor="@color/secondary_text"
+                android:textSize="15sp"/>
+
+
+
             <!-- Skills -->
             <TextView
                 android:layout_width="match_parent"
@@ -232,23 +310,7 @@
                 android:paddingStart="12dp">
             </LinearLayout>
 
-            <!-- Job Description -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Job Description:"
-                android:textColor="@color/primary_text"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_marginTop="12dp"/>
 
-            <TextView
-                android:id="@+id/tvDescription"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="We are looking for..."
-                android:textColor="@color/secondary_text"
-                android:textSize="14sp"/>
 
             <!-- Perks -->
             <TextView
