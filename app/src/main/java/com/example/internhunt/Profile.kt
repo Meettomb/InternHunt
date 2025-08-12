@@ -579,12 +579,22 @@ class Profile : AppCompatActivity() {
         var isValid = true
 
         val username = usernameEdit.text.toString().trim()
+
         val dobDate = birthDateEdit.text.toString().trim()
         val dobMonth = birthMonthEdit.text.toString().trim()
         val dobYear = birthYearEdit.text.toString().trim()
+
         val state = stateEdit.text.toString().trim()
         val city = cityEdit.text.toString().trim()
         val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+
+        // ✅ Always store in DD-MM-YYYY format with leading zeros
+        val dateOfBirth = String.format(
+            "%02d-%02d-%04d",
+            dobDate.toIntOrNull() ?: 0,
+            dobMonth.toIntOrNull() ?: 0,
+            dobYear.toIntOrNull() ?: 0
+        )
 
         // Username
         if (username.isEmpty()) {
@@ -695,19 +705,17 @@ class Profile : AppCompatActivity() {
             else -> ""
         }
 
-        if (isValid){
+        if (isValid) {
             progressBar.visibility = View.VISIBLE
             val prefs = getSharedPreferences("UserSession", MODE_PRIVATE)
             val UserId = prefs.getString("userid", null)
 
-            if (UserId != null){
+            if (UserId != null) {
                 val db = FirebaseFirestore.getInstance()
                 val updateMap = hashMapOf<String, Any>(
                     "headline" to headLineEdit.text.toString(),
                     "username" to username,
-                    "birth_date" to dobDate,
-                    "birth_month" to dobMonth,
-                    "birth_year" to dobYear,
+                    "date_of_birth" to dateOfBirth, // ✅ Stored as DD-MM-YYYY
                     "state" to state,
                     "city" to city,
                     "gender" to gender
@@ -719,8 +727,8 @@ class Profile : AppCompatActivity() {
                         Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_SHORT).show()
 
                         // Update views after saving data
-                        var username = findViewById<TextView>(R.id.username)
-                        username.text = usernameEdit.text.toString()
+                        val usernameText = findViewById<TextView>(R.id.username)
+                        usernameText.text = usernameEdit.text.toString()
                         headline.text = headLineEdit.text.toString()
                         Location.text = "${cityEdit.text.toString()}, ${stateEdit.text.toString()}"
 
@@ -730,12 +738,10 @@ class Profile : AppCompatActivity() {
                         // Hide detail update form
                         detailScrollView.visibility = View.GONE
                     }
-
                     .addOnFailureListener { e ->
                         progressBar.visibility = View.GONE
                         Toast.makeText(this, "Update failed: ${e.message}", Toast.LENGTH_SHORT).show()
                     }
-
             } else {
                 progressBar.visibility = View.GONE
                 Toast.makeText(this, "User ID not found in session", Toast.LENGTH_SHORT).show()
@@ -744,6 +750,7 @@ class Profile : AppCompatActivity() {
 
         return isValid
     }
+
 
     private fun loadUserProfile(userId: String) {
         val db = FirebaseFirestore.getInstance()
@@ -801,7 +808,6 @@ class Profile : AppCompatActivity() {
 
 
                         }
-
 
                         loadUserSkills(userId)
                         loadEducation(userId)
