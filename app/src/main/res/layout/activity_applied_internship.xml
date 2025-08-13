@@ -81,19 +81,36 @@
 
         <!-- RecyclerView -->
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewAppliedInternship"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginHorizontal="5dp"
-            android:layout_marginTop="3dp"
-            android:clipToPadding="false"
-            app:layout_constraintBottom_toTopOf="@id/bottom_nav"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
             app:layout_constraintTop_toBottomOf="@id/Header"
-            app:layout_constraintVertical_bias="0.0" />
+            android:layout_marginHorizontal="5dp"
+            android:layout_marginTop="3dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:text="Applied Internships"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:textColor="@color/primary_text"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewAppliedInternship"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:clipToPadding="false"
+                android:layout_marginHorizontal="5dp"
+                android:layout_marginVertical="8dp"/>
+        </LinearLayout>
+
 
         <FrameLayout
             android:id="@+id/bottom_sheet_overlay"
