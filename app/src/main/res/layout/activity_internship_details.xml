@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".InternshipDetails">
+
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -35,7 +43,7 @@
                     android:layout_height="40dp"
                     android:layout_gravity="center_vertical"
                     android:src="@drawable/back"
-                    app:tint="@color/primary_color"/>
+                    app:tint="@color/primary_color" />
 
                 <!-- Spacer -->
                 <View
@@ -50,18 +58,17 @@
                     android:layout_height="30dp"
                     android:layout_gravity="center_vertical"
                     android:src="@drawable/bookmark"
-                    app:tint="@color/primary_color"/>
+                    app:tint="@color/primary_color" />
             </LinearLayout>
-
 
 
             <LinearLayout
                 android:id="@+id/companySection"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingTop="16dp"
-                android:gravity="center_vertical">
+                android:paddingTop="16dp">
 
                 <FrameLayout
                     android:id="@+id/CompanyLogoFrameLayout"
@@ -84,35 +91,35 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_weight="1">
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/tvCompanyName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Company Name"
+                        android:textColor="@color/primary_text"
                         android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/primary_text" />
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/tvCompanyEmail"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Email"
-                        android:textSize="14sp"
-                        android:textColor="@color/secondary_text" />
+                        android:textColor="@color/secondary_text"
+                        android:textSize="14sp" />
 
                     <TextView
                         android:id="@+id/tvCompanyUrl"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Website URL"
-                        android:textSize="14sp"
-                        android:textColor="@color/primary_color"
                         android:clickable="true"
-                        android:focusable="true" />
+                        android:focusable="true"
+                        android:text="Website URL"
+                        android:textColor="@color/primary_color"
+                        android:textSize="14sp" />
 
                 </LinearLayout>
 
@@ -131,32 +138,32 @@
                 android:id="@+id/tvTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:text="C# Developer"
-                android:textStyle="bold"
-                android:textSize="24sp"
                 android:textColor="@color/primary_text"
-                android:layout_marginTop="16dp" />
+                android:textSize="24sp"
+                android:textStyle="bold" />
 
             <!-- Company -->
             <TextView
                 android:id="@+id/tvCompany"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Company Name"
-                android:textSize="16sp"
-                android:textColor="@color/black"
                 android:layout_marginTop="4dp"
-                android:visibility="gone"/>
+                android:text="Company Name"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:visibility="gone" />
 
             <!-- Job Description -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
                 android:text="Job Description:"
                 android:textColor="@color/primary_text"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_marginTop="12dp"/>
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tvDescription"
@@ -164,17 +171,17 @@
                 android:layout_height="wrap_content"
                 android:text="We are looking for..."
                 android:textColor="@color/secondary_text"
-                android:textSize="14sp"/>
+                android:textSize="14sp" />
 
             <!-- Location -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Location: "
                 android:textColor="@color/primary_text"
                 android:textSize="15sp"
-                android:textStyle="bold"
-                android:text="Location: "
-                android:layout_marginTop="8dp"/>
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tvLocation"
@@ -182,17 +189,18 @@
                 android:layout_height="wrap_content"
                 android:text="Ahmedabad, Gujarat"
                 android:textColor="@color/secondary_text"
-                android:textSize="15sp"/>
+                android:textSize="15sp" />
 
             <!-- Degree Eligibility-->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
                 android:text="Degree Eligibility:"
                 android:textColor="@color/primary_text"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_marginTop="12dp"/>
+                android:textStyle="bold" />
+
             <LinearLayout
                 android:id="@+id/degreeEligibility"
                 android:layout_width="match_parent"
@@ -206,11 +214,11 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:text="Stipend:"
                 android:textColor="@color/primary_text"
                 android:textSize="15sp"
-                android:textStyle="bold"
-                android:layout_marginTop="8dp"/>
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tvStipend"
@@ -218,17 +226,17 @@
                 android:layout_height="wrap_content"
                 android:text="₹6000/month"
                 android:textColor="@color/secondary_text"
-                android:textSize="15sp"/>
+                android:textSize="15sp" />
 
             <!-- Duration -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:text="Duration:"
                 android:textColor="@color/primary_text"
                 android:textSize="15sp"
-                android:textStyle="bold"
-                android:layout_marginTop="8dp"/>
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tvDuration"
@@ -236,19 +244,18 @@
                 android:layout_height="wrap_content"
                 android:text="6 Months"
                 android:textColor="@color/secondary_text"
-                android:textSize="15sp"/>
-
+                android:textSize="15sp" />
 
 
             <!-- Timing -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:text="Timing:"
                 android:textColor="@color/primary_text"
                 android:textSize="15sp"
-                android:textStyle="bold"
-                android:layout_marginTop="8dp"/>
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tvTiming"
@@ -256,18 +263,18 @@
                 android:layout_height="wrap_content"
                 android:text="Full Time/Part Time"
                 android:textColor="@color/secondary_text"
-                android:textSize="15sp"/>
+                android:textSize="15sp" />
 
 
             <!-- Internship Type -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:text="Internship Type:"
                 android:textColor="@color/primary_text"
                 android:textSize="15sp"
-                android:textStyle="bold"
-                android:layout_marginTop="8dp"/>
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tvInternshipType"
@@ -275,18 +282,18 @@
                 android:layout_height="wrap_content"
                 android:text="On site"
                 android:textColor="@color/secondary_text"
-                android:textSize="15sp"/>
+                android:textSize="15sp" />
 
 
             <!-- Opening -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:text="Opening:"
                 android:textColor="@color/primary_text"
                 android:textSize="15sp"
-                android:textStyle="bold"
-                android:layout_marginTop="8dp"/>
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tvOpening"
@@ -294,19 +301,18 @@
                 android:layout_height="wrap_content"
                 android:text="3"
                 android:textColor="@color/secondary_text"
-                android:textSize="15sp"/>
-
+                android:textSize="15sp" />
 
 
             <!-- Skills -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
                 android:text="Skills:"
                 android:textColor="@color/primary_text"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_marginTop="12dp"/>
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:id="@+id/skillsContainer"
@@ -322,31 +328,29 @@
                 android:id="@+id/ResponsibilitiesTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
                 android:text="Responsibilities:"
                 android:textColor="@color/primary_text"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_marginTop="12dp"/>
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:id="@+id/responsibilitiesContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingStart="12dp">
-            </LinearLayout>
-
+                android:paddingStart="12dp"></LinearLayout>
 
 
             <!-- Perks -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
                 android:text="Perks:"
                 android:textColor="@color/primary_text"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_marginTop="12dp"/>
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:id="@+id/perksContainer"
@@ -362,11 +366,11 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
                 android:text="Deadline:"
                 android:textColor="@color/warning_color"
                 android:textSize="15sp"
-                android:textStyle="bold"
-                android:layout_marginTop="12dp"/>
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tvDeadline"
@@ -374,21 +378,112 @@
                 android:layout_height="wrap_content"
                 android:text="10/8/2025"
                 android:textColor="@color/warning_color"
-                android:textSize="15sp"/>
+                android:textSize="15sp" />
 
             <!-- Apply Button -->
             <Button
                 android:id="@+id/btnApply"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Apply Now"
                 android:layout_marginTop="16dp"
                 android:backgroundTint="@color/primary_color"
+                android:text="Apply Now"
                 android:textColor="@android:color/white" />
 
         </LinearLayout>
     </ScrollView>
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/applyConstraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#22000000"
+        android:paddingVertical="15dp"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/innerLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:background="@color/background_light"
+            android:paddingHorizontal="15dp">
+
+            <TextView
+                android:id="@+id/innerLayoutGradLine"
+                android:layout_width="50dp"
+                android:layout_height="5dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/rounded_button"/>
+
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="Apply For Internship"
+                android:textColor="@color/primary_text"
+                android:textSize="18dp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnUploadPdf"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/primary_color"
+                android:drawableLeft="@android:drawable/ic_menu_upload"
+                android:padding="12dp"
+                android:text="Upload PDF"
+                android:textColor="@android:color/white" />
+
+            <TextView
+                android:id="@+id/btnUploadPdfError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TextView"
+                android:textColor="@color/error_color"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/pdfFileName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TextView"
+                android:textColor="@color/secondary_text"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/tvApply"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/rounded_button"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:padding="12dp"
+                android:text="Apply"
+                android:textColor="@android:color/white"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminateTint="#0E64D2"
+        android:visibility="gone" />
+
+</FrameLayout>
