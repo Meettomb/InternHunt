@@ -4,14 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.CheckBox
 import android.widget.EditText
-import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -30,8 +27,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.firebase.firestore.FirebaseFirestore
 
-class CompanyLists : AppCompatActivity() {
-
+class AppliedInternship : AppCompatActivity() {
     private lateinit var userImageView: ImageView
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var logoutButton: TextView
@@ -39,15 +35,17 @@ class CompanyLists : AppCompatActivity() {
     private lateinit var usernameText: TextView
     private lateinit var profile_drawer: GridLayout
     private lateinit var recyclerView: RecyclerView
-    private lateinit var adapter: UsersAdapter
-    private val companyLists = ArrayList<Users>()
+
+    private lateinit var appliedInternshipAdapter: AppliedInternshipAdapter
+    private val internshipList = mutableListOf<InternshipApplications>()
+
 
     private lateinit var search_bar: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //        enableEdgeToEdge()
-        setContentView(R.layout.activity_company_lists)
+        setContentView(R.layout.activity_applied_internship)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             window.statusBarColor = ContextCompat.getColor(this, R.color.white)
@@ -57,8 +55,6 @@ class CompanyLists : AppCompatActivity() {
             window.statusBarColor = ContextCompat.getColor(this, R.color.black)
         }
 
-
-
         userImageView = findViewById(R.id.UserProfileImage)
         userImageView2 = findViewById(R.id.UserProfileImage2)
         logoutButton = findViewById(R.id.LogoutButton)
@@ -67,21 +63,21 @@ class CompanyLists : AppCompatActivity() {
         drawerLayout = findViewById(R.id.drawer_layout)
         search_bar = findViewById(R.id.search_bar)
 
-        recyclerView = findViewById(R.id.recyclerView)
-        adapter = UsersAdapter(companyLists) { selectedCompany ->
-            val intent = Intent(this, CompanyDetail::class.java)
-            intent.putExtra("companyId", selectedCompany.id)
-            startActivity(intent)
-        }
-
-        recyclerView.adapter = adapter
+        recyclerView = findViewById(R.id.recyclerViewAppliedInternship) // your RecyclerView id
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-
+        appliedInternshipAdapter = AppliedInternshipAdapter(internshipList) { post, companyName, imageUrl ->
+            val intent = Intent(this, InternshipDetails::class.java)
+            intent.putExtra("id", post.postId)
+            startActivity(intent)
+        }
+        recyclerView.adapter = appliedInternshipAdapter
 
         // Get session
         val prefs = getSharedPreferences("UserSession", Context.MODE_PRIVATE)
         val userId = prefs.getString("userid", null)
+
+        val db = FirebaseFirestore.getInstance()
 
         // Check if session exists
         if (userId == null) {
@@ -91,11 +87,7 @@ class CompanyLists : AppCompatActivity() {
             return
         }
 
-        // Fetch user from Firestore
-        val db = FirebaseFirestore.getInstance()
         val userRef = db.collection("Users").document(userId)
-        LoadCompanys()
-
 
         userImageView.setOnClickListener {
             drawerLayout.openDrawer(GravityCompat.START)
@@ -150,9 +142,9 @@ class CompanyLists : AppCompatActivity() {
         }
 
         findViewById<LinearLayout>(R.id.BottomCompanyButton).setOnClickListener {
-            LoadCompanys()
+            var intent = Intent(this, CompanyLists::class.java)
+            startActivity(intent)
         }
-
 
         findViewById<LinearLayout>(R.id.BottomBookmarkButton).setOnClickListener {
             var intent = Intent(this, Bookmark::class.java)
@@ -176,10 +168,6 @@ class CompanyLists : AppCompatActivity() {
             }
         }
 
-
-
-
-
         userRef.addSnapshotListener { doc, error ->
             if (error != null) {
                 Toast.makeText(this, "Error: ${error.localizedMessage}", Toast.LENGTH_LONG).show()
@@ -198,6 +186,9 @@ class CompanyLists : AppCompatActivity() {
                         .load(imageUrl)
                         .into(userImageView2)
                 }
+
+                loadAppliedPost(userId, db)
+
                 val userName = doc.getString("username")
                 val companyName = doc.getString("company_name")
                 val role = doc.getString("role")
@@ -207,7 +198,6 @@ class CompanyLists : AppCompatActivity() {
                         usernameText.text = userName
                     }
                     findViewById<TextView>(R.id.nav_add_post).visibility = View.GONE
-//                            findViewById<TextView>(R.id.MyPosts).visibility = View.GONE
                 }
                 else if(role == "Company"){
                     if (!companyName.isNullOrEmpty()){
@@ -259,6 +249,7 @@ class CompanyLists : AppCompatActivity() {
 
 
 
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -266,29 +257,39 @@ class CompanyLists : AppCompatActivity() {
         }
     }
 
-    private fun LoadCompanys() {
-        val db2 = FirebaseFirestore.getInstance()
-        db2.collection("Users")
-            .whereEqualTo("role", "Company")
-            .get()
-            .addOnSuccessListener { documents ->
-                companyLists.clear()
-                for (doc in documents) {
-                    val companyL = doc.toObject(Users::class.java)
-                    companyLists.add(companyL)
+    private fun loadAppliedPost(userId: String, db: FirebaseFirestore) {
+        val userRef = db.collection("Users").document(userId)
+
+        // First, get the list of removed posts
+        userRef.get().addOnSuccessListener { userDoc ->
+            val removedPosts = userDoc.get("removed_applied_posts") as? List<String> ?: emptyList()
+
+            db.collection("InternshipApplications")
+                .whereEqualTo("userId", userId)
+                .get()
+                .addOnSuccessListener { querySnapshot ->
+                    internshipList.clear()
+                    if (querySnapshot.isEmpty) {
+                        Toast.makeText(this, "No Applied Post", Toast.LENGTH_SHORT).show()
+                        appliedInternshipAdapter.notifyDataSetChanged()
+                        return@addOnSuccessListener
+                    }
+
+                    for (document in querySnapshot) {
+                        val internshipApplication = document.toObject(InternshipApplications::class.java)
+                        // Skip if this post id is in removed_applied_posts
+                        if (!removedPosts.contains(internshipApplication.id)) {
+                            internshipList.add(internshipApplication)
+                        }
+                    }
+
+                    appliedInternshipAdapter.notifyDataSetChanged()
                 }
-                adapter.notifyDataSetChanged()
-            }
-            .addOnFailureListener { exception ->
-                Toast.makeText(this, "Error: ${exception.localizedMessage}", Toast.LENGTH_LONG).show()
-            }
-
-        Log.d("LoadCompanys", "Fetched ${companyLists.size} companies")
-
+                .addOnFailureListener { exception ->
+                    Toast.makeText(this, "Error: ${exception.localizedMessage}", Toast.LENGTH_LONG).show()
+                }
+        }
     }
 
 
-
 }
-
-

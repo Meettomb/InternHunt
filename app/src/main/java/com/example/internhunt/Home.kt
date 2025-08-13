@@ -245,7 +245,8 @@ class Home : AppCompatActivity() {
         }
 
         findViewById<TextView>(R.id.history).setOnClickListener {
-            // Handle navigation to Update Details screen
+            var intent = Intent(this, AppliedInternship::class.java)
+            startActivity(intent)
         }
 
         findViewById<TextView>(R.id.notification).setOnClickListener {

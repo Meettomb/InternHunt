@@ -26,6 +26,10 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import java.util.Locale
+import java.text.SimpleDateFormat
+import java.util.Date
+
 
 class InternshipDetails : AppCompatActivity() {
 
@@ -134,6 +138,8 @@ class InternshipDetails : AppCompatActivity() {
             .addOnSuccessListener { document ->
                 if (document.exists()){
                     companyId = document.getString("companyId")
+                    var applicationDeadline = document.getString("applicationDeadline")
+                    Log.d("TAG", "applicationDeadline: $applicationDeadline")
                 }
             }
 
@@ -142,9 +148,40 @@ class InternshipDetails : AppCompatActivity() {
             loadInternshipDetails(internshipId)
 
             btnApply.setOnClickListener {
-                applyLayout.visibility = View.VISIBLE
-            }
+                db.collection("internshipPostsData")
+                    .document(internshipId)
+                    .get()
+                    .addOnSuccessListener { document ->
+                        if (document.exists()) {
+                            val applicationDeadlineStr = document.getString("applicationDeadline")
+                            Log.d("TAG", "applicationDeadline: $applicationDeadlineStr")
 
+                            if (!applicationDeadlineStr.isNullOrEmpty()) {
+                                val dateFormat = SimpleDateFormat("dd/M/yyyy", Locale.getDefault())
+                                val deadlineDate = dateFormat.parse(applicationDeadlineStr)
+
+                                if (deadlineDate != null) {
+                                    try {
+                                        val deadlineDate = dateFormat.parse(applicationDeadlineStr)
+                                        if (deadlineDate != null) {
+                                            val currentDate = Date()
+                                            if (currentDate.after(deadlineDate)) {
+                                                Toast.makeText(this, "Application deadline has passed", Toast.LENGTH_SHORT).show()
+                                                return@addOnSuccessListener
+
+                                            } else {
+                                                applyLayout.visibility = View.VISIBLE
+                                            }
+                                        }
+                                    } catch (e: Exception) {
+                                        Log.e("TAG", "Invalid date format: $applicationDeadlineStr", e)
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+            }
 
             btnUploadPdf.setOnClickListener {
                 val intent = Intent(Intent.ACTION_GET_CONTENT)
@@ -154,19 +191,45 @@ class InternshipDetails : AppCompatActivity() {
             }
             // Apply button click validation
             tvApply.setOnClickListener {
-                var isFormValid = true
-                if (selectedPdfUri == null) {
-                    btnUploadPdfError2.text = "Please select a PDF file"
-                    btnUploadPdfError2.visibility = View.VISIBLE
-                    isFormValid = false
-                } else {
-                    btnUploadPdfError2.visibility = View.GONE
-                }
+                db.collection("internshipPostsData")
+                    .document(internshipId)
+                    .get()
+                    .addOnSuccessListener { document ->
+                        if (document.exists()) {
+                            val applicationDeadlineStr = document.getString("applicationDeadline")
+                            Log.d("TAG", "applicationDeadline: $applicationDeadlineStr")
 
-                if (isFormValid) {
-                    uploadPdfAndApply(userId, internshipId, companyId ?: "")
-                }
+                            if (!applicationDeadlineStr.isNullOrEmpty()) {
+                                val dateFormat = SimpleDateFormat("dd/M/yyyy", Locale.getDefault())
+                                val deadlineDate = dateFormat.parse(applicationDeadlineStr)
+
+                                if (deadlineDate != null) {
+                                    val currentDate = Date()
+
+                                    if (currentDate.after(deadlineDate)) {
+                                        Toast.makeText(this, "Application deadline has passed", Toast.LENGTH_SHORT).show()
+                                        return@addOnSuccessListener
+                                    }
+                                }
+                            }
+                        }
+
+                        // Continue validation if deadline not passed
+                        var isFormValid = true
+                        if (selectedPdfUri == null) {
+                            btnUploadPdfError2.text = "Please select a PDF file"
+                            btnUploadPdfError2.visibility = View.VISIBLE
+                            isFormValid = false
+                        } else {
+                            btnUploadPdfError2.visibility = View.GONE
+                        }
+
+                        if (isFormValid) {
+                            uploadPdfAndApply(userId, internshipId, companyId ?: "")
+                        }
+                    }
             }
+
         }
         applyLayout.setOnClickListener {
             applyLayout.visibility = View.GONE

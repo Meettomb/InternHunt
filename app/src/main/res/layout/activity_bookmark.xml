@@ -503,7 +503,7 @@
                     android:drawablePadding="12dp"
                     android:paddingHorizontal="5dp"
                     android:paddingVertical="10dp"
-                    android:text="Applied Jobs"
+                    android:text="Applied Internship"
                     android:textColor="@color/secondary_text"
                     android:textSize="18sp" />
 
