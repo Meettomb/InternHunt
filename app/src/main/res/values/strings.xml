@@ -22,4 +22,33 @@
     <string name="menu_slideshow">Slideshow</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="terms_and_conditions_text">
+        <![CDATA[
+            Welcome to InternHunt!<br><br>
+            1. <b>Eligibility:</b> Only users who are 18 years or older may apply for internships.<br><br>
+            2. <b>Account:</b> Users must provide accurate information. Sharing accounts is prohibited.<br><br>
+            3. <b>Application Process:</b> We are not responsible for the selection decisions of companies.<br><br>
+            4. <b>Data Privacy:</b> Your data will be used only for internship matching and notifications.<br><br>
+            5. <b>Prohibited Conduct:</b> Users must not submit false information or spam companies.<br><br>
+            6. <b>Termination:</b> We may suspend or terminate accounts violating our rules.<br><br>
+            By using InternHunt, you agree to these terms and conditions.
+        ]]>
+    </string>
+
+    <string name="privacy_policy_text">
+        <![CDATA[
+            Welcome to InternHunt!<br><br>
+            1. <b>Information Collection:</b> We collect information you provide during registration and usage, including name, email, and preferences.<br><br>
+            2. <b>Usage of Information:</b> Collected information is used only to match you with relevant internships and send notifications.<br><br>
+            3. <b>Data Sharing:</b> We do not share your personal information with third parties without your consent, except for legal requirements.<br><br>
+            4. <b>Cookies & Analytics:</b> We may use cookies and analytics to improve the app experience.<br><br>
+            5. <b>Security:</b> We implement reasonable measures to protect your data but cannot guarantee complete security.<br><br>
+            6. <b>Changes to Policy:</b> We may update this privacy policy from time to time. Continued use of the app indicates acceptance of changes.<br><br>
+            By using InternHunt, you agree to this privacy policy.
+        ]]>
+    </string>
+
+
+
 </resources>

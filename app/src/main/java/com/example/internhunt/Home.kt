@@ -231,7 +231,8 @@ class Home : AppCompatActivity() {
 
 
         findViewById<TextView>(R.id.nav_security).setOnClickListener {
-            // Handle navigation to Update Details screen
+            var intent = Intent(this, Security::class.java)
+            startActivity(intent)
         }
 
         findViewById<TextView>(R.id.nav_add_post).setOnClickListener {
