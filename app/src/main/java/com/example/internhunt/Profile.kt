@@ -834,6 +834,11 @@ class Profile : AppCompatActivity() {
                         addExperience.visibility = if (experienceList.isNotEmpty()) View.GONE else View.VISIBLE
 
 
+                        var skillLists = doc.get("skill") as? List<String> ?: emptyList()
+                        if (skillLists.isEmpty()){
+                            var SkillSection = findViewById<LinearLayout>(R.id.SkillSection)
+                            SkillSection.visibility = View.GONE
+                        }
 
 
                     } else if (role == "Company") {
@@ -936,6 +941,7 @@ class Profile : AppCompatActivity() {
                     Log.d("loadUserSkills", "No skills found in document.")
                     Toast.makeText(this, "No skills found", Toast.LENGTH_SHORT).show()
                     skillsRecyclerView.visibility = View.GONE
+
                 }
             }
             .addOnFailureListener { e ->
