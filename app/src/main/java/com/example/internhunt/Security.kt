@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -44,7 +46,8 @@ class Security : AppCompatActivity() {
         }
 
         emailChange.setOnClickListener {
-            // Handle email change click
+            var intent = Intent(this, EmailChange::class.java)
+            startActivity(intent)
         }
 
         passwordChange.setOnClickListener {

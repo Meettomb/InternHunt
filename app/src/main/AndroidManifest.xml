@@ -15,6 +15,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.InternHunt">
         <activity
+            android:name=".new_and_old_email_verify"
+            android:exported="false" />
+        <activity
+            android:name=".EmailChange"
+            android:exported="false" />
+        <activity
             android:name=".PasswordChange"
             android:exported="false" />
         <activity

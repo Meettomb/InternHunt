@@ -451,7 +451,7 @@ class JobPost : AppCompatActivity() {
     }
 
     private fun savePostToFirestore(userId: String) {
-
+        postButton.isEnabled = false
         progressBar.visibility = View.VISIBLE
         val db = FirebaseFirestore.getInstance()
         val newUserRef = db.collection("internshipPostsData").document()
@@ -505,8 +505,10 @@ class JobPost : AppCompatActivity() {
                 Toast.makeText(this, "Internship posted successfully!", Toast.LENGTH_SHORT).show()
                 startActivity(Intent(this, Profile::class.java))
                 finish()
+                postButton.isEnabled = true
             }
             .addOnFailureListener { e ->
+                postButton.isEnabled = true
                 progressBar.visibility = View.GONE
                 Toast.makeText(this, "Failed to post internship: ${e.message}", Toast.LENGTH_LONG).show()
             }
