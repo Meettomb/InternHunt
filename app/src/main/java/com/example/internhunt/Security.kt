@@ -48,7 +48,8 @@ class Security : AppCompatActivity() {
         }
 
         passwordChange.setOnClickListener {
-            // Handle password change click
+            var intent = Intent(this, PasswordChange::class.java)
+            startActivity(intent)
         }
 
         termsAndConditions.setOnClickListener {

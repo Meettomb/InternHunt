@@ -15,6 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.InternHunt">
         <activity
+            android:name=".PasswordChange"
+            android:exported="false" />
+        <activity
             android:name=".Privacy"
             android:exported="false" />
         <activity
