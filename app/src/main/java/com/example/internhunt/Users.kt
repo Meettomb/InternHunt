@@ -31,5 +31,6 @@ data class Users(
     val username: String = "",
     val company_name: String = "",
     val company_url: String = "",
-    val company_description: String = ""
+    val company_description: String = "",
+    val notify_new_internships: Boolean = true
 )

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.widget.PopupWindow
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -17,19 +18,24 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class CompanyHomePage : AppCompatActivity() {
     private var popupWindow: PopupWindow? = null
     private lateinit var UserProfileImage: ImageView
     private lateinit var company_name: TextView
+    private lateinit var post_new_internship: LinearLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // enableEdgeToEdge()
         setContentView(R.layout.activity_company_home_page)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            window.statusBarColor = ContextCompat.getColor(this, R.color.primary_dark)
+            window.statusBarColor = ContextCompat.getColor(this, R.color.card_background)
             window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
         } else {
             // For older versions, use a dark color with light icons
@@ -47,6 +53,11 @@ class CompanyHomePage : AppCompatActivity() {
             startActivity(Intent(this, Login::class.java))
             finish()
             return
+        }
+        if (userId != null) {
+            lodeCompanyDetail(userId)
+            getTotalInternship(userId)
+            getActiveInternship(userId)
         }
 
         when (role) {
@@ -69,15 +80,10 @@ class CompanyHomePage : AppCompatActivity() {
             }
         }
 
-
-
         val headerProfile: View = findViewById(R.id.header_profile)
         UserProfileImage = findViewById(R.id.UserProfileImage)
         company_name = findViewById(R.id.company_name)
-
-        if (userId != null) {
-            lodeCompanyDetail(userId)
-        }
+        post_new_internship = findViewById(R.id.post_new_internship)
 
         headerProfile.setOnClickListener {
             if (popupWindow != null && popupWindow!!.isShowing) {
@@ -86,6 +92,11 @@ class CompanyHomePage : AppCompatActivity() {
                 showProfileMenu(it)
             }
         }
+
+        post_new_internship.setOnClickListener {
+            startActivity(Intent(this, JobPost::class.java))
+        }
+
 
 
 
@@ -158,5 +169,51 @@ class CompanyHomePage : AppCompatActivity() {
             finish()
         }
     }
+
+    private fun getTotalInternship(userId: String){
+        var db = FirebaseFirestore.getInstance()
+        db.collection("internshipPostsData").whereEqualTo("companyId",userId)
+            .addSnapshotListener { querySnapshot, error ->
+                 if (error != null){
+                     Toast.makeText(this, "Fail to get Total Internship", Toast.LENGTH_LONG).show()
+                     return@addSnapshotListener
+                 }
+                 if (querySnapshot != null){
+                    var totalInternship = querySnapshot.size()
+                    var TotalInternship = findViewById<TextView>(R.id.TotalInternship)
+                    TotalInternship.text = totalInternship.toString()
+                 }
+            }
+
+    }
+
+    private fun getActiveInternship(userId: String) {
+        val db = FirebaseFirestore.getInstance()
+        val formatter = SimpleDateFormat("dd/M/yyyy", Locale.getDefault())
+        val now = Date()
+
+        db.collection("internshipPostsData")
+            .whereEqualTo("companyId", userId)
+            .addSnapshotListener { querySnapshot, error ->
+                if (error != null) {
+                    Toast.makeText(this, "Fail to get Active Internship", Toast.LENGTH_LONG).show()
+                    return@addSnapshotListener
+                }
+
+                if (querySnapshot != null) {
+                    val activeInternships = querySnapshot.documents.filter { doc ->
+                        val deadlineStr = doc.getString("applicationDeadline")
+                        val deadlineDate = deadlineStr?.let { formatter.parse(it) }
+                        deadlineDate != null && deadlineDate.after(now)
+                    }
+
+                    val totalActive = activeInternships.size
+                    findViewById<TextView>(R.id.ActiveInternship).text = totalActive.toString()
+                }
+            }
+    }
+
+
+
 
 }

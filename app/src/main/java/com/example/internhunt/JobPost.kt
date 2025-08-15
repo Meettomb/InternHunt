@@ -392,6 +392,36 @@ class JobPost : AppCompatActivity() {
             }
 
 
+            val day = dayStr.toInt()
+            val month = monthStr.toInt()
+            val year = yearStr.toInt()
+
+            val selectedCal = Calendar.getInstance()
+            selectedCal.set(year, month - 1, day) // Month is 0-based in Calendar
+
+            val today = Calendar.getInstance()
+            today.set(Calendar.HOUR_OF_DAY, 0)
+            today.set(Calendar.MINUTE, 0)
+            today.set(Calendar.SECOND, 0)
+            today.set(Calendar.MILLISECOND, 0)
+
+            // Check if date is in the past
+            if (selectedCal.before(today)) {
+                dateError.visibility = View.VISIBLE
+                dateError.text = "Cannot select a past date"
+                isValid = false
+            }
+
+            // Check if date is more than 4 months ahead
+            val maxDate = Calendar.getInstance()
+            maxDate.add(Calendar.MONTH, 4)
+            if (selectedCal.after(maxDate)) {
+                dateError.visibility = View.VISIBLE
+                dateError.text = "Date cannot be more than 4 months from today"
+                isValid = false
+            }
+
+
             if (isValid) {
                 savePostToFirestore(userId.toString())
             }

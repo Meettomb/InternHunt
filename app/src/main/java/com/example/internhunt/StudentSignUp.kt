@@ -289,7 +289,9 @@ class StudentSignUp : AppCompatActivity() {
                                 "username" to userName,
                                 "profile_image_url" to uri.toString(),
                                 "isactive" to true,
-                                "signup_date" to signupDate
+                                "signup_date" to signupDate,
+                                "notify_new_internships" to true
+
                             )
 
                             newUserRef.set(user)
