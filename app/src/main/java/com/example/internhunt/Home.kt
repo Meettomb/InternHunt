@@ -117,17 +117,39 @@ class Home : AppCompatActivity() {
         search_bar = findViewById(R.id.search_bar)
 
 
-        // Get session
+        // Get Session
         val prefs = getSharedPreferences("UserSession", Context.MODE_PRIVATE)
         val userId = prefs.getString("userid", null)
+        val role = prefs.getString("role", null)?.trim()?.lowercase()
 
         // Check if session exists
-        if (userId == null) {
+        if (userId == null || role == null) {
             Toast.makeText(this, "Please login again", Toast.LENGTH_SHORT).show()
             startActivity(Intent(this, Login::class.java))
             finish()
             return
         }
+
+        when (role) {
+            "company" -> {
+                if (this !is CompanyHomePage) { // Prevent reopening the same page
+                    startActivity(Intent(this, CompanyHomePage::class.java))
+                    finish()
+                }
+            }
+            "student" -> {
+                if (this !is Home) { // Prevent reopening same page
+                    startActivity(Intent(this, Home::class.java))
+                    finish()
+                }
+            }
+            else -> {
+                Toast.makeText(this, "Unknown role: $role", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this, Login::class.java))
+                finish()
+            }
+        }
+
 
         // Fetch user from Firestore
         val db = FirebaseFirestore.getInstance()

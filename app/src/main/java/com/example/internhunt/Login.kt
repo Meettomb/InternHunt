@@ -170,19 +170,27 @@ class Login : AppCompatActivity() {
                         emailError.visibility = TextView.VISIBLE
                     } else {
                         val doc = documents.documents[0]
-                        val enteredPassword = passwordEditText.text.toString().trim()
-                        val hashedInput = hashPassword(enteredPassword)
+                        val hashedInput = hashPassword(password)
                         val storedPassword = doc.getString("password")
+
                         if (storedPassword == hashedInput) {
-                            // Save to session using SharedPreferences
+                            val role = doc.getString("role")?.trim()?.lowercase()
+
+                            // Save session
                             val prefs = getSharedPreferences("UserSession", Context.MODE_PRIVATE)
                             prefs.edit()
                                 .putString("userid", doc.id)
                                 .putString("email", email)
+                                .putString("role", role) // Save role too
                                 .apply()
 
                             Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show()
-                            startActivity(Intent(this, Home::class.java))
+
+                            when (role) {
+                                "company" -> startActivity(Intent(this, CompanyHomePage::class.java))
+                                "student" -> startActivity(Intent(this, Home::class.java))
+                                else -> Toast.makeText(this, "Unknown role: $role", Toast.LENGTH_LONG).show()
+                            }
                             finish()
                         } else {
                             passwordError.text = "Incorrect password"
