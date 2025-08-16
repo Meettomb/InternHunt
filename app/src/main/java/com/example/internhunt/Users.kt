@@ -6,6 +6,14 @@ data class EducationEntry(
     val graduation_start_year: String = "",
     val graduation_end_year: String = ""
 )
+data class ProjectsEntry(
+    val description: String = "",
+    val duration: String = "",
+    val link: String = "",
+    val startDate: String = "",
+    val technologies: List<String> = emptyList(),
+    val title: String = "",
+)
 
 data class Users(
     val city: String = "",
@@ -26,7 +34,7 @@ data class Users(
     val signup_date: String = "",
     val state: String = "",
     val skill: List<String> = emptyList(),
-    val project: List<String> = emptyList(),
+    val projects: List<ProjectsEntry> = emptyList(),
     val experience: List<String> = emptyList(),
     val username: String = "",
     val company_name: String = "",

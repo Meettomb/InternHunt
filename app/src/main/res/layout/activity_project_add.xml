@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_light"
+    android:fitsSystemWindows="true"
+    tools:context=".ProjectAdd">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background_light"
+        android:layout_marginTop="15dp">
+
+        <!-- Scrollable Content -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- Header with Back Button -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/backButton"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:contentDescription="Back"
+                        android:src="@drawable/back" />
+
+                    <TextView
+                        android:id="@+id/textView14"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="Add New Project"
+                        android:textColor="@color/primary_text"
+                        android:textSize="22sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- Project Title -->
+                <EditText
+                    android:id="@+id/etProjectTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:background="@drawable/border_all_sides"
+                    android:hint="Project Title"
+                    android:inputType="textCapWords"
+                    android:padding="12dp"
+                    android:textColorHint="@color/secondary_text"
+                    android:textColor="@color/primary_text"/>
+
+                <TextView
+                    android:id="@+id/tvErrorTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/error_color"
+                    android:textSize="12sp"
+                    android:visibility="gone" />
+
+                <!-- Description -->
+                <EditText
+                    android:id="@+id/etDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:background="@drawable/border_all_sides"
+                    android:gravity="top"
+                    android:hint="Description / Overview"
+                    android:inputType="textMultiLine"
+                    android:minLines="3"
+                    android:padding="12dp"
+                    android:textColorHint="@color/secondary_text"
+                    android:textColor="@color/primary_text"/>
+
+                <TextView
+                    android:id="@+id/tvErrorDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/error_color"
+                    android:textSize="12sp"
+                    android:visibility="gone" />
+
+                <!-- Technologies Used -->
+                <EditText
+                    android:id="@+id/etTechnologies"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:background="@drawable/border_all_sides"
+                    android:hint="Technologies / Skills (comma ,)"
+                    android:inputType="textCapWords"
+                    android:padding="12dp"
+                    android:textColorHint="@color/secondary_text"
+                    android:textColor="@color/primary_text" />
+
+                <TextView
+                    android:id="@+id/tvErrorTechnologies"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/error_color"
+                    android:textSize="12sp"
+                    android:visibility="gone" />
+
+
+                <!-- Start Date (Month + Year only) -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Start Date"
+                    android:layout_marginTop="15dp"
+                    android:textColor="@color/secondary_text"
+                    android:textStyle="bold"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <!-- Month -->
+                    <EditText
+                        android:id="@+id/etStartMonth"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/border_all_sides"
+                        android:hint="MM"
+                        android:inputType="number"
+                        android:padding="12dp"
+                        android:textColorHint="@color/secondary_text"
+                        android:textColor="@color/primary_text"
+                        android:maxLength="2"/>
+
+                    <!-- Year -->
+                    <EditText
+                        android:id="@+id/etStartYear"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/border_all_sides"
+                        android:hint="YYYY"
+                        android:inputType="number"
+                        android:padding="12dp"
+                        android:textColorHint="@color/secondary_text"
+                        android:textColor="@color/primary_text"
+                        android:maxLength="4"/>
+                </LinearLayout>
+
+                <!-- Error Text -->
+                <TextView
+                    android:id="@+id/tvStartDateError"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Invalid start date"
+                    android:textColor="@color/error_color"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    android:layout_marginTop="4dp"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="End Date (Optional)"
+                    android:layout_marginTop="15dp"
+                    android:textColor="@color/secondary_text"
+                    android:textStyle="bold"/>
+                <!-- End Date (Month + Year only) -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <!-- Month -->
+                    <EditText
+                        android:id="@+id/etEndMonth"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/border_all_sides"
+                        android:hint="MM"
+                        android:inputType="number"
+                        android:padding="12dp"
+                        android:textColorHint="@color/secondary_text"
+                        android:textColor="@color/primary_text"
+                        android:maxLength="2"/>
+
+                    <!-- Year -->
+                    <EditText
+                        android:id="@+id/etEndYear"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/border_all_sides"
+                        android:hint="YYYY"
+                        android:inputType="number"
+                        android:padding="12dp"
+                        android:textColorHint="@color/secondary_text"
+                        android:textColor="@color/primary_text"
+                        android:maxLength="4"/>
+                </LinearLayout>
+                <TextView
+                    android:id="@+id/tvEndDateError"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Invalid end date"
+                    android:textColor="@color/error_color"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    android:layout_marginTop="4dp"/>
+                <!-- Note below Duration -->
+                <TextView
+                    android:id="@+id/tvNoteDuration"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="Note: If you don’t enter a end date, it will be considered that you are currently working on this project."
+                    android:textSize="12sp"
+                    android:textColor="@color/warning_color"
+                    android:padding="4dp"/>
+
+
+
+                <TextView
+                    android:id="@+id/tvErrorDuration"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/error_color"
+                    android:textSize="12sp"
+                    android:visibility="gone" />
+
+                <!-- Project Link -->
+                <EditText
+                    android:id="@+id/etLink"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:background="@drawable/border_all_sides"
+                    android:hint="Link (GitHub / Live) (Optional)"
+                    android:inputType="textUri"
+                    android:padding="12dp"
+                    android:textColorHint="@color/secondary_text"
+                    android:textColor="@color/primary_text"/>
+
+                <TextView
+                    android:id="@+id/tvErrorLink"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/error_color"
+                    android:textSize="12sp"
+                    android:visibility="gone" />
+
+                <!-- Save Button (TextView styled as Button) -->
+                <TextView
+                    android:id="@+id/btnSave"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/rounded_button"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:padding="14dp"
+                    android:text="Save Project"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+        </ScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Progress Loader -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminateTint="#0E64D2"
+        android:visibility="gone" />
+
+</FrameLayout>

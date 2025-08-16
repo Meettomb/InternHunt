@@ -36,6 +36,7 @@ import androidx.appcompat.app.AlertDialog
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.SetOptions
+import org.w3c.dom.Text
 
 
 class Profile : AppCompatActivity() {
@@ -89,8 +90,6 @@ class Profile : AppCompatActivity() {
     private val skillsList = mutableListOf<String>()
 
     private lateinit var educationContainer: LinearLayout
-//    private lateinit var educationAdapter: EducationAdapter
-//    private val educationList = mutableListOf<String>()
 
     private lateinit var addMoreEducation: ImageView
     private val degrees = arrayOf(
@@ -122,6 +121,8 @@ class Profile : AppCompatActivity() {
         "M.Arch (Master of Architecture)"
     )
 
+
+    private lateinit var projectAdd: TextView
 
 
 
@@ -196,11 +197,8 @@ class Profile : AppCompatActivity() {
         }
         skillsRecyclerView.adapter = skillsAdapter
 
-
         educationContainer = findViewById(R.id.edu_layout)
-
         addMoreEducation = findViewById(R.id.addMoreEducation)
-
         addMoreEducation.setOnClickListener {
             val dialogView = layoutInflater.inflate(R.layout.dialog_add_education, null)
 
@@ -279,6 +277,15 @@ class Profile : AppCompatActivity() {
                 alertDialog.dismiss()
             }
         }
+
+
+        projectAdd = findViewById(R.id.addProjects)
+        projectAdd.setOnClickListener {
+            var intent = Intent(this, ProjectAdd::class.java)
+            startActivity(intent)
+        }
+
+
 
 
 
@@ -372,10 +379,6 @@ class Profile : AppCompatActivity() {
             }
         }
 
-        // Example: Handle click for each option
-        findViewById<TextView>(R.id.addProjects).setOnClickListener {
-            Toast.makeText(this, "Add Projects Clicked", Toast.LENGTH_SHORT).show()
-        }
 
         findViewById<TextView>(R.id.addSkills).setOnClickListener {
             val intent = Intent(this, add_skills::class.java)
@@ -386,9 +389,6 @@ class Profile : AppCompatActivity() {
             startActivity(intent)
         }
 
-        findViewById<TextView>(R.id.addExperience).setOnClickListener {
-            Toast.makeText(this, "Add Experience Clicked", Toast.LENGTH_SHORT).show()
-        }
 
 
 
@@ -755,11 +755,14 @@ class Profile : AppCompatActivity() {
     private fun loadUserProfile(userId: String) {
         val db = FirebaseFirestore.getInstance()
 
-        db.collection("Users").document(userId).get()
-            .addOnSuccessListener { doc ->
+        db.collection("Users").document(userId)
+            .addSnapshotListener { doc, error ->
+                if (error != null) {
+                    Toast.makeText(this, "Error: ${error.localizedMessage}", Toast.LENGTH_LONG).show()
+                    return@addSnapshotListener
+                }
+
                 if (doc != null && doc.exists()) {
-
-
                     val coverImage = findViewById<TextView>(R.id.coverImage)
                     val coverImageView = findViewById<ImageView>(R.id.coverImageView)
                     val back_cover = doc.getString("background_cover_url")
@@ -776,7 +779,6 @@ class Profile : AppCompatActivity() {
                             .load(back_cover)
                             .into(coverImageView)
                     } else {
-                        // Show TextView, hide ImageView
                         coverImage.visibility = View.VISIBLE
                         coverImageView.visibility = View.GONE
                         profile_background_edit_icon.visibility = View.VISIBLE
@@ -785,13 +787,11 @@ class Profile : AppCompatActivity() {
                         upload_cover_text.visibility = View.VISIBLE
                     }
 
-
                     val imageUrl = doc.getString("profile_image_url")
                     if (!imageUrl.isNullOrEmpty()) {
                         Glide.with(this)
                             .load(imageUrl)
                             .into(findViewById(R.id.UserProfileImage2))
-
                     }
 
                     val userName = doc.getString("username")
@@ -804,9 +804,6 @@ class Profile : AppCompatActivity() {
                         if (!userName.isNullOrEmpty()) {
                             username.text = userName
                             usernameEdit.setText(userName)
-
-
-
                         }
 
                         loadUserSkills(userId)
@@ -815,31 +812,19 @@ class Profile : AppCompatActivity() {
                         val sectionAddSection = findViewById<LinearLayout>(R.id.SectionAddSection)
                         val addProjects = findViewById<TextView>(R.id.addProjects)
                         val addSkills = findViewById<TextView>(R.id.addSkills)
-                        val addExperience = findViewById<TextView>(R.id.addExperience)
 
                         val skillList = doc.get("skill") as? List<String> ?: emptyList()
-                        val projectList = doc.get("project") as? List<String> ?: emptyList()
-                        val experienceList = doc.get("experience") as? List<String> ?: emptyList()
+                        val projectList = doc.get("projects") as? List<Map<String, Any>> ?: emptyList()
 
-                        // Hide the entire section if all three have data
-                        if (skillList.isNotEmpty() && projectList.isNotEmpty() && experienceList.isNotEmpty()) {
-                            sectionAddSection.visibility = View.GONE
-                        } else {
-                            sectionAddSection.visibility = View.VISIBLE
-                        }
-
-                        // Hide individual buttons if that data already exists
+                        sectionAddSection.visibility =
+                            if (skillList.isNotEmpty() && projectList.isNotEmpty()) View.GONE else View.VISIBLE
                         addProjects.visibility = if (projectList.isNotEmpty()) View.GONE else View.VISIBLE
                         addSkills.visibility = if (skillList.isNotEmpty()) View.GONE else View.VISIBLE
-                        addExperience.visibility = if (experienceList.isNotEmpty()) View.GONE else View.VISIBLE
 
-
-                        var skillLists = doc.get("skill") as? List<String> ?: emptyList()
-                        if (skillLists.isEmpty()){
-                            var SkillSection = findViewById<LinearLayout>(R.id.SkillSection)
-                            SkillSection.visibility = View.GONE
+                        val skillLists = doc.get("skill") as? List<String> ?: emptyList()
+                        if (skillLists.isEmpty()) {
+                            findViewById<LinearLayout>(R.id.SkillSection).visibility = View.GONE
                         }
-
 
                     } else if (role == "Company") {
                         if (!companyName.isNullOrEmpty()) {
@@ -848,18 +833,11 @@ class Profile : AppCompatActivity() {
                             internshipPostListLayout.visibility = View.VISIBLE
                         }
 
-                        var SectionAddSection = findViewById<LinearLayout>(R.id.SectionAddSection)
-                        SectionAddSection.visibility = View.GONE
-
-                        var SkillSection = findViewById<LinearLayout>(R.id.SkillSection)
-                        SkillSection.visibility = View.GONE
-
+                        findViewById<LinearLayout>(R.id.SectionAddSection).visibility = View.GONE
+                        findViewById<LinearLayout>(R.id.SkillSection).visibility = View.GONE
                     } else {
                         username.text = "Guest"
                     }
-
-
-
 
                     val state = doc.getString("state") ?: ""
                     val city = doc.getString("city") ?: ""
@@ -869,36 +847,27 @@ class Profile : AppCompatActivity() {
                     cityEdit.setText(city)
 
                     val gender = doc.getString("gender") ?: ""
-                    if (gender == "Male") {
-                        genderEdit.check(R.id.MaleRadioButton)
-                    } else if (gender == "Female") {
-                        genderEdit.check(R.id.FemaleRadioButton)
+                    when (gender) {
+                        "Male" -> genderEdit.check(R.id.MaleRadioButton)
+                        "Female" -> genderEdit.check(R.id.FemaleRadioButton)
                     }
 
                     val headlineStr = doc.getString("headline") ?: ""
                     headLineEdit.setText(headlineStr)
-
-                    if (!headlineStr.isNullOrEmpty()) {
-                        headline.text = headlineStr
-                    }
-                    else{
-                        headline.text = "Add Headline"
-                    }
+                    headline.text = if (headlineStr.isNotEmpty()) headlineStr else "Add Headline"
 
                     val dateOfBirth = doc.getString("date_of_birth") ?: ""
                     val dateOfBirtView = findViewById<TextView>(R.id.BirthDate)
                     val birthMonthView = findViewById<TextView>(R.id.BirthMonth)
                     val birthYearView = findViewById<TextView>(R.id.BirthYear)
 
-                    // If date is in format "dd-MM-yyyy"
                     if (dateOfBirth.isNotEmpty() && dateOfBirth.contains("-")) {
                         val parts = dateOfBirth.split("-")
                         if (parts.size == 3) {
-                            dateOfBirtView.text = parts[0]  // Day
-                            birthMonthView.text = parts[1]  // Month
-                            birthYearView.text = parts[2]   // Year
+                            dateOfBirtView.text = parts[0]
+                            birthMonthView.text = parts[1]
+                            birthYearView.text = parts[2]
                         } else {
-                            // fallback if format is wrong
                             dateOfBirtView.text = ""
                             birthMonthView.text = ""
                             birthYearView.text = ""
@@ -908,16 +877,9 @@ class Profile : AppCompatActivity() {
                         birthMonthView.text = ""
                         birthYearView.text = ""
                     }
-
-
-
-
                 } else {
                     Toast.makeText(this, "User not found", Toast.LENGTH_SHORT).show()
                 }
-            }
-            .addOnFailureListener {
-                Toast.makeText(this, "Error: ${it.localizedMessage}", Toast.LENGTH_LONG).show()
             }
     }
 
@@ -1093,10 +1055,7 @@ class Profile : AppCompatActivity() {
             .update("education", FieldValue.arrayUnion(newEducationMap))
             .addOnSuccessListener {
                 Toast.makeText(this, "Education added successfully", Toast.LENGTH_SHORT).show()
-                // Optionally reload your education list here
-//                educationContainer.post {
-//                    hideKeyboard(educationContainer)
-//                }
+
                 hideKeyboard(educationContainer)
                 loadEducation(userId)
             }
