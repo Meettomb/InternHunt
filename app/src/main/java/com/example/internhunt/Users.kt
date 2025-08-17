@@ -1,4 +1,5 @@
 package com.example.internhunt
+import java.io.Serializable
 
 data class EducationEntry(
     val collage_name: String = "",
@@ -8,12 +9,12 @@ data class EducationEntry(
 )
 data class ProjectsEntry(
     val description: String = "",
-    val duration: String = "",
+    val end_date: String = "",
     val link: String = "",
     val startDate: String = "",
     val technologies: List<String> = emptyList(),
     val title: String = "",
-)
+): Serializable
 
 data class Users(
     val city: String = "",

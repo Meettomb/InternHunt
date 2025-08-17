@@ -1,5 +1,6 @@
     package com.example.internhunt
 
+    import android.app.Activity
     import android.content.Context
     import android.content.Intent
     import android.os.Build
@@ -95,6 +96,7 @@
                     Toast.makeText(this, "Project saved successfully!", Toast.LENGTH_SHORT).show()
                     saveProject(userId)
                     hideKeyboard(etProjectTitle)
+                    setResult(Activity.RESULT_OK, intent)
                     finish()
                 }
             }
@@ -228,13 +230,13 @@
             val projectDescription = etDescription.text.toString()
             val projectTechnologiesInput = etTechnologies.text.toString()
             val projectLink = etLink.text.toString()
-            val projectStartDate = etStartMonth.text.toString() + "-" +
+            val projectStartDate = etStartMonth.text.toString() + "/" +
                     etStartYear.text.toString()
 
             val projectEndDate = if (etEndMonth.text.toString().isEmpty() && etEndYear.text.toString().isEmpty()) {
                 "Present"
             } else {
-                etEndMonth.text.toString() + "-" + etEndYear.text.toString()
+                etEndMonth.text.toString() + "/" + etEndYear.text.toString()
             }
 
 

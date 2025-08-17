@@ -1,5 +1,6 @@
 package com.example.internhunt
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -89,6 +90,7 @@ class add_skills : AppCompatActivity() {
 
             if (skillsList.isNotEmpty()) {
                 saveSkills(skillsList)
+                setResult(Activity.RESULT_OK, intent)
             } else {
                 Toast.makeText(this, "Please enter at least one valid skill.", Toast.LENGTH_SHORT).show()
             }
@@ -131,8 +133,7 @@ class add_skills : AppCompatActivity() {
                         .addOnSuccessListener {
                             Toast.makeText(this, "Skills saved successfully!", Toast.LENGTH_SHORT).show()
                             hideKeyboard()
-                            var intent = Intent(this, Profile::class.java)
-                            startActivity(intent)
+
                             finish()
                         }
                         .addOnFailureListener { e ->

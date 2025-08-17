@@ -98,65 +98,78 @@ class CompanyLists : AppCompatActivity() {
 
 
         userImageView.setOnClickListener {
+            hideKeyboard(search_bar)
             drawerLayout.openDrawer(GravityCompat.START)
         }
 
         profile_drawer.setOnClickListener {
             var intent = Intent(this, Profile::class.java)
+            hideKeyboard(search_bar)
             startActivity(intent)
         }
 
         findViewById<TextView>(R.id.nav_home).setOnClickListener {
             var intent = Intent(this, Home::class.java)
+            hideKeyboard(search_bar)
             startActivity(intent)
         }
 
 
         findViewById<TextView>(R.id.nav_security).setOnClickListener {
             var intent = Intent(this, Security::class.java)
+            hideKeyboard(search_bar)
             startActivity(intent)
         }
 
         findViewById<TextView>(R.id.nav_add_post).setOnClickListener {
             var intent = Intent(this, JobPost::class.java)
+            hideKeyboard(search_bar)
             startActivity(intent)
         }
 
         findViewById<TextView>(R.id.bookmark).setOnClickListener {
             var intent = Intent(this, Bookmark::class.java)
+            hideKeyboard(search_bar)
             startActivity(intent)
         }
 
         findViewById<TextView>(R.id.history).setOnClickListener {
             var intent = Intent(this, AppliedInternship::class.java)
+            hideKeyboard(search_bar)
             startActivity(intent)
         }
 
         findViewById<TextView>(R.id.notification).setOnClickListener {
+            hideKeyboard(search_bar)
             // Handle navigation to Update Details screen
         }
 
         findViewById<TextView>(R.id.setting).setOnClickListener {
+            hideKeyboard(search_bar)
             // Handle navigation to Update Details screen
         }
 
         findViewById<TextView>(R.id.help).setOnClickListener {
+            hideKeyboard(search_bar)
             // Handle navigation to Update Details screen
         }
 
 
         findViewById<LinearLayout>(R.id.BottomHomeButton).setOnClickListener {
             var intent = Intent(this, Home::class.java)
+            hideKeyboard(search_bar)
             startActivity(intent)
         }
 
         findViewById<LinearLayout>(R.id.BottomCompanyButton).setOnClickListener {
+            hideKeyboard(search_bar)
             LoadCompanys()
         }
 
 
         findViewById<LinearLayout>(R.id.BottomBookmarkButton).setOnClickListener {
             var intent = Intent(this, Bookmark::class.java)
+            hideKeyboard(search_bar)
             startActivity(intent)
         }
 
@@ -288,7 +301,10 @@ class CompanyLists : AppCompatActivity() {
 
     }
 
-
+    private fun hideKeyboard(view: View) {
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
+    }
 
 }
 

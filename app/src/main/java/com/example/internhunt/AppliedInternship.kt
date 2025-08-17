@@ -90,65 +90,78 @@ class AppliedInternship : AppCompatActivity() {
         val userRef = db.collection("Users").document(userId)
 
         userImageView.setOnClickListener {
+            hideKeyboard(search_bar)
             drawerLayout.openDrawer(GravityCompat.START)
         }
 
         profile_drawer.setOnClickListener {
             var intent = Intent(this, Profile::class.java)
+            hideKeyboard(search_bar)
             startActivity(intent)
         }
 
         findViewById<TextView>(R.id.nav_home).setOnClickListener {
             var intent = Intent(this, Home::class.java)
+            hideKeyboard(search_bar)
             startActivity(intent)
         }
 
 
         findViewById<TextView>(R.id.nav_security).setOnClickListener {
             var intent = Intent(this, Security::class.java)
+            hideKeyboard(search_bar)
             startActivity(intent)
         }
 
         findViewById<TextView>(R.id.nav_add_post).setOnClickListener {
             var intent = Intent(this, JobPost::class.java)
+            hideKeyboard(search_bar)
             startActivity(intent)
         }
 
         findViewById<TextView>(R.id.bookmark).setOnClickListener {
             var intent = Intent(this, Bookmark::class.java)
+            hideKeyboard(search_bar)
             startActivity(intent)
         }
 
         findViewById<TextView>(R.id.history).setOnClickListener {
             var intent = Intent(this, AppliedInternship::class.java)
+            hideKeyboard(search_bar)
             startActivity(intent)
         }
 
         findViewById<TextView>(R.id.notification).setOnClickListener {
             // Handle navigation to Update Details screen
+            hideKeyboard(search_bar)
         }
 
         findViewById<TextView>(R.id.setting).setOnClickListener {
             // Handle navigation to Update Details screen
+            hideKeyboard(search_bar)
         }
 
         findViewById<TextView>(R.id.help).setOnClickListener {
             // Handle navigation to Update Details screen
+            hideKeyboard(search_bar)
         }
 
 
         findViewById<LinearLayout>(R.id.BottomHomeButton).setOnClickListener {
             var intent = Intent(this, Home::class.java)
+            hideKeyboard(search_bar)
             startActivity(intent)
         }
 
         findViewById<LinearLayout>(R.id.BottomCompanyButton).setOnClickListener {
             var intent = Intent(this, CompanyLists::class.java)
+            hideKeyboard(search_bar)
             startActivity(intent)
         }
 
         findViewById<LinearLayout>(R.id.BottomBookmarkButton).setOnClickListener {
             var intent = Intent(this, Bookmark::class.java)
+            hideKeyboard(search_bar)
             startActivity(intent)
         }
 
@@ -291,6 +304,9 @@ class AppliedInternship : AppCompatActivity() {
                 }
         }
     }
-
+    private fun hideKeyboard(view: View) {
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
+    }
 
 }

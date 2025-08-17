@@ -338,6 +338,53 @@
                         android:orientation="vertical" />
                 </LinearLayout>
 
+                <LinearLayout
+                    android:id="@+id/projectLinearLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:orientation="vertical"
+                    android:layout_marginTop="10dp"
+                    android:paddingHorizontal="15dp"
+                    android:paddingVertical="15dp">
+
+                    <!-- Header Row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical"
+                            android:text="Projets"
+                            android:textColor="@color/primary_text"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <ImageView
+                            android:id="@+id/addMoreProjects"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="Add icon"
+                            app:srcCompat="@drawable/plus"
+                            app:tint="@color/primary_color" />
+                    </LinearLayout>
+
+                    <!-- Project Items -->
+                    <LinearLayout
+                        android:id="@+id/project_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+                </LinearLayout>
+
 
             </LinearLayout>
         </ScrollView>
@@ -631,7 +678,7 @@
             android:id="@+id/upload_back_cover_overlay"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/background_light"
+            android:background="#58000000"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent">

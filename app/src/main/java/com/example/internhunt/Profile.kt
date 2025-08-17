@@ -1,7 +1,10 @@
 package com.example.internhunt
 
 import InputFilterMinMax
+import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -20,6 +23,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
@@ -35,6 +39,7 @@ import java.util.Locale
 import androidx.appcompat.app.AlertDialog
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.SetOptions
 import org.w3c.dom.Text
 
@@ -77,12 +82,6 @@ class Profile : AppCompatActivity() {
     private lateinit var detailEditIcon: TextView
     private lateinit var closeUpdateDetail: ImageView
 
-    private lateinit var btnActiveJobs: TextView
-    private lateinit var btnClosedJobs: TextView
-    private lateinit var jobPostsRecyclerView: RecyclerView
-
-    private lateinit var activeJobs: List<InternshipPostData>
-    private lateinit var closedJobs: List<InternshipPostData>
     private lateinit var internshipPostListLayout: LinearLayout
 
     private lateinit var skillsRecyclerView: RecyclerView
@@ -92,6 +91,9 @@ class Profile : AppCompatActivity() {
     private lateinit var educationContainer: LinearLayout
 
     private lateinit var addMoreEducation: ImageView
+    private lateinit var addMoreProjects: ImageView
+    private lateinit var projectLinearLayout: LinearLayout
+    private var profileListener: ListenerRegistration? = null
     private val degrees = arrayOf(
         "B.Tech (Bachelor of Technology)",
         "B.E. (Bachelor of Engineering)",
@@ -123,6 +125,19 @@ class Profile : AppCompatActivity() {
 
 
     private lateinit var projectAdd: TextView
+    private val projectAddLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val prefs = getSharedPreferences("UserSession", Context.MODE_PRIVATE)
+            val userId = prefs.getString("userid", null)
+            if (userId != null) {
+                loadProject(userId)      // Reload projects
+                loadUserSkills(userId)   // Reload skills if needed
+            }
+        }
+    }
+
 
 
 
@@ -222,6 +237,7 @@ class Profile : AppCompatActivity() {
             val saveButton = dialogView.findViewById<TextView>(R.id.saveTextView)
             val cancelButton = dialogView.findViewById<TextView>(R.id.cancelTextView)
 
+
             saveButton.setOnClickListener {
                 val collageName = etCollageName.text.toString().trim()
                 val degreeName = etDegreeName.text.toString().trim()
@@ -280,7 +296,14 @@ class Profile : AppCompatActivity() {
 
 
         projectAdd = findViewById(R.id.addProjects)
+        addMoreProjects = findViewById(R.id.addMoreProjects)
+        projectLinearLayout = findViewById(R.id.projectLinearLayout)
+
         projectAdd.setOnClickListener {
+            var intent = Intent(this, ProjectAdd::class.java)
+            startActivity(intent)
+        }
+        addMoreProjects.setOnClickListener {
             var intent = Intent(this, ProjectAdd::class.java)
             startActivity(intent)
         }
@@ -291,7 +314,7 @@ class Profile : AppCompatActivity() {
 
         // Back Button
         backButton.setOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
+            finish()
         }
 
         // Open panel
@@ -489,10 +512,12 @@ class Profile : AppCompatActivity() {
 
                         // Instantly load new image into ImageView
                         val coverImageView = findViewById<ImageView>(R.id.coverImageView)
-                        Glide.with(this)
-                            .load(downloadUrl)
-                            .centerCrop() // Optional: crop nicely
-                            .into(coverImageView)
+                        if (!isFinishing && !isDestroyed) {
+                            Glide.with(this)
+                                .load(downloadUrl)
+                                .centerCrop() // Optional: crop nicely
+                                .into(coverImageView)
+                        }
 
                         // Hide placeholder and edit icon if needed
                         findViewById<View>(R.id.coverImage).visibility = View.GONE
@@ -775,9 +800,12 @@ class Profile : AppCompatActivity() {
                         update_cover_text.visibility = View.VISIBLE
                         upload_cover_text.visibility = View.GONE
 
-                        Glide.with(this)
-                            .load(back_cover)
-                            .into(coverImageView)
+                        if (!isDestroyed && !isFinishing) {
+                            Glide.with(this)
+                                .load(back_cover)
+                                .centerCrop() // optional
+                                .into(coverImageView)
+                        }
                     } else {
                         coverImage.visibility = View.VISIBLE
                         coverImageView.visibility = View.GONE
@@ -787,12 +815,16 @@ class Profile : AppCompatActivity() {
                         upload_cover_text.visibility = View.VISIBLE
                     }
 
+
                     val imageUrl = doc.getString("profile_image_url")
                     if (!imageUrl.isNullOrEmpty()) {
-                        Glide.with(this)
-                            .load(imageUrl)
-                            .into(findViewById(R.id.UserProfileImage2))
+                        if (!isDestroyed && !isFinishing) {
+                            Glide.with(this)
+                                .load(imageUrl)
+                                .into(findViewById(R.id.UserProfileImage2))
+                        }
                     }
+
 
                     val userName = doc.getString("username")
                     val companyName = doc.getString("company_name")
@@ -808,9 +840,11 @@ class Profile : AppCompatActivity() {
 
                         loadUserSkills(userId)
                         loadEducation(userId)
+                        loadProject(userId)
 
                         val sectionAddSection = findViewById<LinearLayout>(R.id.SectionAddSection)
                         val addProjects = findViewById<TextView>(R.id.addProjects)
+                        val projectLinearLayout = findViewById<LinearLayout>(R.id.projectLinearLayout)
                         val addSkills = findViewById<TextView>(R.id.addSkills)
 
                         val skillList = doc.get("skill") as? List<String> ?: emptyList()
@@ -819,13 +853,13 @@ class Profile : AppCompatActivity() {
                         sectionAddSection.visibility =
                             if (skillList.isNotEmpty() && projectList.isNotEmpty()) View.GONE else View.VISIBLE
                         addProjects.visibility = if (projectList.isNotEmpty()) View.GONE else View.VISIBLE
+                        projectLinearLayout.visibility = if (projectList.isEmpty()) View.GONE else View.VISIBLE
                         addSkills.visibility = if (skillList.isNotEmpty()) View.GONE else View.VISIBLE
 
                         val skillLists = doc.get("skill") as? List<String> ?: emptyList()
                         if (skillLists.isEmpty()) {
                             findViewById<LinearLayout>(R.id.SkillSection).visibility = View.GONE
                         }
-
                     } else if (role == "Company") {
                         if (!companyName.isNullOrEmpty()) {
                             username.text = companyName
@@ -891,16 +925,13 @@ class Profile : AppCompatActivity() {
             .addOnSuccessListener { document ->
                 if (document != null && document.exists()) {
                     val skills = document.get("skill") as? List<String> ?: emptyList()
-                    Log.d("loadUserSkills", "Skills from Firestore: $skills")
 
                     skillsList.clear()
                     skillsList.addAll(skills)
-                    Log.d("loadUserSkills", "skillsList after update: $skillsList")
 
                     skillsRecyclerView.visibility = View.VISIBLE
                     skillsAdapter.notifyDataSetChanged()
                 } else {
-                    Log.d("loadUserSkills", "No skills found in document.")
                     Toast.makeText(this, "No skills found", Toast.LENGTH_SHORT).show()
                     skillsRecyclerView.visibility = View.GONE
 
@@ -912,7 +943,6 @@ class Profile : AppCompatActivity() {
                 skillsRecyclerView.visibility = View.GONE
             }
     }
-
     private fun editSkillAtPosition(position: Int) {
         val skillToEdit = skillsList[position]
 
@@ -958,7 +988,6 @@ class Profile : AppCompatActivity() {
             dialog.dismiss()
         }
     }
-
     private fun saveSkills(updatedSkillsList: List<String>) {
         val prefs = getSharedPreferences("UserSession", MODE_PRIVATE)
         val userId = prefs.getString("userid", null)
@@ -1033,15 +1062,7 @@ class Profile : AppCompatActivity() {
                 Toast.makeText(this, "Failed to load education: ${e.message}", Toast.LENGTH_LONG).show()
             }
     }
-
-
-    private fun saveEducationToFirestore(
-        collageName: String,
-        degreeName: String,
-        startYear: String,
-        endYear: String,
-        userId: String
-    ) {
+    private fun saveEducationToFirestore(collageName: String, degreeName: String, startYear: String, endYear: String, userId: String) {
         val db = FirebaseFirestore.getInstance()
 
         val newEducationMap = hashMapOf(
@@ -1063,12 +1084,7 @@ class Profile : AppCompatActivity() {
                 Toast.makeText(this, "Failed to add education: ${e.message}", Toast.LENGTH_LONG).show()
             }
     }
-
-    private fun openEditEducationDialog(
-        education: EducationEntry,
-        position: Int,
-        userId: String
-    ) {
+    private fun openEditEducationDialog(education: EducationEntry,position: Int,userId: String) {
         val dialogView = layoutInflater.inflate(R.layout.dialog_edit_education, null)
 
         val etCollegeName = dialogView.findViewById<EditText>(R.id.etCollageName)
@@ -1139,14 +1155,7 @@ class Profile : AppCompatActivity() {
             alertDialog.dismiss()
         }
     }
-
-
-    private fun updateEducationList(
-        userId: String,
-        updatedEducation: EducationEntry,
-        position: Int,
-        callback: (Boolean) -> Unit
-    ) {
+    private fun updateEducationList(userId: String,updatedEducation: EducationEntry, position: Int, callback: (Boolean) -> Unit) {
         val db = FirebaseFirestore.getInstance()
         val userDocRef = db.collection("Users").document(userId)
 
@@ -1174,12 +1183,7 @@ class Profile : AppCompatActivity() {
             }
             .addOnFailureListener { callback(false) }
     }
-
-    private fun deleteEducationEntry(
-        userId: String,
-        position: Int,
-        callback: (Boolean) -> Unit
-    ) {
+    private fun deleteEducationEntry(userId: String, position: Int,callback: (Boolean) -> Unit) {
         val db = FirebaseFirestore.getInstance()
         val userDocRef = db.collection("Users").document(userId)
 
@@ -1209,12 +1213,101 @@ class Profile : AppCompatActivity() {
     }
 
 
+    fun formatMonthYear(input: String): String {
+        return try {
+            val parts = input.split("-")
+            if (parts.size == 2) {
+                val month = parts[0].toInt()
+                val year = parts[1]
+                val monthName = java.text.DateFormatSymbols().months[month - 1]
+                "$monthName $year"
+            } else {
+                input // fallback if format is wrong
+            }
+        } catch (e: Exception) {
+            input
+        }
+    }
+
+    private fun loadProject(userId: String) {
+        val db = FirebaseFirestore.getInstance()
+        val projectLayout = findViewById<LinearLayout>(R.id.project_layout)
+        projectLayout.removeAllViews() // Clear previous projects
+
+        db.collection("Users").document(userId).get()
+            .addOnSuccessListener { document ->
+                val projectList = document.get("projects") as? List<Map<String, Any>> ?: emptyList()
+                if (projectList.isNotEmpty()) {
+                    Log.d("loadProject", "Projects from Firestore: $projectList")
+
+                    for ((index, pMap) in projectList.withIndex()) {
+                        val project = ProjectsEntry(
+                            title = pMap["title"] as? String ?: "N/A",
+                            description = pMap["description"] as? String ?: "N/A",
+                            end_date = pMap["end_date"] as? String ?: "N/A",
+                            link = pMap["link"] as? String ?: "N/A",
+                            startDate = pMap["startDate"] as? String ?: "N/A",
+                            technologies = pMap["technologies"] as? List<String> ?: emptyList(),
+                        )
+
+                        // Inflate new project view
+                        val projectView = layoutInflater.inflate(
+                            R.layout.project_list,
+                            projectLayout, // attach to the correct layout
+                            false
+                        )
+
+                        // Set project data
+                        projectView.findViewById<TextView>(R.id.projectTitle).text = project.title
+                        projectView.findViewById<TextView>(R.id.projectDescription).text = project.description
+                        projectView.findViewById<TextView>(R.id.projectTechnologiesSkill).text =
+                            project.technologies.joinToString(", ")
+
+                        val start = formatMonthYear(project.startDate)
+                        val end = formatMonthYear(project.end_date)
+                        projectView.findViewById<TextView>(R.id.projectDuration).text = "$start - $end"
+
+                        // Handle project link
+                        val linkContainer = projectView.findViewById<LinearLayout>(R.id.linkContainer)
+                        if (project.link.isNotEmpty()) {
+                            val linkTextView = projectView.findViewById<TextView>(R.id.projectLink)
+                            linkTextView.text = project.link
+                            linkTextView.setOnClickListener {
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(project.link))
+                                it.context.startActivity(intent)
+                            }
+                            linkContainer.visibility = View.VISIBLE
+                        } else {
+                            linkContainer.visibility = View.GONE
+                        }
+
+                        // Edit project
+                        projectView.findViewById<ImageView>(R.id.editIcon).setOnClickListener {
+                            val intent = Intent(this, project_edit::class.java)
+                            intent.putExtra("position", index)
+                            intent.putExtra("project", project)
+                            startActivity(intent)
+                        }
+
+                        // Add view to layout
+                        projectLayout.addView(projectView)
+                    }
+                } else {
+                    Log.d("loadProject", "No projects found in document.")
+                }
+            }
+    }
+
+
     private fun hideKeyboard(view: View) {
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
 
-
+    override fun onDestroy() {
+        super.onDestroy()
+        profileListener?.remove() // stop listening when activity is gone
+    }
 
 }
