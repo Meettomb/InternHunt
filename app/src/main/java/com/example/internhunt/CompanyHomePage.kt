@@ -29,6 +29,10 @@ class CompanyHomePage : AppCompatActivity() {
     private lateinit var UserProfileImage: ImageView
     private lateinit var company_name: TextView
     private lateinit var post_new_internship: LinearLayout
+    private lateinit var topFivePost_container: LinearLayout
+    private lateinit var activeJobPostViewAllBtn: TextView
+    private lateinit var TopFiveActiveInternshipPost: LinearLayout
+    private val loadedInternshipIds = mutableSetOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +46,14 @@ class CompanyHomePage : AppCompatActivity() {
             window.statusBarColor = ContextCompat.getColor(this, R.color.black)
         }
 
+        val headerProfile: View = findViewById(R.id.header_profile)
+        UserProfileImage = findViewById(R.id.UserProfileImage)
+        company_name = findViewById(R.id.company_name)
+        post_new_internship = findViewById(R.id.post_new_internship)
+        topFivePost_container = findViewById(R.id.topFivePost_container)
+        activeJobPostViewAllBtn = findViewById(R.id.activeJobPostViewAllBtn)
+        TopFiveActiveInternshipPost = findViewById(R.id.TopFiveActiveInternshipPost)
+
         // Get session
         val prefs = getSharedPreferences("UserSession", Context.MODE_PRIVATE)
         val userId = prefs.getString("userid", null)
@@ -54,11 +66,6 @@ class CompanyHomePage : AppCompatActivity() {
             finish()
             return
         }
-        if (userId != null) {
-            lodeCompanyDetail(userId)
-            getTotalInternship(userId)
-            getActiveInternship(userId)
-        }
 
         when (role) {
             "company" -> {
@@ -67,12 +74,14 @@ class CompanyHomePage : AppCompatActivity() {
                     finish()
                 }
             }
+
             "student" -> {
                 if (this !is Home) { // Prevent reopening same page
                     startActivity(Intent(this, Home::class.java))
                     finish()
                 }
             }
+
             else -> {
                 Toast.makeText(this, "Unknown role: $role", Toast.LENGTH_SHORT).show()
                 startActivity(Intent(this, Login::class.java))
@@ -80,10 +89,12 @@ class CompanyHomePage : AppCompatActivity() {
             }
         }
 
-        val headerProfile: View = findViewById(R.id.header_profile)
-        UserProfileImage = findViewById(R.id.UserProfileImage)
-        company_name = findViewById(R.id.company_name)
-        post_new_internship = findViewById(R.id.post_new_internship)
+        if (userId != null) {
+            lodeCompanyDetail(userId)
+            getTotalInternshipCount(userId)
+            getActiveInternshipCount(userId)
+            getTopFiveActiveInternshipPost(userId)
+        }
 
         headerProfile.setOnClickListener {
             if (popupWindow != null && popupWindow!!.isShowing) {
@@ -107,7 +118,7 @@ class CompanyHomePage : AppCompatActivity() {
         }
     }
 
-    private fun lodeCompanyDetail(userId: String){
+    private fun lodeCompanyDetail(userId: String) {
         var db = FirebaseFirestore.getInstance()
         var userRef = db.collection("Users").document(userId)
         userRef.addSnapshotListener { doc, error ->
@@ -170,24 +181,24 @@ class CompanyHomePage : AppCompatActivity() {
         }
     }
 
-    private fun getTotalInternship(userId: String){
+    private fun getTotalInternshipCount(userId: String) {
         var db = FirebaseFirestore.getInstance()
-        db.collection("internshipPostsData").whereEqualTo("companyId",userId)
+        db.collection("internshipPostsData").whereEqualTo("companyId", userId)
             .addSnapshotListener { querySnapshot, error ->
-                 if (error != null){
-                     Toast.makeText(this, "Fail to get Total Internship", Toast.LENGTH_LONG).show()
-                     return@addSnapshotListener
-                 }
-                 if (querySnapshot != null){
+                if (error != null) {
+                    Toast.makeText(this, "Fail to get Total Internship", Toast.LENGTH_LONG).show()
+                    return@addSnapshotListener
+                }
+                if (querySnapshot != null) {
                     var totalInternship = querySnapshot.size()
                     var TotalInternship = findViewById<TextView>(R.id.TotalInternship)
                     TotalInternship.text = totalInternship.toString()
-                 }
+                }
             }
 
     }
 
-    private fun getActiveInternship(userId: String) {
+    private fun getActiveInternshipCount(userId: String) {
         val db = FirebaseFirestore.getInstance()
         val formatter = SimpleDateFormat("dd/M/yyyy", Locale.getDefault())
         val now = Date()
@@ -213,7 +224,75 @@ class CompanyHomePage : AppCompatActivity() {
             }
     }
 
+    private fun getTopFiveActiveInternshipPost(userId: String) {
+        val db = FirebaseFirestore.getInstance()
 
 
+        db.collection("internshipPostsData")
+            .whereEqualTo("companyId", userId)
+            .addSnapshotListener { querySnapshot, error ->
+                if (error != null) {
+                    Log.e("InternshipDetail", "Error fetching internships", error)
+                    return@addSnapshotListener
+                }
+
+                if (querySnapshot != null && !querySnapshot.isEmpty) {
+                    // Sort by deadline if needed, then take top 5
+                    val formatter = SimpleDateFormat("dd/M/yyyy", Locale.getDefault())
+                    val now = Date()
+
+                    val activePosts = querySnapshot.documents
+                        .filter { doc ->
+                            val deadlineStr = doc.getString("applicationDeadline")
+                            val deadlineDate = deadlineStr?.let { formatter.parse(it) }
+                            deadlineDate != null && deadlineDate.after(now)
+                        }
+                        .take(5)
+
+                    TopFiveActiveInternshipPost.removeAllViews()
+                    loadedInternshipIds.clear()
+
+                    for (doc in activePosts) {
+                        val title = doc.getString("title")
+                        val internshipType = doc.getString("internshipType")
+                        val internshipTime = doc.getString("internshipTime")
+                        val stipend = doc.getString("stipend")
+                        val deadline = doc.getString("applicationDeadline")
+
+                        Log.d(
+                            "InternshipDetail",
+                            "Title: $title, Type: $internshipType, Time: $internshipTime, Stipend: $stipend, Deadline: $deadline"
+                        )
+
+                       val activeInternshipView = layoutInflater.inflate(
+                           R.layout.job_post_item,
+                           TopFiveActiveInternshipPost,
+                           false)
+
+
+                        activeInternshipView.findViewById<TextView>(R.id.JobTitle).text = title
+                        activeInternshipView.findViewById<TextView>(R.id.internshipType).text = internshipType
+                        activeInternshipView.findViewById<TextView>(R.id.internshipTime).text = internshipTime
+                        activeInternshipView.findViewById<TextView>(R.id.Stipend).text = stipend
+                        activeInternshipView.findViewById<TextView>(R.id.Deadline).text = deadline
+
+                        activeInternshipView.setOnClickListener {
+                            var intent = Intent(this, InternshipDetails::class.java)
+                            intent.putExtra("id", doc.id)
+                            startActivity(intent)
+                        }
+
+                        TopFiveActiveInternshipPost.addView(activeInternshipView)
+
+
+                    }
+                } else {
+                    Log.d("InternshipDetail", "No active internships found")
+                    TopFiveActiveInternshipPost.removeAllViews()
+                    loadedInternshipIds.clear()
+                }
+            }
+
+    }
 
 }

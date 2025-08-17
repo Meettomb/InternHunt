@@ -81,16 +81,7 @@ class InternshipDetails : AppCompatActivity() {
             window.statusBarColor = ContextCompat.getColor(this, R.color.black)
         }
 
-        val prefs = getSharedPreferences("UserSession", Context.MODE_PRIVATE)
-        val userId = prefs.getString("userid", null)
 
-        // Check if session exists
-        if (userId == null) {
-            Toast.makeText(this, "Please login again", Toast.LENGTH_SHORT).show()
-            startActivity(Intent(this, Login::class.java))
-            finish()
-            return
-        }
 
         // Bind Views
         tvTitle = findViewById(R.id.tvTitle)
@@ -124,6 +115,26 @@ class InternshipDetails : AppCompatActivity() {
 
         progressBar = findViewById(R.id.progressBar)
 
+        val prefs = getSharedPreferences("UserSession", Context.MODE_PRIVATE)
+        val userId = prefs.getString("userid", null)
+        val role = prefs.getString("role", null)?.trim()?.lowercase()
+
+        // Check if session exists
+        if (userId == null) {
+            Toast.makeText(this, "Please login again", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, Login::class.java))
+            finish()
+            return
+        }
+
+        if (role == "company") {
+            btnApply.visibility = View.GONE
+            bookmark.visibility = View.GONE
+        }
+        else if(role == "student"){
+            btnApply.visibility = View.VISIBLE
+            bookmark.visibility = View.VISIBLE
+        }
         val backButton = findViewById<ImageView>(R.id.backButton)
 
         backButton.setOnClickListener {
