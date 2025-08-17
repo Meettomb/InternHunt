@@ -8,6 +8,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.EditText
@@ -299,26 +300,6 @@ class EditInternship : AppCompatActivity() {
             }
 
             // Validate Degree Name
-            if (degreeInput.isEmpty()) {
-                degreeError.text = "Degree is required"
-                degreeError.visibility = TextView.VISIBLE
-                isValid = false
-            } else {
-                // Split input by commas, trim spaces, filter out empty strings
-                val enteredDegrees = degreeInput.split(",").map { it.trim() }.filter { it.isNotEmpty() }
-
-                // Check if every entered degree is in the allowed degrees list
-                val invalidDegrees = enteredDegrees.filter { it !in degrees }
-
-                if (invalidDegrees.isNotEmpty()) {
-                    degreeError.text = "Please select degrees from the list provided."
-                    degreeError.visibility = TextView.VISIBLE
-                    isValid = false
-                } else {
-                    degreeError.visibility = TextView.GONE
-                }
-            }
-
 
 
             if (dayStr.isEmpty()) {
@@ -407,10 +388,34 @@ class EditInternship : AppCompatActivity() {
                 isValid = false
             }
 
+            // Degree Validation
+            if (degreeInput.isEmpty()) {
+                degreeError.visibility = View.VISIBLE
+                degreeError.text = "Degree is required"
+                isValid = false
+            } else {
+                val enteredDegrees = degreeInput.split(",").map { it.trim().lowercase() }.filter { it.isNotEmpty() }
+                val allowedDegrees = degrees.map { it.trim().lowercase() }
+                val invalidDegrees = enteredDegrees.filter { it !in allowedDegrees }
+
+                if (invalidDegrees.isNotEmpty()) {
+                    degreeError.visibility = View.VISIBLE
+                    degreeError.text = "Please select degrees from the list provided."
+                    isValid = false
+                } else {
+                    degreeError.visibility = View.GONE
+                }
+            }
+
+            // Perks Validation
             if (selectedPerks.isEmpty()) {
                 perksError.visibility = View.VISIBLE
+                perksError.text = "Please select at least one perk"
                 isValid = false
+            } else {
+                perksError.visibility = View.GONE
             }
+
 
 
             val day = dayStr.toInt()
@@ -444,7 +449,8 @@ class EditInternship : AppCompatActivity() {
 
 
             if (isValid) {
-                updatePostToFirestore(userId.toString())
+                updatePostToFirestore(internshipId, userId)
+                hideKeyboard(internshipTitle)
             }
 
 
@@ -513,8 +519,17 @@ class EditInternship : AppCompatActivity() {
                     internshipTitle.setText(data?.get("title") as? String ?: "")
                     description.setText(data?.get("description") as? String ?: "")
                     location.setText(data?.get("location") as? String ?: "")
-                    stipend.setText(data?.get("stipend") as? String ?: "")
-                    duration.setText(data?.get("duration") as? String ?: "")
+
+                    // Extract only numbers from stipend
+                    val stipendRaw = data?.get("stipend") as? String ?: ""
+                    val stipendNumber = stipendRaw.filter { it.isDigit() }
+                    stipend.setText(stipendNumber)
+
+                    // Extract only numbers from duration
+                    val durationRaw = data?.get("duration") as? String ?: ""
+                    val durationNumber = durationRaw.filter { it.isDigit() }
+                    duration.setText(durationNumber)
+
                     companyId.setText(data?.get("companyId") as? String ?: "")
                     opening.setText(data?.get("openings") as? String ?: "")
 
@@ -530,15 +545,12 @@ class EditInternship : AppCompatActivity() {
                     val skillsList = data?.get("skillsRequired") as? List<String>
                     skills.setText(skillsList?.joinToString(", ") ?: "")
 
-                    // Degree Eligibility (array) -> MultiAutoCompleteTextView
+                    // Degree Eligibility
                     val degreesList = data?.get("degreeEligibility") as? List<String>
                     degreeName.setText(degreesList?.joinToString(", ") ?: "")
 
-                    // Perks (array) -> TextView (if you are displaying selected perks as text)
-                    val perksList = data?.get("perks") as? List<String>
-                    perksDropdown.text = perksList?.joinToString(", ") ?: ""
 
-                    // Application Deadline (string) -> split to date, month, year
+                    // Application Deadline
                     val deadlineStr = data?.get("applicationDeadline") as? String
                     if (!deadlineStr.isNullOrEmpty()) {
                         val parts = deadlineStr.split("/")
@@ -549,7 +561,6 @@ class EditInternship : AppCompatActivity() {
                         }
                     }
 
-                    // Hide progress bar after loading
                     progressBar.visibility = View.GONE
                 }
             }
@@ -558,11 +569,11 @@ class EditInternship : AppCompatActivity() {
                 progressBar.visibility = View.GONE
             }
     }
-    private fun updatePostToFirestore(userId: String) {
+
+    private fun updatePostToFirestore(internshipId: String, userId: String) {
         postButton.isEnabled = false
         progressBar.visibility = View.VISIBLE
         val db = FirebaseFirestore.getInstance()
-        val newUserRef = db.collection("internshipPostsData").document()
 
         val title = internshipTitle.text.toString().trim()
         val desc = description.text.toString().trim()
@@ -570,58 +581,59 @@ class EditInternship : AppCompatActivity() {
         val stipendValue = stipend.text.toString().trim()
         val durationValue = duration.text.toString().trim()
         val skillsList = skills.text.toString().trim().split(",").map { it.trim() }
-        val responsibilities = responsibilities.text.toString().trim().split(",").map { it.trim() }
-        val day = date.text.toString().toInt()
-        val month = month.text.toString().toInt()
-        val year = year.text.toString().toInt()
-        val opening = opening.text.toString().trim()
+        val responsibilitiesList = responsibilities.text.toString().trim().split(",").map { it.trim() }
+        val day = date.text.toString().toIntOrNull() ?: 1
+        val month = month.text.toString().toIntOrNull() ?: 1
+        val year = year.text.toString().toIntOrNull() ?: 2000
+        val openingValue = opening.text.toString().trim()
         val internshipTypeValue = internshipTypeDropdown.text.toString()
         val internshipTimeValue = internshipTimeDropdown.text.toString()
         val degreesText = degreeName.text.toString().trim()
         val degreesList = degreesText.split(",").map { it.trim() }.filter { it.isNotEmpty() }
 
-
-        // Combine date fields into single string or store as Date object (optional)
         val deadlineDate = "$day/$month/$year"
 
-        // Prepare data
         val postData = hashMapOf(
-            "id" to newUserRef.id,
             "title" to title,
             "description" to desc,
             "location" to loc,
             "stipend" to "₹$stipendValue/month",
             "duration" to "$durationValue/month",
             "skillsRequired" to skillsList,
-            "responsibilities" to responsibilities,
+            "responsibilities" to responsibilitiesList,
             "companyId" to userId,
-            "postedDate" to com.google.firebase.Timestamp.now(),
             "applicationDeadline" to deadlineDate,
-            "openings" to opening,
-            "type" to "internship",
+            "openings" to openingValue,
             "internshipType" to internshipTypeValue,
             "internshipTime" to internshipTimeValue,
             "perks" to selectedPerks,
-            "degreeEligibility" to degreesList,
-            "status" to true
+            "degreeEligibility" to degreesList
         )
 
-        // Save to Firestore
-        newUserRef.set(postData)
+        db.collection("internshipPostsData")
+            .document(internshipId)
+            .update(postData as Map<String, Any>)
             .addOnSuccessListener {
                 progressBar.visibility = View.GONE
-                Toast.makeText(this, "Internship posted successfully!", Toast.LENGTH_SHORT).show()
-                startActivity(Intent(this, Profile::class.java))
-                finish()
+                Toast.makeText(this, "Internship updated successfully!", Toast.LENGTH_SHORT).show()
                 postButton.isEnabled = true
+                hideKeyboard(internshipTitle)
+                finish()
             }
             .addOnFailureListener { e ->
-                postButton.isEnabled = true
                 progressBar.visibility = View.GONE
-                Toast.makeText(this, "Failed to post internship: ${e.message}", Toast.LENGTH_LONG).show()
+                postButton.isEnabled = true
+                hideKeyboard(internshipTitle)
+                Toast.makeText(this, "Failed to update internship: ${e.message}", Toast.LENGTH_LONG).show()
             }
+
+
     }
 
+    private fun hideKeyboard(view: View) {
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
+    }
 
 
 }

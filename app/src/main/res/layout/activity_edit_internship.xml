@@ -472,7 +472,6 @@
                     android:id="@+id/perksError"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Please select at least one perk"
                     android:textColor="#FF0000"
                     android:textSize="14sp"
                     android:visibility="gone" />
