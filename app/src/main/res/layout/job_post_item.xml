@@ -132,4 +132,38 @@
             android:textColor="@color/primary_text" />
     </LinearLayout>
 
+    <!-- Edit/Delete buttons -->
+    <LinearLayout
+        android:id="@+id/edit_delete_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:layout_marginTop="8dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/btnEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Edit"
+            android:textColor="@color/primary_color"
+            android:padding="6dp"
+            android:textStyle="bold"
+            android:clickable="true"
+            android:focusable="true"/>
+
+        <TextView
+            android:id="@+id/btnDelete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Delete"
+            android:textColor="@color/error_color"
+            android:padding="6dp"
+            android:textStyle="bold"
+            android:layout_marginStart="16dp"
+            android:clickable="true"
+            android:focusable="true"/>
+    </LinearLayout>
+
 </LinearLayout>

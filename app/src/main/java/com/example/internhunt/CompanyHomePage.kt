@@ -20,6 +20,8 @@ import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
+import org.w3c.dom.Text
+import java.io.LineNumberReader
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -276,8 +278,19 @@ class CompanyHomePage : AppCompatActivity() {
                         activeInternshipView.findViewById<TextView>(R.id.Stipend).text = stipend
                         activeInternshipView.findViewById<TextView>(R.id.Deadline).text = deadline
 
+
+
                         activeInternshipView.setOnClickListener {
                             var intent = Intent(this, InternshipDetails::class.java)
+                            intent.putExtra("id", doc.id)
+                            startActivity(intent)
+                        }
+
+                        var edit_delete_buttons = activeInternshipView.findViewById<LinearLayout>(R.id.edit_delete_buttons)
+                        edit_delete_buttons.visibility = View.VISIBLE
+
+                        activeInternshipView.findViewById<TextView>(R.id.btnEdit).setOnClickListener {
+                            var intent = Intent(this, EditInternship::class.java)
                             intent.putExtra("id", doc.id)
                             startActivity(intent)
                         }

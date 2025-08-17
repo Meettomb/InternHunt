@@ -67,6 +67,8 @@ class InternshipDetails : AppCompatActivity() {
     private var selectedPdfUri: Uri? = null
     private lateinit var progressBar: ProgressBar
 
+    private lateinit var editIcon2: ImageView
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -114,6 +116,7 @@ class InternshipDetails : AppCompatActivity() {
         btnUploadPdfError2 = applyLayout.findViewById(R.id.btnUploadPdfError)
 
         progressBar = findViewById(R.id.progressBar)
+        editIcon2 = findViewById(R.id.editIcon2)
 
         val prefs = getSharedPreferences("UserSession", Context.MODE_PRIVATE)
         val userId = prefs.getString("userid", null)
@@ -127,14 +130,6 @@ class InternshipDetails : AppCompatActivity() {
             return
         }
 
-        if (role == "company") {
-            btnApply.visibility = View.GONE
-            bookmark.visibility = View.GONE
-        }
-        else if(role == "student"){
-            btnApply.visibility = View.VISIBLE
-            bookmark.visibility = View.VISIBLE
-        }
         val backButton = findViewById<ImageView>(R.id.backButton)
 
         backButton.setOnClickListener {
@@ -154,7 +149,22 @@ class InternshipDetails : AppCompatActivity() {
                 }
             }
 
+        if (role == "company") {
+            btnApply.visibility = View.GONE
+            bookmark.visibility = View.GONE
+            editIcon2.visibility = View.VISIBLE
 
+        }
+        else if(role == "student"){
+            btnApply.visibility = View.VISIBLE
+            bookmark.visibility = View.VISIBLE
+            editIcon2.visibility = View.GONE
+        }
+        editIcon2.setOnClickListener {
+            var intent = Intent(this, EditInternship::class.java)
+            intent.putExtra("id", internshipId)
+            startActivity(intent)
+        }
         if (internshipId.isNotEmpty()) {
             loadInternshipDetails(internshipId)
 

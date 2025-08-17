@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
@@ -16,17 +17,16 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.protobuf.DescriptorProtos
 import java.util.Calendar
-import androidx.appcompat.app.AlertDialog
+import kotlin.toString
 
-
-class JobPost : AppCompatActivity() {
+class EditInternship : AppCompatActivity() {
 
     private lateinit var backButton: ImageView
     private lateinit var internshipTitle: EditText
@@ -98,11 +98,19 @@ class JobPost : AppCompatActivity() {
     )
 
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_job_post)
+        setContentView(R.layout.activity_edit_internship)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            window.statusBarColor = ContextCompat.getColor(this, R.color.white)
+            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+        } else {
+            // For older versions, use a dark color with light icons
+            window.statusBarColor = ContextCompat.getColor(this, R.color.black)
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             window.statusBarColor = ContextCompat.getColor(this, R.color.white)
             window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
@@ -168,12 +176,25 @@ class JobPost : AppCompatActivity() {
             onBackPressed()
         }
 
+
         val prefs = getSharedPreferences("UserSession", Context.MODE_PRIVATE)
         val userId = prefs.getString("userid", null)
-        LoadUserdata(userId.toString());
+        // Check if session exists
+        if (userId == null) {
+            Toast.makeText(this, "Please login again", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, Login::class.java))
+            finish()
+            return
+        }
 
         companyId.setText(userId)
 
+        val internshipId = intent.getStringExtra("id") ?: ""
+        if (internshipId != null){
+            Log.d("TAG", "internshipId: $internshipId")
+        }
+
+        loadInternshipData(internshipId)
         perksDropdown = findViewById(R.id.perksDropdown)
         perksError = findViewById(R.id.perksError)
 
@@ -423,7 +444,7 @@ class JobPost : AppCompatActivity() {
 
 
             if (isValid) {
-                savePostToFirestore(userId.toString())
+                updatePostToFirestore(userId.toString())
             }
 
 
@@ -473,6 +494,7 @@ class JobPost : AppCompatActivity() {
         resetBorderOnTextChange(year, yearError)
 
 
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -480,7 +502,63 @@ class JobPost : AppCompatActivity() {
         }
     }
 
-    private fun savePostToFirestore(userId: String) {
+
+    private fun loadInternshipData(internshipId: String) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("internshipPostsData").document(internshipId).get()
+            .addOnSuccessListener { documentSnapshot ->
+                if (documentSnapshot.exists()) {
+                    val data = documentSnapshot.data
+
+                    internshipTitle.setText(data?.get("title") as? String ?: "")
+                    description.setText(data?.get("description") as? String ?: "")
+                    location.setText(data?.get("location") as? String ?: "")
+                    stipend.setText(data?.get("stipend") as? String ?: "")
+                    duration.setText(data?.get("duration") as? String ?: "")
+                    companyId.setText(data?.get("companyId") as? String ?: "")
+                    opening.setText(data?.get("openings") as? String ?: "")
+
+                    // Internship Type / Time
+                    internshipTypeDropdown.setText(data?.get("internshipType") as? String ?: "", false)
+                    internshipTimeDropdown.setText(data?.get("internshipTime") as? String ?: "", false)
+
+                    // Responsibilities (array)
+                    val responsibilitiesList = data?.get("responsibilities") as? List<String>
+                    responsibilities.setText(responsibilitiesList?.joinToString(", ") ?: "")
+
+                    // Skills (array)
+                    val skillsList = data?.get("skillsRequired") as? List<String>
+                    skills.setText(skillsList?.joinToString(", ") ?: "")
+
+                    // Degree Eligibility (array) -> MultiAutoCompleteTextView
+                    val degreesList = data?.get("degreeEligibility") as? List<String>
+                    degreeName.setText(degreesList?.joinToString(", ") ?: "")
+
+                    // Perks (array) -> TextView (if you are displaying selected perks as text)
+                    val perksList = data?.get("perks") as? List<String>
+                    perksDropdown.text = perksList?.joinToString(", ") ?: ""
+
+                    // Application Deadline (string) -> split to date, month, year
+                    val deadlineStr = data?.get("applicationDeadline") as? String
+                    if (!deadlineStr.isNullOrEmpty()) {
+                        val parts = deadlineStr.split("/")
+                        if (parts.size == 3) {
+                            date.setText(parts[0])
+                            month.setText(parts[1])
+                            year.setText(parts[2])
+                        }
+                    }
+
+                    // Hide progress bar after loading
+                    progressBar.visibility = View.GONE
+                }
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Failed to load internship data: ${e.message}", Toast.LENGTH_LONG).show()
+                progressBar.visibility = View.GONE
+            }
+    }
+    private fun updatePostToFirestore(userId: String) {
         postButton.isEnabled = false
         progressBar.visibility = View.VISIBLE
         val db = FirebaseFirestore.getInstance()
@@ -544,20 +622,6 @@ class JobPost : AppCompatActivity() {
             }
     }
 
-
-    private fun LoadUserdata(userId: String){
-        val db = FirebaseFirestore.getInstance()
-
-        db.collection("Users").document(userId).get()
-            .addOnSuccessListener { doc ->
-                if (doc != null && doc.exists()){
-                    var city = doc.getString("city")
-                    var state = doc.getString("state")
-
-                    location.setText("$city, $state")
-                }
-            }
-    }
 
 
 }

@@ -1,5 +1,6 @@
 package com.example.internhunt
 
+import android.R
 import android.icu.text.CaseMap
 import com.google.firebase.Timestamp
 
@@ -21,7 +22,7 @@ data class InternshipPostData(
     val internshipType: String = "",
     val internshipTime: String = "",
     val perks: List<String> = emptyList(),
-    val status: String = "",
+    val status: Boolean = true,
     val degreeEligibility: List<String> = emptyList(),
     val otherFields: String = ""
 )
