@@ -295,6 +295,29 @@ class CompanyHomePage : AppCompatActivity() {
                             startActivity(intent)
                         }
 
+                        activeInternshipView.findViewById<TextView>(R.id.btnDelete).setOnClickListener {
+                            val db = FirebaseFirestore.getInstance()
+                            val todayStr = SimpleDateFormat("dd/M/yyyy", Locale.getDefault()).format(Date())
+
+                            // Update the document
+                            db.collection("internshipPostsData").document(doc.id)
+                                .update(
+                                    mapOf(
+                                        "status" to false,
+                                        "applicationDeadline" to todayStr
+                                    )
+                                )
+                                .addOnSuccessListener {
+                                    Toast.makeText(this, "Internship marked as inactive", Toast.LENGTH_SHORT).show()
+                                    // Optionally remove the view from UI
+                                    TopFiveActiveInternshipPost.removeView(activeInternshipView)
+                                }
+                                .addOnFailureListener { e ->
+                                    Toast.makeText(this, "Failed to update internship: ${e.message}", Toast.LENGTH_LONG).show()
+                                }
+                        }
+
+
                         TopFiveActiveInternshipPost.addView(activeInternshipView)
 
 

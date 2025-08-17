@@ -560,7 +560,6 @@ class EditInternship : AppCompatActivity() {
                             year.setText(parts[2])
                         }
                     }
-
                     progressBar.visibility = View.GONE
                 }
             }
