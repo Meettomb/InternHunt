@@ -136,8 +136,24 @@ class InternshipDetails : AppCompatActivity() {
             onBackPressedDispatcher.onBackPressed()
         }
 
-        val internshipId = intent.getStringExtra("id") ?: ""
+        // 1️⃣ Try to get from deep link
+        val data = intent?.data
+        var internshipId = data?.getQueryParameter("id")
+
+
+        // 2️⃣ If not from deep link, try intent extra
+        if (internshipId.isNullOrEmpty()) {
+            internshipId = intent.getStringExtra("id")
+        }
+        // 3️⃣ Final safety check
+        if (internshipId.isNullOrEmpty()) {
+            Log.e("InternshipDetails", "No internship ID provided")
+            Toast.makeText(this, "Invalid internship link", Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        }
         val db = FirebaseFirestore.getInstance()
+
         db.collection("internshipPostsData")
             .document(internshipId)
             .get()

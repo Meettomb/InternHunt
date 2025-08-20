@@ -20,6 +20,8 @@ import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
+import com.google.firebase.messaging.FirebaseMessaging
 import org.w3c.dom.Text
 import java.io.LineNumberReader
 import java.text.SimpleDateFormat
@@ -97,7 +99,7 @@ class CompanyHomePage : AppCompatActivity() {
             getActiveInternshipCount(userId)
             getTopFiveActiveInternshipPost(userId)
         }
-
+        saveFcmToken(userId)
         headerProfile.setOnClickListener {
             if (popupWindow != null && popupWindow!!.isShowing) {
                 popupWindow!!.dismiss()
@@ -330,5 +332,25 @@ class CompanyHomePage : AppCompatActivity() {
             }
 
     }
+    private fun saveFcmToken(userId: String) {
+        FirebaseMessaging.getInstance().token
+            .addOnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    return@addOnCompleteListener
+                }
+                val token = task.result
+                val db = FirebaseFirestore.getInstance()
 
+                val data = hashMapOf("fcmToken" to token)
+
+                db.collection("Users").document(userId)
+                    .set(data, SetOptions.merge())  // 👈 create if not exist, update if exist
+                    .addOnSuccessListener {
+                        Log.d("FCM", "Token saved: $token")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e("FCM", "Failed to save token", e)
+                    }
+            }
+    }
 }

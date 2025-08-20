@@ -82,7 +82,6 @@ class Profile : AppCompatActivity() {
     private lateinit var detailEditIcon: TextView
     private lateinit var closeUpdateDetail: ImageView
 
-    private lateinit var internshipPostListLayout: LinearLayout
 
     private lateinit var skillsRecyclerView: RecyclerView
     private lateinit var skillsAdapter: SkillsAdapter
@@ -864,7 +863,6 @@ class Profile : AppCompatActivity() {
                         if (!companyName.isNullOrEmpty()) {
                             username.text = companyName
                             usernameEdit.setText(companyName)
-                            internshipPostListLayout.visibility = View.VISIBLE
                         }
 
                         findViewById<LinearLayout>(R.id.SectionAddSection).visibility = View.GONE

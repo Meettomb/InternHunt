@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
@@ -24,6 +25,16 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.protobuf.DescriptorProtos
 import java.util.Calendar
 import androidx.appcompat.app.AlertDialog
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
+import okio.IOException
+import org.json.JSONObject
+import kotlin.concurrent.thread
 
 
 class JobPost : AppCompatActivity() {
@@ -169,9 +180,8 @@ class JobPost : AppCompatActivity() {
         }
 
         val prefs = getSharedPreferences("UserSession", Context.MODE_PRIVATE)
-        val userId = prefs.getString("userid", null)
-        LoadUserdata(userId.toString());
-
+        val userId = prefs.getString("userid", null).toString()
+        LoadUserdata(userId);
         companyId.setText(userId)
 
         perksDropdown = findViewById(R.id.perksDropdown)
@@ -450,7 +460,6 @@ class JobPost : AppCompatActivity() {
         }
 
 
-
         // Reset border when user starts typing
         fun resetBorderOnTextChange(editText: EditText, errorTextView: TextView? = null) {
             editText.addTextChangedListener(object : TextWatcher {
@@ -485,6 +494,7 @@ class JobPost : AppCompatActivity() {
         progressBar.visibility = View.VISIBLE
         val db = FirebaseFirestore.getInstance()
         val newUserRef = db.collection("internshipPostsData").document()
+        val newPostId = newUserRef.id
 
         val title = internshipTitle.text.toString().trim()
         val desc = description.text.toString().trim()
@@ -508,7 +518,7 @@ class JobPost : AppCompatActivity() {
 
         // Prepare data
         val postData = hashMapOf(
-            "id" to newUserRef.id,
+            "id" to newPostId,
             "title" to title,
             "description" to desc,
             "location" to loc,
@@ -531,16 +541,115 @@ class JobPost : AppCompatActivity() {
         // Save to Firestore
         newUserRef.set(postData)
             .addOnSuccessListener {
-                progressBar.visibility = View.GONE
                 Toast.makeText(this, "Internship posted successfully!", Toast.LENGTH_SHORT).show()
-                startActivity(Intent(this, Profile::class.java))
+                Log.d("InternshipPost", "Post data saved successfully. PostId: $newPostId")
+
+                // ✅ Now call our new function here
+                notifyApplicants(userId, newPostId)
+
+                progressBar.visibility = View.GONE
+                startActivity(Intent(this, CompanyHomePage::class.java))
                 finish()
                 postButton.isEnabled = true
             }
             .addOnFailureListener { e ->
-                postButton.isEnabled = true
+                Log.e("InternshipPost", "Error saving post data", e)
+                Toast.makeText(this, "Failed to post internship!", Toast.LENGTH_SHORT).show()
                 progressBar.visibility = View.GONE
-                Toast.makeText(this, "Failed to post internship: ${e.message}", Toast.LENGTH_LONG).show()
+                postButton.isEnabled = true
+            }
+
+    }
+
+    private fun notifyApplicants(userId: String, newPostId: String) {
+        val db = FirebaseFirestore.getInstance()
+
+        // ✅ First fetch company details (name/email/etc.)
+        db.collection("Users").document(userId).get()
+            .addOnSuccessListener { companyDoc ->
+                val companyName = companyDoc.getString("company_name") ?: "Unknown Company"
+                Log.d("Firestore", "Company name fetched: $companyName")
+                db.collection("InternshipApplications")
+                    .whereEqualTo("companyId", userId)
+                    .get()
+                    .addOnSuccessListener { querySnapshot ->
+                        Log.d("Firestore", "Applications query success. Count: ${querySnapshot.size()}")
+                        if (!querySnapshot.isEmpty) {
+                            for (document in querySnapshot.documents) {
+                                val applicantId = document.getString("userId")
+                                Log.d("Firestore", "Applicant found: $applicantId")
+
+                                if (applicantId != null) {
+                                    db.collection("Users").document(applicantId).get()
+                                        .addOnSuccessListener { userDoc ->
+                                            Log.d("Firestore", "Fetched user document for $applicantId, exists=${userDoc.exists()}")
+                                            if (userDoc.exists()) {
+                                                val userEmail = userDoc.getString("email")
+                                                Log.d("Firestore", "User email fetched: $userEmail")
+
+                                                if (!userEmail.isNullOrEmpty()) {
+
+                                                    // ✅ Fetch internship details
+                                                    db.collection("internshipPostsData")
+                                                        .document(newPostId)
+                                                        .get()
+                                                        .addOnSuccessListener { postDoc ->
+                                                            if (postDoc.exists()) {
+                                                                val title = postDoc.getString("title") ?: "Internship"
+                                                                val stipend = postDoc.getString("stipend") ?: "-"
+                                                                val duration = postDoc.getString("duration") ?: "-"
+
+                                                                // ✅ Updated email body
+                                                                val body = """
+                                                                <p>A new internship has been posted 🎉</p>
+                                                                <p><b>Title:</b> $title</p>
+                                                                <p><b>Company:</b> $companyName</p>
+                                                                <p><b>Stipend:</b> $stipend</p>
+                                                                <p><b>Duration:</b> $duration</p>
+                                                                <p><a href="https://serene-swan-422bbe.netlify.app/?id=$newPostId">
+                                                                    Click here to view details
+                                                                </a></p>
+                                                            """.trimIndent()
+
+                                                                thread {
+                                                                    try {
+                                                                        val sender = JakartaMailSender(
+                                                                            "internhunt2@gmail.com",
+                                                                            "cayw smpo qwvu terg"
+                                                                        )
+                                                                        sender.sendEmail(
+                                                                            toEmail = userEmail,
+                                                                            subject = "New Internship Posted 🎉",
+                                                                            body = body
+                                                                        )
+                                                                        Log.d("Email", "Email successfully sent to: $userEmail")
+                                                                    } catch (e: Exception) {
+                                                                        Log.e("Email", "Failed to send email to: $userEmail", e)
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                } else {
+                                                    Log.w("Firestore", "User email missing for applicant: $applicantId")
+                                                }
+                                            } else {
+                                                Log.w("Firestore", "No user document found for $applicantId")
+                                            }
+                                        }
+                                        .addOnFailureListener { e ->
+                                            Log.e("Firestore", "Error fetching user $applicantId", e)
+                                        }
+                                } else {
+                                    Log.w("Firestore", "ApplicantId is null in InternshipApplications document: ${document.id}")
+                                }
+                            }
+                        } else {
+                            Log.d("Firestore", "No applications found for this company")
+                        }
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e("Firestore", "Error getting applications", e)
+                    }
             }
     }
 
@@ -558,6 +667,5 @@ class JobPost : AppCompatActivity() {
                 }
             }
     }
-
 
 }

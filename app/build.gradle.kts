@@ -59,6 +59,10 @@ dependencies {
     implementation ("com.google.firebase:firebase-storage-ktx")
     implementation("com.google.firebase:firebase-storage-ktx:20.3.0")
 
+    implementation ("com.google.firebase:firebase-messaging")
+    implementation ("com.google.firebase:firebase-analytics:23.0.0")
+    implementation ("com.google.firebase:firebase-firestore")
+
 
     // image preview
     implementation("com.github.bumptech.glide:glide:4.16.0")

@@ -1,5 +1,6 @@
 package com.example.internhunt
 
+import jakarta.mail.*
 import jakarta.mail.Authenticator
 import jakarta.mail.Message
 import jakarta.mail.MessagingException
@@ -33,7 +34,8 @@ class JakartaMailSender(
                 setFrom(InternetAddress(senderEmail))
                 setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail))
                 setSubject(subject)
-                setText(body)
+                // 👉 send as HTML instead of plain text
+                setContent(body, "text/html; charset=utf-8")
             }
 
             Transport.send(message)
@@ -43,3 +45,4 @@ class JakartaMailSender(
         }
     }
 }
+

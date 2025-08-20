@@ -39,6 +39,9 @@ import com.google.firebase.firestore.firestoreSettings
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.firestore.SetOptions
+
 
 
 class Home : AppCompatActivity() {
@@ -230,7 +233,7 @@ class Home : AppCompatActivity() {
 
 
 
-
+        saveFcmToken(userId)
 
 
 
@@ -425,6 +428,7 @@ class Home : AppCompatActivity() {
 
 
 
+
     }
 
     private fun showBottomSheet() {
@@ -548,6 +552,29 @@ class Home : AppCompatActivity() {
                 }
         }
     }
+
+    private fun saveFcmToken(userId: String) {
+        FirebaseMessaging.getInstance().token
+            .addOnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    return@addOnCompleteListener
+                }
+                val token = task.result
+                val db = FirebaseFirestore.getInstance()
+
+                val data = hashMapOf("fcmToken" to token)
+
+                db.collection("Users").document(userId)
+                    .set(data, SetOptions.merge())  // 👈 create if not exist, update if exist
+                    .addOnSuccessListener {
+                        Log.d("FCM", "Token saved: $token")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e("FCM", "Failed to save token", e)
+                    }
+            }
+    }
+
 
     private fun hideKeyboard(view: View) {
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
