@@ -15,6 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.InternHunt">
         <activity
+            android:name=".AllActivePostedInternship"
+            android:exported="false" />
+        <activity
             android:name=".EditInternship"
             android:exported="false" />
         <activity
@@ -55,23 +58,21 @@
             android:exported="false" />
         <activity
             android:name=".InternshipDetails"
-            android:exported="true" >
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
 
-        <intent-filter>
-            <action android:name="android.intent.action.VIEW" />
-            <category android:name="android.intent.category.DEFAULT" />
-            <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
 
-            <data
-                android:scheme="internhunt"
-                android:host="internshipdetails" />
-        </intent-filter>
+                <data
+                    android:host="internshipdetails"
+                    android:scheme="internhunt" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".CompanyDetail"
-            android:exported="false"/>
-
-
+            android:exported="false" />
         <activity
             android:name=".CompanyLists"
             android:exported="false" />
@@ -136,10 +137,9 @@
             android:name=".MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
     </application>
 
 </manifest>

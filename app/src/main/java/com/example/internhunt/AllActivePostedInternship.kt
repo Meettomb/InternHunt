@@ -5,45 +5,37 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.widget.PopupWindow
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
-import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.SetOptions
-import com.google.firebase.messaging.FirebaseMessaging
-import org.w3c.dom.Text
-import java.io.LineNumberReader
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import com.google.firebase.firestore.Query
 
 
-class CompanyHomePage : AppCompatActivity() {
+class AllActivePostedInternship : AppCompatActivity() {
     private var popupWindow: PopupWindow? = null
     private lateinit var UserProfileImage: ImageView
-    private lateinit var company_name: TextView
-    private lateinit var post_new_internship: LinearLayout
     private lateinit var topFivePost_container: LinearLayout
-    private lateinit var activeJobPostViewAllBtn: TextView
-    private lateinit var TopFiveActiveInternshipPost: LinearLayout
+    private lateinit var ActiveInternshipPost: LinearLayout
     private val loadedInternshipIds = mutableSetOf<String>()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // enableEdgeToEdge()
-        setContentView(R.layout.activity_company_home_page)
+//        enableEdgeToEdge()
+        setContentView(R.layout.activity_all_active_posted_internship)
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             window.statusBarColor = ContextCompat.getColor(this, R.color.card_background)
             window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
@@ -54,11 +46,8 @@ class CompanyHomePage : AppCompatActivity() {
 
         val headerProfile: View = findViewById(R.id.header_profile)
         UserProfileImage = findViewById(R.id.UserProfileImage)
-        company_name = findViewById(R.id.company_name)
-        post_new_internship = findViewById(R.id.post_new_internship)
         topFivePost_container = findViewById(R.id.topFivePost_container)
-        activeJobPostViewAllBtn = findViewById(R.id.activeJobPostViewAllBtn)
-        TopFiveActiveInternshipPost = findViewById(R.id.TopFiveActiveInternshipPost)
+        ActiveInternshipPost = findViewById(R.id.ActiveInternshipPost)
 
         // Get session
         val prefs = getSharedPreferences("UserSession", Context.MODE_PRIVATE)
@@ -73,35 +62,13 @@ class CompanyHomePage : AppCompatActivity() {
             return
         }
 
-        when (role) {
-            "company" -> {
-                if (this !is CompanyHomePage) { // Prevent reopening the same page
-                    startActivity(Intent(this, CompanyHomePage::class.java))
-                    finish()
-                }
-            }
 
-            "student" -> {
-                if (this !is Home) { // Prevent reopening same page
-                    startActivity(Intent(this, Home::class.java))
-                    finish()
-                }
-            }
-
-            else -> {
-                Toast.makeText(this, "Unknown role: $role", Toast.LENGTH_SHORT).show()
-                startActivity(Intent(this, Login::class.java))
-                finish()
-            }
-        }
 
         if (userId != null) {
             lodeCompanyDetail(userId)
-            getTotalInternshipCount(userId)
-            getActiveInternshipCount(userId)
-            getTopFiveActiveInternshipPost(userId)
+            getActiveInternshipPost(userId)
         }
-        saveFcmToken(userId)
+
         headerProfile.setOnClickListener {
             if (popupWindow != null && popupWindow!!.isShowing) {
                 popupWindow!!.dismiss()
@@ -109,16 +76,6 @@ class CompanyHomePage : AppCompatActivity() {
                 showProfileMenu(it)
             }
         }
-
-        post_new_internship.setOnClickListener {
-            startActivity(Intent(this, JobPost::class.java))
-        }
-
-        activeJobPostViewAllBtn.setOnClickListener {
-            val intent = Intent(this, AllActivePostedInternship::class.java)
-            startActivity(intent)
-        }
-
 
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -137,12 +94,8 @@ class CompanyHomePage : AppCompatActivity() {
                 return@addSnapshotListener
             }
             if (doc != null && doc.exists()) {
-                var companyName = doc.getString("company_name")
                 var profileImage = doc.getString("profile_image_url")
 
-                if (companyName != null) {
-                    company_name.text = "$companyName!"
-                }
                 if (profileImage != null) {
                     Glide.with(this)
                         .load(profileImage)
@@ -191,50 +144,7 @@ class CompanyHomePage : AppCompatActivity() {
         }
     }
 
-    private fun getTotalInternshipCount(userId: String) {
-        var db = FirebaseFirestore.getInstance()
-        db.collection("internshipPostsData").whereEqualTo("companyId", userId)
-            .addSnapshotListener { querySnapshot, error ->
-                if (error != null) {
-                    Toast.makeText(this, "Fail to get Total Internship", Toast.LENGTH_LONG).show()
-                    return@addSnapshotListener
-                }
-                if (querySnapshot != null) {
-                    var totalInternship = querySnapshot.size()
-                    var TotalInternship = findViewById<TextView>(R.id.TotalInternship)
-                    TotalInternship.text = totalInternship.toString()
-                }
-            }
-
-    }
-
-    private fun getActiveInternshipCount(userId: String) {
-        val db = FirebaseFirestore.getInstance()
-        val formatter = SimpleDateFormat("dd/M/yyyy", Locale.getDefault())
-        val now = Date()
-
-        db.collection("internshipPostsData")
-            .whereEqualTo("companyId", userId)
-            .addSnapshotListener { querySnapshot, error ->
-                if (error != null) {
-                    Toast.makeText(this, "Fail to get Active Internship", Toast.LENGTH_LONG).show()
-                    return@addSnapshotListener
-                }
-
-                if (querySnapshot != null) {
-                    val activeInternships = querySnapshot.documents.filter { doc ->
-                        val deadlineStr = doc.getString("applicationDeadline")
-                        val deadlineDate = deadlineStr?.let { formatter.parse(it) }
-                        deadlineDate != null && deadlineDate.after(now)
-                    }
-
-                    val totalActive = activeInternships.size
-                    findViewById<TextView>(R.id.ActiveInternship).text = totalActive.toString()
-                }
-            }
-    }
-
-    private fun getTopFiveActiveInternshipPost(userId: String) {
+    private fun getActiveInternshipPost(userId: String) {
         val db = FirebaseFirestore.getInstance()
 
 
@@ -258,9 +168,8 @@ class CompanyHomePage : AppCompatActivity() {
                             val deadlineDate = deadlineStr?.let { formatter.parse(it) }
                             deadlineDate != null && deadlineDate.after(now)
                         }
-                        .take(5)
 
-                    TopFiveActiveInternshipPost.removeAllViews()
+                    ActiveInternshipPost.removeAllViews()
                     loadedInternshipIds.clear()
 
                     for (doc in activePosts) {
@@ -275,10 +184,10 @@ class CompanyHomePage : AppCompatActivity() {
                             "Title: $title, Type: $internshipType, Time: $internshipTime, Stipend: $stipend, Deadline: $deadline"
                         )
 
-                       val activeInternshipView = layoutInflater.inflate(
-                           R.layout.job_post_item,
-                           TopFiveActiveInternshipPost,
-                           false)
+                        val activeInternshipView = layoutInflater.inflate(
+                            R.layout.job_post_item,
+                            ActiveInternshipPost,
+                            false)
 
 
                         activeInternshipView.findViewById<TextView>(R.id.JobTitle).text = title
@@ -323,7 +232,7 @@ class CompanyHomePage : AppCompatActivity() {
                                 .addOnSuccessListener {
                                     Toast.makeText(this, "Internship marked as inactive", Toast.LENGTH_SHORT).show()
                                     // Optionally remove the view from UI
-                                    TopFiveActiveInternshipPost.removeView(activeInternshipView)
+                                    ActiveInternshipPost.removeView(activeInternshipView)
                                 }
                                 .addOnFailureListener { e ->
                                     Toast.makeText(this, "Failed to update internship: ${e.message}", Toast.LENGTH_LONG).show()
@@ -331,37 +240,16 @@ class CompanyHomePage : AppCompatActivity() {
                         }
 
 
-                        TopFiveActiveInternshipPost.addView(activeInternshipView)
+                        ActiveInternshipPost.addView(activeInternshipView)
 
 
                     }
                 } else {
                     Log.d("InternshipDetail", "No active internships found")
-                    TopFiveActiveInternshipPost.removeAllViews()
+                    ActiveInternshipPost.removeAllViews()
                     loadedInternshipIds.clear()
                 }
             }
 
-    }
-    private fun saveFcmToken(userId: String) {
-        FirebaseMessaging.getInstance().token
-            .addOnCompleteListener { task ->
-                if (!task.isSuccessful) {
-                    return@addOnCompleteListener
-                }
-                val token = task.result
-                val db = FirebaseFirestore.getInstance()
-
-                val data = hashMapOf("fcmToken" to token)
-
-                db.collection("Users").document(userId)
-                    .set(data, SetOptions.merge())  // 👈 create if not exist, update if exist
-                    .addOnSuccessListener {
-                        Log.d("FCM", "Token saved: $token")
-                    }
-                    .addOnFailureListener { e ->
-                        Log.e("FCM", "Failed to save token", e)
-                    }
-            }
     }
 }
