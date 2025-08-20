@@ -4,9 +4,13 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.PopupWindow
@@ -30,6 +34,8 @@ class AllActivePostedInternship : AppCompatActivity() {
     private lateinit var UserProfileImage: ImageView
     private lateinit var topFivePost_container: LinearLayout
     private lateinit var ActiveInternshipPost: LinearLayout
+    private lateinit var search_bar: EditText
+
     private val loadedInternshipIds = mutableSetOf<String>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +54,7 @@ class AllActivePostedInternship : AppCompatActivity() {
         UserProfileImage = findViewById(R.id.UserProfileImage)
         topFivePost_container = findViewById(R.id.topFivePost_container)
         ActiveInternshipPost = findViewById(R.id.ActiveInternshipPost)
+        search_bar = findViewById(R.id.search_bar)
 
         // Get session
         val prefs = getSharedPreferences("UserSession", Context.MODE_PRIVATE)
@@ -74,9 +81,20 @@ class AllActivePostedInternship : AppCompatActivity() {
                 popupWindow!!.dismiss()
             } else {
                 showProfileMenu(it)
+                hideKeyboard(search_bar)
             }
         }
 
+        search_bar.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val queryText = s.toString().trim()
+                filterInternships(queryText, userId)
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -126,7 +144,10 @@ class AllActivePostedInternship : AppCompatActivity() {
             popupWindow?.dismiss()
         }
         popupView.findViewById<View>(R.id.home).setOnClickListener {
-            // Handle Home Redirect
+            var intent = Intent(this, CompanyHomePage::class.java)
+            hideKeyboard(search_bar)
+            startActivity(intent)
+            finish()
             popupWindow?.dismiss()
         }
 
@@ -252,4 +273,108 @@ class AllActivePostedInternship : AppCompatActivity() {
             }
 
     }
+
+
+    private fun filterInternships(searchText: String, userId: String) {
+        val db = FirebaseFirestore.getInstance()
+        val noResultsText = findViewById<TextView>(R.id.noResultsText) // Reference to TextView
+
+        db.collection("internshipPostsData")
+            .whereEqualTo("companyId", userId)
+            .orderBy("postedDate", Query.Direction.DESCENDING)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                val now = Date()
+                val formatter = SimpleDateFormat("dd/M/yyyy", Locale.getDefault())
+
+                val filteredPosts = querySnapshot.documents.filter { doc ->
+                    val deadlineStr = doc.getString("applicationDeadline")
+                    val deadlineDate = deadlineStr?.let { formatter.parse(it) }
+                    val isActive = deadlineDate != null && deadlineDate.after(now)
+
+                    val title = doc.getString("title") ?: ""
+                    val internshipType = doc.getString("internshipType") ?: ""
+                    val internshipTime = doc.getString("internshipTime") ?: ""
+                    val stipend = doc.getString("stipend") ?: ""
+
+                    val skillsRequiredList = doc.get("skillsRequired") as? List<*>
+                    val skillsRequired = skillsRequiredList?.joinToString(", ") ?: ""
+
+                    val matchesSearch = listOf(title, internshipType, internshipTime, stipend, skillsRequired)
+                        .any { it.contains(searchText, ignoreCase = true) }
+
+                    isActive && matchesSearch
+                }
+
+                // Clear old views
+                ActiveInternshipPost.removeAllViews()
+                loadedInternshipIds.clear()
+
+                if (filteredPosts.isEmpty()) {
+                    noResultsText.visibility = View.VISIBLE
+                } else {
+                    noResultsText.visibility = View.GONE
+
+                    // Add filtered internships
+                    for (doc in filteredPosts) {
+                        val activeInternshipView = layoutInflater.inflate(
+                            R.layout.job_post_item,
+                            ActiveInternshipPost,
+                            false
+                        )
+
+                        activeInternshipView.findViewById<TextView>(R.id.JobTitle).text = doc.getString("title")
+                        activeInternshipView.findViewById<TextView>(R.id.internshipType).text = doc.getString("internshipType")
+                        activeInternshipView.findViewById<TextView>(R.id.internshipTime).text = doc.getString("internshipTime")
+                        activeInternshipView.findViewById<TextView>(R.id.Stipend).text = doc.getString("stipend")
+                        activeInternshipView.findViewById<TextView>(R.id.Deadline).text = doc.getString("applicationDeadline")
+
+                        // Click listeners
+                        activeInternshipView.setOnClickListener {
+                            val intent = Intent(this, InternshipDetails::class.java)
+                            intent.putExtra("id", doc.id)
+                            startActivity(intent)
+                        }
+
+                        val edit_delete_buttons = activeInternshipView.findViewById<LinearLayout>(R.id.edit_delete_buttons)
+                        edit_delete_buttons.visibility = View.VISIBLE
+
+                        activeInternshipView.findViewById<TextView>(R.id.btnViewApplicants).setOnClickListener {
+                            Toast.makeText(this, "View Applicants (${doc.id})", Toast.LENGTH_SHORT).show()
+                        }
+
+                        activeInternshipView.findViewById<TextView>(R.id.btnEdit).setOnClickListener {
+                            val intent = Intent(this, EditInternship::class.java)
+                            intent.putExtra("id", doc.id)
+                            startActivity(intent)
+                        }
+
+                        activeInternshipView.findViewById<TextView>(R.id.btnDelete).setOnClickListener {
+                            val todayStr = SimpleDateFormat("dd/M/yyyy", Locale.getDefault()).format(Date())
+                            db.collection("internshipPostsData").document(doc.id)
+                                .update(mapOf("status" to false, "applicationDeadline" to todayStr))
+                                .addOnSuccessListener {
+                                    Toast.makeText(this, "Internship marked as inactive", Toast.LENGTH_SHORT).show()
+                                    ActiveInternshipPost.removeView(activeInternshipView)
+                                }
+                                .addOnFailureListener { e ->
+                                    Toast.makeText(this, "Failed to update internship: ${e.message}", Toast.LENGTH_LONG).show()
+                                }
+                        }
+
+                        ActiveInternshipPost.addView(activeInternshipView)
+                    }
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e("InternshipDetail", "Error fetching internships", e)
+            }
+    }
+
+    private fun hideKeyboard(view: View) {
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
+
 }

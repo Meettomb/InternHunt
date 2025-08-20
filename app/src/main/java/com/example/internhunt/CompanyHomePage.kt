@@ -117,6 +117,7 @@ class CompanyHomePage : AppCompatActivity() {
         activeJobPostViewAllBtn.setOnClickListener {
             val intent = Intent(this, AllActivePostedInternship::class.java)
             startActivity(intent)
+            finish()
         }
 
 
@@ -173,7 +174,9 @@ class CompanyHomePage : AppCompatActivity() {
             popupWindow?.dismiss()
         }
         popupView.findViewById<View>(R.id.home).setOnClickListener {
-            // Handle Home Redirect
+            var intent = Intent(this, CompanyHomePage::class.java)
+            startActivity(intent)
+            finish()
             popupWindow?.dismiss()
         }
 
