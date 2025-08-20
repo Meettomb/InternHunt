@@ -564,7 +564,7 @@ class JobPost : AppCompatActivity() {
     private fun notifyApplicants(userId: String, newPostId: String) {
         val db = FirebaseFirestore.getInstance()
 
-        // ✅ First fetch company details (name/email/etc.)
+        //  First fetch company details (name/email/etc.)
         db.collection("Users").document(userId).get()
             .addOnSuccessListener { companyDoc ->
                 val companyName = companyDoc.getString("company_name") ?: "Unknown Company"
@@ -585,11 +585,11 @@ class JobPost : AppCompatActivity() {
                                             Log.d("Firestore", "Fetched user document for $applicantId, exists=${userDoc.exists()}")
                                             if (userDoc.exists()) {
                                                 val userEmail = userDoc.getString("email")
-                                                Log.d("Firestore", "User email fetched: $userEmail")
+                                                val notify = userDoc.getBoolean("notify_new_internships") ?: true
 
-                                                if (!userEmail.isNullOrEmpty()) {
+                                                if (!userEmail.isNullOrEmpty() && notify) {
 
-                                                    // ✅ Fetch internship details
+                                                    //  Fetch internship details
                                                     db.collection("internshipPostsData")
                                                         .document(newPostId)
                                                         .get()
@@ -599,7 +599,7 @@ class JobPost : AppCompatActivity() {
                                                                 val stipend = postDoc.getString("stipend") ?: "-"
                                                                 val duration = postDoc.getString("duration") ?: "-"
 
-                                                                // ✅ Updated email body
+                                                                //  Updated email body
                                                                 val body = """
                                                                 <p>A new internship has been posted 🎉</p>
                                                                 <p><b>Title:</b> $title</p>
