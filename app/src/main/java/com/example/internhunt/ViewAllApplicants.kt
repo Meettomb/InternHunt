@@ -133,6 +133,8 @@ class ViewAllApplicants : AppCompatActivity() {
                                         applicantItemView.findViewById<LinearLayout>(R.id.viewApplicantProfile).setOnClickListener {
                                             val intent = Intent(this, ViewApplicantProfile::class.java)
                                             intent.putExtra("userId", userId)
+                                            intent.putExtra("postId", postId)
+                                            intent.putExtra("cvPdf", cvPdf)
                                             startActivity(intent)
                                         }
 

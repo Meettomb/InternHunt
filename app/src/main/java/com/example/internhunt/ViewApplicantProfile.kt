@@ -2,16 +2,19 @@ package com.example.internhunt
 
 import InputFilterMinMax
 import android.app.Activity
+import android.app.DownloadManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import android.widget.Button
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -41,7 +44,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.SetOptions
+import org.checkerframework.checker.units.qual.Length
 import org.w3c.dom.Text
+import kotlin.concurrent.thread
 
 
 class ViewApplicantProfile : AppCompatActivity() {
@@ -62,34 +67,12 @@ class ViewApplicantProfile : AppCompatActivity() {
 
     private lateinit var projectLinearLayout: LinearLayout
     private var profileListener: ListenerRegistration? = null
-    private val degrees = arrayOf(
-        "B.Tech (Bachelor of Technology)",
-        "B.E. (Bachelor of Engineering)",
-        "B.Sc (Bachelor of Science)",
-        "BCA (Bachelor of Computer Applications)",
-        "BBA (Bachelor of Business Administration)",
-        "B.Com (Bachelor of Commerce)",
-        "B.A. (Bachelor of Arts)",
-        "M.Tech (Master of Technology)",
-        "M.E. (Master of Engineering)",
-        "M.Sc (Master of Science)",
-        "MCA (Master of Computer Applications)",
-        "MBA (Master of Business Administration)",
-        "M.Com (Master of Commerce)",
-        "PhD (Doctor of Philosophy)",
-        "Diploma in Engineering",
-        "Polytechnic Diploma",
-        "B.Ed (Bachelor of Education)",
-        "M.Ed (Master of Education)",
-        "LLB (Bachelor of Laws)",
-        "LLM (Master of Laws)",
-        "MBBS (Bachelor of Medicine & Surgery)",
-        "BDS (Bachelor of Dental Surgery)",
-        "B.Pharm (Bachelor of Pharmacy)",
-        "M.Pharm (Master of Pharmacy)",
-        "B.Arch (Bachelor of Architecture)",
-        "M.Arch (Master of Architecture)"
-    )
+
+    private lateinit var progressBar: ProgressBar
+    private lateinit var ViewCV: TextView
+    private lateinit var downloadCV: ImageView
+    private lateinit var btnHire: Button
+
 
 
 
@@ -106,10 +89,11 @@ class ViewApplicantProfile : AppCompatActivity() {
             window.statusBarColor = ContextCompat.getColor(this, R.color.black)
         }
 
-        // Load Session
-        val UserId = intent.getStringExtra("userId")
-        val prefs = getSharedPreferences("UserSession", MODE_PRIVATE)
-        val role = prefs.getString("role", null).toString().lowercase()
+        val UserId = intent.getStringExtra("userId").toString()
+        val postId = intent.getStringExtra("postId").toString()
+        val cvPdf = intent.getStringExtra("cvPdf")
+
+
 
         if (UserId != null){
             loadUserProfile(UserId)
@@ -125,11 +109,48 @@ class ViewApplicantProfile : AppCompatActivity() {
         username = findViewById(R.id.username)
         headline = findViewById(R.id.headline)
         Location = findViewById(R.id.Location)
+        progressBar = findViewById(R.id.progressBar)
+        ViewCV = findViewById(R.id.ViewCV)
+        downloadCV = findViewById(R.id.downloadCV)
+        btnHire = findViewById(R.id.btnHire)
 
         backButton = findViewById(R.id.backButton)
 
+        ViewCV.setOnClickListener {
+            if (cvPdf != null) {
+                val intent = Intent(Intent.ACTION_VIEW)
+                intent.setDataAndType(Uri.parse(cvPdf), "application/pdf")
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                startActivity(intent)
+            }
+        }
+        downloadCV.setOnClickListener {
+            if (cvPdf != null) {
+                try {
+                    val request = DownloadManager.Request(Uri.parse(cvPdf))
+                        .setTitle("Downloading CV")
+                        .setDescription("Downloading applicant CV file...")
+                        .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                        .setAllowedOverMetered(true)
+                        .setAllowedOverRoaming(true)
+                        .setDestinationInExternalPublicDir(
+                            Environment.DIRECTORY_DOWNLOADS, "Applicant_CV.pdf")
 
+                    val downloadManager = this.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+                    downloadManager.enqueue(request)
 
+                    Toast.makeText(this, "Download started...", Toast.LENGTH_SHORT).show()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Toast.makeText(this, "Failed to start download", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(this, "No CV found", Toast.LENGTH_LONG).show()
+            }
+        }
+        btnHire.setOnClickListener {
+            sendHireEmail(UserId, postId)
+        }
 
         skillsRecyclerView = findViewById(R.id.SkillrecyclerView)
         skillsRecyclerView.layoutManager = LinearLayoutManager(this)
@@ -249,9 +270,6 @@ class ViewApplicantProfile : AppCompatActivity() {
                 }
             }
     }
-
-
-
     private fun loadUserSkills(userId: String) {
         val db = FirebaseFirestore.getInstance()
         db.collection("Users").document(userId).get()
@@ -276,8 +294,6 @@ class ViewApplicantProfile : AppCompatActivity() {
                 skillsRecyclerView.visibility = View.GONE
             }
     }
-
-
     private fun loadEducation(userId: String) {
         val db = FirebaseFirestore.getInstance()
         educationContainer = findViewById(R.id.edu_layout)
@@ -327,8 +343,6 @@ class ViewApplicantProfile : AppCompatActivity() {
                 Toast.makeText(this, "Failed to load education: ${e.message}", Toast.LENGTH_LONG).show()
             }
     }
-
-
     fun formatMonthYear(input: String): String {
         return try {
             val parts = input.split("-")
@@ -344,7 +358,6 @@ class ViewApplicantProfile : AppCompatActivity() {
             input
         }
     }
-
     private fun loadProject(userId: String) {
         val db = FirebaseFirestore.getInstance()
         val projectLayout = findViewById<LinearLayout>(R.id.project_layout)
@@ -409,10 +422,81 @@ class ViewApplicantProfile : AppCompatActivity() {
             }
     }
 
+    private fun sendHireEmail(userId: String, postId: String) {
+        val db = FirebaseFirestore.getInstance()
+        progressBar.visibility = View.VISIBLE
 
-    private fun hideKeyboard(view: View) {
-        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(view.windowToken, 0)
+        val postRef = db.collection("internshipPostsData").document(postId)
+
+        db.runTransaction { transaction ->
+            val snapshot = transaction.get(postRef)
+            val hiredList = snapshot.get("hiredApplicants") as? MutableList<String> ?: mutableListOf()
+
+            // Prevent duplicate hires
+            if (!hiredList.contains(userId)) {
+                hiredList.add(userId)
+                transaction.update(postRef, "hiredApplicants", hiredList)
+            } else {
+                Toast.makeText(this, "User already hired for this post", Toast.LENGTH_SHORT).show()
+                throw Exception("User already hired for this post")
+            }
+        }.addOnSuccessListener {
+            // Fetch user and company details only after Firestore update
+            db.collection("Users").document(userId).get()
+                .addOnSuccessListener { document ->
+                    val userEmail = document.getString("email")
+                    val userName = document.getString("username")
+
+                    if (userEmail.isNullOrBlank()) {
+                        progressBar.visibility = View.GONE
+                        return@addOnSuccessListener
+                    }
+
+                    db.collection("internshipPostsData").document(postId).get()
+                        .addOnSuccessListener { postDocument ->
+                            val title = postDocument.getString("title")
+                            val companyId = postDocument.getString("companyId")
+
+                            db.collection("Users").document(companyId ?: "").get()
+                                .addOnSuccessListener { companyDoc ->
+                                    val companyName = companyDoc.getString("company_name")
+                                    val companyLink = companyDoc.getString("company_url")
+
+                                    thread {
+                                        try {
+                                            val sender = JakartaMailSender("internhunt2@gmail.com", "cayw smpo qwvu terg")
+                                            sender.sendEmail(
+                                                toEmail = userEmail,
+                                                subject = "Congratulations! You’re Hired at $companyName 🎉",
+                                                body = """
+                                            Hello $userName,
+                                            
+                                            Congratulations! You have been selected for the internship "$title" 
+                                            at $companyName.
+                                            
+                                            Company Website: $companyLink
+                                            
+                                            The company will contact you soon with further details.
+                                            
+                                            Best wishes,  
+                                            InternHunt Team
+                                        """.trimIndent()
+                                            )
+                                        } catch (e: Exception) {
+                                            e.printStackTrace()
+                                        } finally {
+                                            progressBar.post {
+                                                progressBar.visibility = View.GONE
+                                            }
+                                        }
+                                    }
+                                }
+                        }
+                }
+        }.addOnFailureListener { e ->
+            progressBar.visibility = View.GONE
+            e.printStackTrace()
+        }
     }
 
 
@@ -420,5 +504,7 @@ class ViewApplicantProfile : AppCompatActivity() {
         super.onDestroy()
         profileListener?.remove() // stop listening when activity is gone
     }
+
+
 
 }
