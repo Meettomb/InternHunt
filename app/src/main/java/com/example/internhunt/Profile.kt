@@ -205,10 +205,11 @@ class Profile : AppCompatActivity() {
 
         skillsRecyclerView = findViewById(R.id.SkillrecyclerView)
         skillsRecyclerView.layoutManager = LinearLayoutManager(this)
-        skillsAdapter = SkillsAdapter(skillsList) { position, skill ->
+        skillsAdapter = SkillsAdapter(this, skillsList) { position, skill ->
             Toast.makeText(this, "Edit skill: $skill", Toast.LENGTH_SHORT).show()
             editSkillAtPosition(position)
         }
+
         skillsRecyclerView.adapter = skillsAdapter
 
         educationContainer = findViewById(R.id.edu_layout)

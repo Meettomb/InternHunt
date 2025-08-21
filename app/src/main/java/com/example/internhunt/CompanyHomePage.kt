@@ -302,7 +302,9 @@ class CompanyHomePage : AppCompatActivity() {
                         edit_delete_buttons.visibility = View.VISIBLE
 
                         activeInternshipView.findViewById<TextView>(R.id.btnViewApplicants).setOnClickListener {
-                            Toast.makeText(this, "View Applicants (${doc.id})", Toast.LENGTH_SHORT).show()
+                            var intent = Intent(this, ViewAllApplicants::class.java)
+                            intent.putExtra("postId", doc.id)
+                            startActivity(intent)
                         }
 
                         activeInternshipView.findViewById<TextView>(R.id.btnEdit).setOnClickListener {

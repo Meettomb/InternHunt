@@ -1,13 +1,17 @@
 package com.example.internhunt
 
+import android.content.Context.MODE_PRIVATE
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import android.content.Context
+
 
 class SkillsAdapter(
+    private val context: Context,
     private val skills: MutableList<String>,
     private val onEditClick: (position: Int, skill: String) -> Unit
 ) : RecyclerView.Adapter<SkillsAdapter.SkillViewHolder>() {
@@ -35,6 +39,15 @@ class SkillsAdapter(
     override fun onBindViewHolder(holder: SkillViewHolder, position: Int) {
         val skill = skills[position]
         holder.skillTextView.text = skill
+
+        val prefs = context.getSharedPreferences("UserSession", Context.MODE_PRIVATE)
+        val role = prefs.getString("role", null).toString().lowercase()
+
+        if (role == "student") {
+            holder.editIcon.visibility = View.VISIBLE
+        } else {
+            holder.editIcon.visibility = View.GONE
+        }
 
         holder.editIcon.setOnClickListener {
             onEditClick(position, skill)

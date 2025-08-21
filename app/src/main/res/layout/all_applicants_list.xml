@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingHorizontal="10dp"
+    android:paddingVertical="8dp"
+    android:background="@drawable/border_all_sides"
+    android:layout_marginVertical="5dp">
+
+    <CheckBox
+        android:id="@+id/checkBox"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="CheckBox"
+        android:visibility="gone"/>
+
+    <LinearLayout
+        android:id="@+id/viewApplicantProfile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_weight="1">
+
+
+        <FrameLayout
+            android:id="@+id/header_profile"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_margin="4dp"
+            android:background="@drawable/full_round_border"
+            android:padding="2dp">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/UserProfileImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/background_light"
+                android:scaleType="centerCrop"
+                app:shapeAppearanceOverlay="@style/CircleImage" />
+
+        </FrameLayout>
+        <!-- Applicant Name -->
+        <TextView
+            android:id="@+id/applicantName"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="Applicant Name"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/primary_text"/>
+    </LinearLayout>
+    <!-- Profile -->
+
+    <!-- Download Icon (aligned to right) -->
+    <ImageView
+        android:id="@+id/downloadIcon"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/download"
+        android:contentDescription="Download" />
+
+</LinearLayout>
