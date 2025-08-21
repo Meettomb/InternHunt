@@ -1,10 +1,12 @@
 package com.example.internhunt
 
+import android.app.DownloadManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.provider.OpenableColumns
 import android.util.Log
 import android.view.View
@@ -68,6 +70,10 @@ class InternshipDetails : AppCompatActivity() {
     private lateinit var progressBar: ProgressBar
 
     private lateinit var editIcon2: ImageView
+    private lateinit var tvInquiryCount: TextView
+    private lateinit var tvHiredList: TextView
+    private lateinit var applicantItemLayout: LinearLayout
+    private lateinit var applicantsContainer: LinearLayout
 
 
 
@@ -117,6 +123,10 @@ class InternshipDetails : AppCompatActivity() {
 
         progressBar = findViewById(R.id.progressBar)
         editIcon2 = findViewById(R.id.editIcon2)
+        tvInquiryCount = findViewById(R.id.tvInquiryCount)
+        tvHiredList = findViewById(R.id.tvHiredList)
+        applicantItemLayout = findViewById(R.id.applicantItemLayout)
+        applicantsContainer = findViewById(R.id.applicantsContainer)
 
         val prefs = getSharedPreferences("UserSession", Context.MODE_PRIVATE)
         val userId = prefs.getString("userid", null)
@@ -169,12 +179,14 @@ class InternshipDetails : AppCompatActivity() {
             btnApply.visibility = View.GONE
             bookmark.visibility = View.GONE
             editIcon2.visibility = View.VISIBLE
+            applicantsContainer.visibility = View.VISIBLE
 
         }
         else if(role == "student"){
             btnApply.visibility = View.VISIBLE
             bookmark.visibility = View.VISIBLE
             editIcon2.visibility = View.GONE
+            applicantsContainer.visibility = View.GONE
         }
         editIcon2.setOnClickListener {
             var intent = Intent(this, EditInternship::class.java)
@@ -358,6 +370,85 @@ class InternshipDetails : AppCompatActivity() {
             .addOnSuccessListener { doc ->
                 if (doc.exists()) {
                     val internship = doc.toObject(InternshipPostData::class.java)
+                    db.collection("InternshipApplications").whereEqualTo("postId", id).get()
+                        .addOnSuccessListener { documents ->
+                            val count = documents.size()
+                            val cvPdf = documents.firstOrNull()?.getString("pdfUrl")
+                            tvInquiryCount.text = count.toString()
+
+                            val hiredApplicantsList = doc.get("hiredApplicants") as? List<String> ?: emptyList()
+                            if (hiredApplicantsList.isNotEmpty()) {
+                                applicantsContainer.visibility = View.VISIBLE
+                                tvHiredList.visibility = View.VISIBLE
+                                applicantsContainer.removeAllViews() // clear old views before adding new ones
+
+                                Log.d("TAG", "hiredApplicantsList: $hiredApplicantsList")
+
+                                hiredApplicantsList.chunked(10).forEach { batchIds ->
+                                    db.collection("Users")
+                                        .whereIn("id", batchIds)
+                                        .get()
+                                        .addOnSuccessListener { documents ->
+                                            for (docUser in documents) {
+                                                val userName = docUser.getString("username")
+                                                val userProfileImage = docUser.getString("profile_image_url")
+                                                val userId = docUser.getString("id")
+
+                                                val applicantItemView = layoutInflater.inflate(
+                                                    R.layout.all_applicants_list,
+                                                    applicantsContainer,
+                                                    false
+                                                )
+
+                                                applicantItemView.findViewById<TextView>(R.id.applicantName).text = userName
+                                                Glide.with(this)
+                                                    .load(userProfileImage)
+                                                    .into(applicantItemView.findViewById<ImageView>(R.id.UserProfileImage))
+
+                                                applicantItemView.findViewById<LinearLayout>(R.id.viewApplicantProfile)
+                                                    .setOnClickListener {
+                                                        val intent = Intent(this, ViewApplicantProfile::class.java)
+                                                        intent.putExtra("userId", userId)
+                                                        intent.putExtra("postId", id)
+                                                        intent.putExtra("cvPdf", cvPdf)
+                                                        startActivity(intent)
+                                                    }
+
+                                                applicantItemView.findViewById<ImageView>(R.id.downloadIcon).setOnClickListener {
+                                                    if (cvPdf != null) {
+                                                        try {
+                                                            val request = DownloadManager.Request(Uri.parse(cvPdf))
+                                                                .setTitle("Downloading CV")
+                                                                .setDescription("Downloading applicant CV file...")
+                                                                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                                                                .setAllowedOverMetered(true)
+                                                                .setAllowedOverRoaming(true)
+                                                                .setDestinationInExternalPublicDir(
+                                                                    Environment.DIRECTORY_DOWNLOADS, "Applicant_CV.pdf")
+
+                                                            val downloadManager = this.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+                                                            downloadManager.enqueue(request)
+
+                                                            Toast.makeText(this, "Download started...", Toast.LENGTH_SHORT).show()
+                                                        } catch (e: Exception) {
+                                                            e.printStackTrace()
+                                                            Toast.makeText(this, "Failed to start download", Toast.LENGTH_SHORT).show()
+                                                        }
+                                                    } else {
+                                                        Toast.makeText(this, "No CV found", Toast.LENGTH_LONG).show()
+                                                    }
+                                                }
+
+                                                applicantsContainer.addView(applicantItemView)
+                                            }
+                                        }
+                                }
+                            } else {
+                                applicantsContainer.visibility = View.GONE
+                                tvHiredList.visibility = View.GONE
+                            }
+
+                        }
                     internship?.let {
                         tvTitle.text = it.title
                         tvCompany.text = "Company ID: ${it.companyId}"
@@ -397,8 +488,6 @@ class InternshipDetails : AppCompatActivity() {
                 Toast.makeText(this, "Error loading details", Toast.LENGTH_SHORT).show()
             }
     }
-
-
     private fun loadCompanyDetails(companyId: String) {
         val db = FirebaseFirestore.getInstance()
         db.collection("Users")
@@ -441,8 +530,6 @@ class InternshipDetails : AppCompatActivity() {
             }
     }
 
-
-
     private fun populateBulletList(container: LinearLayout, items: List<String>) {
         container.removeAllViews()
         items.forEach { item ->
@@ -453,8 +540,6 @@ class InternshipDetails : AppCompatActivity() {
             container.addView(tv)
         }
     }
-
-
     private fun uploadPdfAndApply(userId: String, intershipId: String, companyId: String) {
         if (selectedPdfUri == null) {
             Toast.makeText(this, "Please select a PDF first", Toast.LENGTH_SHORT).show()
@@ -494,7 +579,6 @@ class InternshipDetails : AppCompatActivity() {
                 Toast.makeText(this, "Error checking application: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
-
     private fun applyForInternship(userId: String, intershipId: String, companyId: String, pdfUrl: String) {
         Log.d("TAG", "UserId: $userId, PostId: $intershipId, CompanyId: $companyId")
         val db = FirebaseFirestore.getInstance()
@@ -544,5 +628,7 @@ class InternshipDetails : AppCompatActivity() {
             tvError.visibility = View.GONE
         }
     }
+
+    private fun countApplicant() {}
 }
 
