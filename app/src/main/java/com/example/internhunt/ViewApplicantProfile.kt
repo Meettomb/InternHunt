@@ -72,6 +72,7 @@ class ViewApplicantProfile : AppCompatActivity() {
     private lateinit var ViewCV: TextView
     private lateinit var downloadCV: ImageView
     private lateinit var btnHire: Button
+    private lateinit var btnCancelHire: Button
 
 
 
@@ -113,6 +114,7 @@ class ViewApplicantProfile : AppCompatActivity() {
         ViewCV = findViewById(R.id.ViewCV)
         downloadCV = findViewById(R.id.downloadCV)
         btnHire = findViewById(R.id.btnHire)
+        btnCancelHire = findViewById(R.id.btnCancelHire)
 
         backButton = findViewById(R.id.backButton)
 
@@ -148,9 +150,6 @@ class ViewApplicantProfile : AppCompatActivity() {
                 Toast.makeText(this, "No CV found", Toast.LENGTH_LONG).show()
             }
         }
-        btnHire.setOnClickListener {
-            sendHireEmail(UserId, postId)
-        }
 
         skillsRecyclerView = findViewById(R.id.SkillrecyclerView)
         skillsRecyclerView.layoutManager = LinearLayoutManager(this)
@@ -166,6 +165,31 @@ class ViewApplicantProfile : AppCompatActivity() {
         // Back Button
         backButton.setOnClickListener {
             finish()
+        }
+
+        val db = FirebaseFirestore.getInstance()
+        val postRef = db.collection("internshipPostsData").document(postId)
+
+        postRef.get().addOnSuccessListener { doc ->
+            if (doc.exists()) {
+                val hiredList = doc.get("hiredApplicants") as? List<String> ?: emptyList()
+
+                if (hiredList.contains(UserId)) {
+                    btnHire.visibility = View.GONE
+                    btnCancelHire.visibility = View.VISIBLE
+                } else {
+                    btnHire.visibility = View.VISIBLE
+                    btnCancelHire.visibility = View.GONE
+                }
+            }
+        }
+
+        btnHire.setOnClickListener {
+            sendHireEmail(UserId, postId)
+        }
+
+        btnCancelHire.setOnClickListener {
+            cancelHire(UserId, postId)
         }
 
 
@@ -422,80 +446,164 @@ class ViewApplicantProfile : AppCompatActivity() {
             }
     }
 
+
+
     private fun sendHireEmail(userId: String, postId: String) {
         val db = FirebaseFirestore.getInstance()
         progressBar.visibility = View.VISIBLE
-
         val postRef = db.collection("internshipPostsData").document(postId)
 
         db.runTransaction { transaction ->
             val snapshot = transaction.get(postRef)
             val hiredList = snapshot.get("hiredApplicants") as? MutableList<String> ?: mutableListOf()
-
-            // Prevent duplicate hires
             if (!hiredList.contains(userId)) {
                 hiredList.add(userId)
                 transaction.update(postRef, "hiredApplicants", hiredList)
             } else {
-                Toast.makeText(this, "User already hired for this post", Toast.LENGTH_SHORT).show()
                 throw Exception("User already hired for this post")
             }
         }.addOnSuccessListener {
-            // Fetch user and company details only after Firestore update
-            db.collection("Users").document(userId).get()
-                .addOnSuccessListener { document ->
-                    val userEmail = document.getString("email")
-                    val userName = document.getString("username")
-
-                    if (userEmail.isNullOrBlank()) {
-                        progressBar.visibility = View.GONE
-                        return@addOnSuccessListener
-                    }
-
-                    db.collection("internshipPostsData").document(postId).get()
-                        .addOnSuccessListener { postDocument ->
-                            val title = postDocument.getString("title")
-                            val companyId = postDocument.getString("companyId")
-
-                            db.collection("Users").document(companyId ?: "").get()
-                                .addOnSuccessListener { companyDoc ->
-                                    val companyName = companyDoc.getString("company_name")
-                                    val companyLink = companyDoc.getString("company_url")
-
-                                    thread {
-                                        try {
-                                            val sender = JakartaMailSender("internhunt2@gmail.com", "cayw smpo qwvu terg")
-                                            sender.sendEmail(
-                                                toEmail = userEmail,
-                                                subject = "Congratulations! You’re Hired at $companyName 🎉",
-                                                body = """
-                                            Hello $userName,
-                                            
-                                            Congratulations! You have been selected for the internship "$title" 
-                                            at $companyName.
-                                            
-                                            Company Website: $companyLink
-                                            
-                                            The company will contact you soon with further details.
-                                            
-                                            Best wishes,  
-                                            InternHunt Team
-                                        """.trimIndent()
-                                            )
-                                        } catch (e: Exception) {
-                                            e.printStackTrace()
-                                        } finally {
-                                            progressBar.post {
-                                                progressBar.visibility = View.GONE
-                                            }
-                                        }
-                                    }
-                                }
-                        }
-                }
+            sendHireEmailToUser(userId, postId)
         }.addOnFailureListener { e ->
             progressBar.visibility = View.GONE
+            Toast.makeText(this, "Failed to hire user", Toast.LENGTH_SHORT).show()
             e.printStackTrace()
+        }
+    }
+
+    private fun sendHireEmailToUser(userId: String, postId: String) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("Users").document(userId).get().addOnSuccessListener { userDoc ->
+            val userEmail = userDoc.getString("email")
+            val userName = userDoc.getString("username")
+            if (userEmail.isNullOrBlank()) {
+                progressBar.visibility = View.GONE
+                return@addOnSuccessListener
+            }
+
+            db.collection("internshipPostsData").document(postId).get()
+                .addOnSuccessListener { postDoc ->
+                    val title = postDoc.getString("title")
+                    val companyId = postDoc.getString("companyId")
+                    if (companyId.isNullOrBlank()) return@addOnSuccessListener
+
+                    db.collection("Users").document(companyId).get()
+                        .addOnSuccessListener { companyDoc ->
+                            val companyName = companyDoc.getString("company_name")
+                            val companyLink = companyDoc.getString("company_url")
+
+                            thread {
+                                try {
+                                    val sender = JakartaMailSender("internhunt2@gmail.com", "cayw smpo qwvu terg")
+                                    sender.sendEmail(
+                                        toEmail = userEmail,
+                                        subject = "Congratulations! You’re Hired at $companyName 🎉",
+                                        body = """
+                                    Hello $userName,
+                                    
+                                    Congratulations! You have been selected for the internship "$title" 
+                                    at $companyName.
+                                    
+                                    Company Website: $companyLink
+                                    
+                                    The company will contact you soon with further details.
+                                    
+                                    Best wishes,
+                                    InternHunt Team
+                                """.trimIndent()
+                                    )
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                } finally {
+                                    progressBar.post {
+                                        progressBar.visibility = View.GONE
+                                        Toast.makeText(this, "Hire successful and email sent!", Toast.LENGTH_SHORT).show()
+                                        btnHire.visibility = View.GONE
+                                        btnCancelHire.visibility = View.VISIBLE
+                                    }
+                                }
+                            }
+                        }
+                }
+        }
+    }
+
+    private fun cancelHire(userId: String, postId: String) {
+        val db = FirebaseFirestore.getInstance()
+        progressBar.visibility = View.VISIBLE
+        val postRef = db.collection("internshipPostsData").document(postId)
+
+        db.runTransaction { transaction ->
+            val snapshot = transaction.get(postRef)
+            val hiredList = snapshot.get("hiredApplicants") as? MutableList<String> ?: mutableListOf()
+            if (hiredList.contains(userId)) {
+                hiredList.remove(userId)
+                transaction.update(postRef, "hiredApplicants", hiredList)
+            } else {
+                throw Exception("User not found in hired list")
+            }
+        }.addOnSuccessListener {
+            sendCancelEmailToUser(userId, postId)
+        }.addOnFailureListener { e ->
+            progressBar.visibility = View.GONE
+            Toast.makeText(this, "Failed to cancel hire", Toast.LENGTH_SHORT).show()
+            e.printStackTrace()
+        }
+    }
+
+    private fun sendCancelEmailToUser(userId: String, postId: String) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("Users").document(userId).get().addOnSuccessListener { userDoc ->
+            val userEmail = userDoc.getString("email")
+            val userName = userDoc.getString("username")
+            if (userEmail.isNullOrBlank()) {
+                progressBar.visibility = View.GONE
+                return@addOnSuccessListener
+            }
+
+            db.collection("internshipPostsData").document(postId).get()
+                .addOnSuccessListener { postDoc ->
+                    val title = postDoc.getString("title")
+                    val companyId = postDoc.getString("companyId") ?: return@addOnSuccessListener
+
+                    db.collection("Users").document(companyId).get()
+                        .addOnSuccessListener { companyDoc ->
+                            val companyName = companyDoc.getString("company_name")
+                            val companyLink = companyDoc.getString("company_url")
+
+                            thread {
+                                try {
+                                    val sender = JakartaMailSender("internhunt2@gmail.com", "cayw smpo qwvu terg")
+                                    sender.sendEmail(
+                                        toEmail = userEmail,
+                                        subject = "Update: Your Internship at $companyName ❌",
+                                        body = """
+                                    Hello $userName,
+                                    
+                                    We regret to inform you that your selection for the internship "$title" 
+                                    at $companyName has been cancelled.
+                                    
+                                    Company Website: $companyLink
+                                    
+                                    We encourage you to apply for other opportunities.
+                                    
+                                    Best regards,  
+                                    InternHunt Team
+                                """.trimIndent()
+                                    )
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                } finally {
+                                    progressBar.post {
+                                        progressBar.visibility = View.GONE
+                                        Toast.makeText(this, "Hire cancelled successfully!", Toast.LENGTH_SHORT).show()
+                                        btnCancelHire.visibility = View.GONE
+                                        btnHire.visibility = View.VISIBLE
+                                    }
+                                }
+                            }
+                        }
+                }
         }
     }
 

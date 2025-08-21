@@ -172,6 +172,7 @@ class InternshipDetails : AppCompatActivity() {
                     companyId = document.getString("companyId")
                     var applicationDeadline = document.getString("applicationDeadline")
                     Log.d("TAG", "applicationDeadline: $applicationDeadline")
+
                 }
             }
 
@@ -194,7 +195,7 @@ class InternshipDetails : AppCompatActivity() {
             startActivity(intent)
         }
         if (internshipId.isNotEmpty()) {
-            loadInternshipDetails(internshipId)
+            loadInternshipDetails(internshipId, userId)
 
             btnApply.setOnClickListener {
                 db.collection("internshipPostsData")
@@ -362,34 +363,48 @@ class InternshipDetails : AppCompatActivity() {
         }
     }
 
-    private fun loadInternshipDetails(id: String) {
+    private fun loadInternshipDetails(id: String, currentUserId: String) {
         val db = FirebaseFirestore.getInstance()
+
+        // Listen to changes in the internship post
         db.collection("internshipPostsData")
             .document(id)
-            .get()
-            .addOnSuccessListener { doc ->
-                if (doc.exists()) {
+            .addSnapshotListener { doc, error ->
+                if (error != null) {
+                    Toast.makeText(this, "Error loading details", Toast.LENGTH_SHORT).show()
+                    return@addSnapshotListener
+                }
+
+                if (doc != null && doc.exists()) {
                     val internship = doc.toObject(InternshipPostData::class.java)
-                    db.collection("InternshipApplications").whereEqualTo("postId", id).get()
-                        .addOnSuccessListener { documents ->
-                            val count = documents.size()
-                            val cvPdf = documents.firstOrNull()?.getString("pdfUrl")
+
+                    // Listen to changes in internship applications
+                    db.collection("InternshipApplications")
+                        .whereEqualTo("postId", id)
+                        .addSnapshotListener { applications, appError ->
+                            if (appError != null) return@addSnapshotListener
+
+                            val count = applications?.size() ?: 0
+                            val cvPdf = applications?.firstOrNull()?.getString("pdfUrl")
+                            val companyId = applications?.firstOrNull()?.getString("companyId")
+
                             tvInquiryCount.text = count.toString()
 
-                            val hiredApplicantsList = doc.get("hiredApplicants") as? List<String> ?: emptyList()
-                            if (hiredApplicantsList.isNotEmpty()) {
+                            val hiredApplicantsList =
+                                doc.get("hiredApplicants") as? List<String> ?: emptyList()
+
+                            if (hiredApplicantsList.isNotEmpty() && companyId == currentUserId) {
                                 applicantsContainer.visibility = View.VISIBLE
                                 tvHiredList.visibility = View.VISIBLE
-                                applicantsContainer.removeAllViews() // clear old views before adding new ones
-
-                                Log.d("TAG", "hiredApplicantsList: $hiredApplicantsList")
+                                applicantsContainer.removeAllViews()
 
                                 hiredApplicantsList.chunked(10).forEach { batchIds ->
                                     db.collection("Users")
                                         .whereIn("id", batchIds)
-                                        .get()
-                                        .addOnSuccessListener { documents ->
-                                            for (docUser in documents) {
+                                        .addSnapshotListener { usersSnapshot, usersError ->
+                                            if (usersError != null) return@addSnapshotListener
+
+                                            usersSnapshot?.forEach { docUser ->
                                                 val userName = docUser.getString("username")
                                                 val userProfileImage = docUser.getString("profile_image_url")
                                                 val userId = docUser.getString("id")
@@ -400,11 +415,17 @@ class InternshipDetails : AppCompatActivity() {
                                                     false
                                                 )
 
-                                                applicantItemView.findViewById<TextView>(R.id.applicantName).text = userName
-                                                Glide.with(this)
-                                                    .load(userProfileImage)
-                                                    .into(applicantItemView.findViewById<ImageView>(R.id.UserProfileImage))
-
+                                                applicantItemView.findViewById<TextView>(R.id.applicantName).text =
+                                                    userName
+                                                if (!isFinishing && !isDestroyed) {
+                                                    Glide.with(this)
+                                                        .load(userProfileImage)
+                                                        .into(
+                                                            applicantItemView.findViewById<ImageView>(
+                                                                R.id.UserProfileImage
+                                                            )
+                                                        )
+                                                }
                                                 applicantItemView.findViewById<LinearLayout>(R.id.viewApplicantProfile)
                                                     .setOnClickListener {
                                                         val intent = Intent(this, ViewApplicantProfile::class.java)
@@ -424,15 +445,20 @@ class InternshipDetails : AppCompatActivity() {
                                                                 .setAllowedOverMetered(true)
                                                                 .setAllowedOverRoaming(true)
                                                                 .setDestinationInExternalPublicDir(
-                                                                    Environment.DIRECTORY_DOWNLOADS, "Applicant_CV.pdf")
+                                                                    Environment.DIRECTORY_DOWNLOADS,
+                                                                    "Applicant_CV.pdf"
+                                                                )
 
-                                                            val downloadManager = this.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+                                                            val downloadManager =
+                                                                this.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
                                                             downloadManager.enqueue(request)
 
-                                                            Toast.makeText(this, "Download started...", Toast.LENGTH_SHORT).show()
+                                                            Toast.makeText(this, "Download started...", Toast.LENGTH_SHORT)
+                                                                .show()
                                                         } catch (e: Exception) {
                                                             e.printStackTrace()
-                                                            Toast.makeText(this, "Failed to start download", Toast.LENGTH_SHORT).show()
+                                                            Toast.makeText(this, "Failed to start download", Toast.LENGTH_SHORT)
+                                                                .show()
                                                         }
                                                     } else {
                                                         Toast.makeText(this, "No CV found", Toast.LENGTH_LONG).show()
@@ -447,25 +473,25 @@ class InternshipDetails : AppCompatActivity() {
                                 applicantsContainer.visibility = View.GONE
                                 tvHiredList.visibility = View.GONE
                             }
-
                         }
+
                     internship?.let {
                         tvTitle.text = it.title
                         tvCompany.text = "Company ID: ${it.companyId}"
-                        tvLocation.text = "${it.location}"
-                        tvStipend.text = "${it.stipend}"
-                        tvDuration.text = "${it.duration}"
-                        tvInternshipType.text = "${it.internshipType}"
-                        tvTiming.text = "${it.internshipTime}"
-                        tvOpening.text = "${it.openings}"
+                        tvLocation.text = it.location
+                        tvStipend.text = it.stipend
+                        tvDuration.text = it.duration
+                        tvInternshipType.text = it.internshipType
+                        tvTiming.text = it.internshipTime
+                        tvOpening.text = it.openings
                         tvDescription.text = it.description
-                        tvDeadline.text = "${it.applicationDeadline}"
+                        tvDeadline.text = it.applicationDeadline
 
                         // Skills
                         populateBulletList(skillsContainer, it.skillsRequired)
 
-                        // Responsibilities — filter out empty/blank items before showing
-                        val responsibilitiesFiltered = it.responsibilities.filter { item -> item.isNotBlank() }
+                        // Responsibilities
+                        val responsibilitiesFiltered = it.responsibilities.filter { it.isNotBlank() }
                         if (responsibilitiesFiltered.isEmpty()) {
                             findViewById<View>(R.id.responsibilitiesContainer).visibility = View.GONE
                             findViewById<View>(R.id.ResponsibilitiesTextView).visibility = View.GONE
@@ -475,7 +501,7 @@ class InternshipDetails : AppCompatActivity() {
                             populateBulletList(findViewById(R.id.responsibilitiesContainer), responsibilitiesFiltered)
                         }
 
-                        // Perks
+                        // Perks & Degree Eligibility
                         populateBulletList(perksContainer, it.perks)
                         populateBulletList(degreeEligibilityContainer, it.degreeEligibility)
 
@@ -484,51 +510,57 @@ class InternshipDetails : AppCompatActivity() {
                     }
                 }
             }
-            .addOnFailureListener {
-                Toast.makeText(this, "Error loading details", Toast.LENGTH_SHORT).show()
-            }
     }
+
     private fun loadCompanyDetails(companyId: String) {
         val db = FirebaseFirestore.getInstance()
         db.collection("Users")
             .document(companyId)
             .get()
             .addOnSuccessListener { doc ->
-                if (doc.exists()) {
-                    val company = doc.toObject(Users::class.java)
-                    company?.let {
-                        tvCompanyName.text = it.company_name
-                        tvCompanyEmail.text = it.email
-                        tvCompanyUrl.text = it.company_url
+                if (!isFinishing && !isDestroyed) { // <-- check activity state
+                    if (doc.exists()) {
+                        val company = doc.toObject(Users::class.java)
+                        company?.let {
+                            tvCompanyName.text = it.company_name
+                            tvCompanyEmail.text = it.email
+                            tvCompanyUrl.text = it.company_url
 
-                        // Open website on click
-                        val websiteUrl = it.company_url?.trim() ?: ""
-                        if (websiteUrl.isEmpty()) {
-                            tvCompanyUrl.visibility = View.GONE // Hide if no URL
-                        } else {
-                            tvCompanyUrl.setOnClickListener {
-                                val finalUrl = if (websiteUrl.startsWith("http://") || websiteUrl.startsWith("https://")) {
-                                    websiteUrl
-                                } else {
-                                    "http://$websiteUrl"
+                            // Open website on click
+                            val websiteUrl = it.company_url?.trim() ?: ""
+                            if (websiteUrl.isEmpty()) {
+                                tvCompanyUrl.visibility = View.GONE
+                            } else {
+                                tvCompanyUrl.setOnClickListener {
+                                    val finalUrl = if (websiteUrl.startsWith("http://") || websiteUrl.startsWith("https://")) {
+                                        websiteUrl
+                                    } else {
+                                        "http://$websiteUrl"
+                                    }
+                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(finalUrl))
+                                    startActivity(intent)
                                 }
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(finalUrl))
-                                startActivity(intent)
+                            }
+
+                            // Safe Glide load
+                            if (!isFinishing && !isDestroyed) {
+                                Glide.with(this)
+                                    .load(it.profile_image_url)
+                                    .placeholder(android.R.drawable.ic_menu_report_image)
+                                    .transform(CircleCrop())
+                                    .into(imgCompanyLogo)
                             }
                         }
-
-                        Glide.with(this)
-                            .load(it.profile_image_url)
-                            .placeholder(android.R.drawable.ic_menu_report_image) // fallback
-                            .transform(CircleCrop()) // makes it circular
-                            .into(imgCompanyLogo)
                     }
                 }
             }
             .addOnFailureListener {
-                Toast.makeText(this, "Error loading company details", Toast.LENGTH_SHORT).show()
+                if (!isFinishing && !isDestroyed) {
+                    Toast.makeText(this, "Error loading company details", Toast.LENGTH_SHORT).show()
+                }
             }
     }
+
 
     private fun populateBulletList(container: LinearLayout, items: List<String>) {
         container.removeAllViews()
@@ -629,6 +661,5 @@ class InternshipDetails : AppCompatActivity() {
         }
     }
 
-    private fun countApplicant() {}
 }
 

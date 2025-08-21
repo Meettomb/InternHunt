@@ -202,6 +202,15 @@
                                 android:text="Hire"
                                 android:backgroundTint="@color/primary_color"
                                 android:textColor="@android:color/white" />
+
+                            <Button
+                                android:id="@+id/btnCancelHire"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Cancel Hire"
+                                android:backgroundTint="@color/error_color"
+                                android:textColor="@android:color/white"
+                                android:visibility="gone"/>
                         </LinearLayout>
 
 
