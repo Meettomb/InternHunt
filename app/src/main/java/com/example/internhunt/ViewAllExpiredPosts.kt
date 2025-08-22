@@ -29,7 +29,7 @@ import java.util.Locale
 import com.google.firebase.firestore.Query
 
 
-class AllActivePostedInternship : AppCompatActivity() {
+class ViewAllExpiredPosts : AppCompatActivity() {
     private var popupWindow: PopupWindow? = null
     private lateinit var UserProfileImage: ImageView
     private lateinit var topFivePost_container: LinearLayout
@@ -40,7 +40,7 @@ class AllActivePostedInternship : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //        enableEdgeToEdge()
-        setContentView(R.layout.activity_all_active_posted_internship)
+        setContentView(R.layout.activity_view_all_expired_posts)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             window.statusBarColor = ContextCompat.getColor(this, R.color.card_background)
@@ -187,7 +187,7 @@ class AllActivePostedInternship : AppCompatActivity() {
                         .filter { doc ->
                             val deadlineStr = doc.getString("applicationDeadline")
                             val deadlineDate = deadlineStr?.let { formatter.parse(it) }
-                            deadlineDate != null && deadlineDate.after(now)
+                            deadlineDate != null && deadlineDate.before(now)
                         }
 
                     ActiveInternshipPost.removeAllViews()
@@ -225,9 +225,17 @@ class AllActivePostedInternship : AppCompatActivity() {
                             startActivity(intent)
                         }
 
-
                         var edit_delete_buttons = activeInternshipView.findViewById<LinearLayout>(R.id.edit_delete_buttons)
                         edit_delete_buttons.visibility = View.VISIBLE
+
+                        activeInternshipView.findViewById<TextView>(R.id.btnViewApplicants).setOnClickListener {
+                            Toast.makeText(this, "View Applicants (${doc.id})", Toast.LENGTH_SHORT).show()
+                        }
+
+
+
+                        var btnEdit = activeInternshipView.findViewById<TextView>(R.id.btnEdit)
+                        btnEdit.visibility = View.GONE
 
                         activeInternshipView.findViewById<TextView>(R.id.btnViewApplicants).setOnClickListener {
                             var intent = Intent(this, ViewAllApplicants::class.java)
@@ -235,33 +243,8 @@ class AllActivePostedInternship : AppCompatActivity() {
                             startActivity(intent)
                         }
 
-                        activeInternshipView.findViewById<TextView>(R.id.btnEdit).setOnClickListener {
-                            var intent = Intent(this, EditInternship::class.java)
-                            intent.putExtra("id", doc.id)
-                            startActivity(intent)
-                        }
-
-                        activeInternshipView.findViewById<TextView>(R.id.btnDelete).setOnClickListener {
-                            val db = FirebaseFirestore.getInstance()
-                            val todayStr = SimpleDateFormat("dd/M/yyyy", Locale.getDefault()).format(Date())
-
-                            // Update the document
-                            db.collection("internshipPostsData").document(doc.id)
-                                .update(
-                                    mapOf(
-                                        "status" to false,
-                                        "applicationDeadline" to todayStr
-                                    )
-                                )
-                                .addOnSuccessListener {
-                                    Toast.makeText(this, "Internship marked as inactive", Toast.LENGTH_SHORT).show()
-                                    // Optionally remove the view from UI
-                                    ActiveInternshipPost.removeView(activeInternshipView)
-                                }
-                                .addOnFailureListener { e ->
-                                    Toast.makeText(this, "Failed to update internship: ${e.message}", Toast.LENGTH_LONG).show()
-                                }
-                        }
+                        var btnDelete = activeInternshipView.findViewById<TextView>(R.id.btnDelete)
+                        btnDelete.visibility = View.GONE
 
 
                         ActiveInternshipPost.addView(activeInternshipView)

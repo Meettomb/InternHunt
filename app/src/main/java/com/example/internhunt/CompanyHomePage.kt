@@ -38,6 +38,12 @@ class CompanyHomePage : AppCompatActivity() {
     private lateinit var topFivePost_container: LinearLayout
     private lateinit var activeJobPostViewAllBtn: TextView
     private lateinit var TopFiveActiveInternshipPost: LinearLayout
+
+    private lateinit var topFiveUnActivePost_container: LinearLayout
+    private lateinit var TopFiveUnActiveInternshipPost: LinearLayout
+    private lateinit var unactiveJobPostViewAllBtn: TextView
+
+
     private val loadedInternshipIds = mutableSetOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,6 +65,10 @@ class CompanyHomePage : AppCompatActivity() {
         topFivePost_container = findViewById(R.id.topFivePost_container)
         activeJobPostViewAllBtn = findViewById(R.id.activeJobPostViewAllBtn)
         TopFiveActiveInternshipPost = findViewById(R.id.TopFiveActiveInternshipPost)
+        topFiveUnActivePost_container = findViewById(R.id.topFiveUnActivePost_container)
+        TopFiveUnActiveInternshipPost = findViewById(R.id.TopFiveUnActiveInternshipPost)
+        unactiveJobPostViewAllBtn = findViewById(R.id.unactiveJobPostViewAllBtn)
+
 
         // Get session
         val prefs = getSharedPreferences("UserSession", Context.MODE_PRIVATE)
@@ -100,6 +110,7 @@ class CompanyHomePage : AppCompatActivity() {
             getTotalInternshipCount(userId)
             getActiveInternshipCount(userId)
             getTopFiveActiveInternshipPost(userId)
+            getTopFiveUnActiveInternshipPost(userId)
         }
         saveFcmToken(userId)
         headerProfile.setOnClickListener {
@@ -120,6 +131,11 @@ class CompanyHomePage : AppCompatActivity() {
             finish()
         }
 
+        unactiveJobPostViewAllBtn.setOnClickListener {
+            val intent = Intent(this, ViewAllExpiredPosts::class.java)
+            startActivity(intent)
+            finish()
+        }
 
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -266,79 +282,104 @@ class CompanyHomePage : AppCompatActivity() {
                     TopFiveActiveInternshipPost.removeAllViews()
                     loadedInternshipIds.clear()
 
-                    for (doc in activePosts) {
-                        val title = doc.getString("title")
-                        val internshipType = doc.getString("internshipType")
-                        val internshipTime = doc.getString("internshipTime")
-                        val stipend = doc.getString("stipend")
-                        val deadline = doc.getString("applicationDeadline")
+                    if (activePosts.isNotEmpty()) {
+                        for (doc in activePosts) {
+                            val title = doc.getString("title")
+                            val internshipType = doc.getString("internshipType")
+                            val internshipTime = doc.getString("internshipTime")
+                            val stipend = doc.getString("stipend")
+                            val deadline = doc.getString("applicationDeadline")
 
-                        Log.d(
-                            "InternshipDetail",
-                            "Title: $title, Type: $internshipType, Time: $internshipTime, Stipend: $stipend, Deadline: $deadline"
-                        )
+                            Log.d(
+                                "InternshipDetail",
+                                "Title: $title, Type: $internshipType, Time: $internshipTime, Stipend: $stipend, Deadline: $deadline"
+                            )
 
-                       val activeInternshipView = layoutInflater.inflate(
-                           R.layout.job_post_item,
-                           TopFiveActiveInternshipPost,
-                           false)
-
-
-                        activeInternshipView.findViewById<TextView>(R.id.JobTitle).text = title
-                        activeInternshipView.findViewById<TextView>(R.id.internshipType).text = internshipType
-                        activeInternshipView.findViewById<TextView>(R.id.internshipTime).text = internshipTime
-                        activeInternshipView.findViewById<TextView>(R.id.Stipend).text = stipend
-                        activeInternshipView.findViewById<TextView>(R.id.Deadline).text = deadline
+                            val activeInternshipView = layoutInflater.inflate(
+                                R.layout.job_post_item,
+                                TopFiveActiveInternshipPost,
+                                false
+                            )
 
 
+                            activeInternshipView.findViewById<TextView>(R.id.JobTitle).text = title
+                            activeInternshipView.findViewById<TextView>(R.id.internshipType).text =
+                                internshipType
+                            activeInternshipView.findViewById<TextView>(R.id.internshipTime).text =
+                                internshipTime
+                            activeInternshipView.findViewById<TextView>(R.id.Stipend).text = stipend
+                            activeInternshipView.findViewById<TextView>(R.id.Deadline).text =
+                                deadline
 
-                        activeInternshipView.setOnClickListener {
-                            var intent = Intent(this, InternshipDetails::class.java)
-                            intent.putExtra("id", doc.id)
-                            startActivity(intent)
-                        }
 
-                        var edit_delete_buttons = activeInternshipView.findViewById<LinearLayout>(R.id.edit_delete_buttons)
-                        edit_delete_buttons.visibility = View.VISIBLE
 
-                        activeInternshipView.findViewById<TextView>(R.id.btnViewApplicants).setOnClickListener {
-                            var intent = Intent(this, ViewAllApplicants::class.java)
-                            intent.putExtra("postId", doc.id)
-                            startActivity(intent)
-                        }
+                            activeInternshipView.setOnClickListener {
+                                var intent = Intent(this, InternshipDetails::class.java)
+                                intent.putExtra("id", doc.id)
+                                startActivity(intent)
+                            }
 
-                        activeInternshipView.findViewById<TextView>(R.id.btnEdit).setOnClickListener {
-                            var intent = Intent(this, EditInternship::class.java)
-                            intent.putExtra("id", doc.id)
-                            startActivity(intent)
-                        }
+                            var edit_delete_buttons =
+                                activeInternshipView.findViewById<LinearLayout>(R.id.edit_delete_buttons)
+                            edit_delete_buttons.visibility = View.VISIBLE
 
-                        activeInternshipView.findViewById<TextView>(R.id.btnDelete).setOnClickListener {
-                            val db = FirebaseFirestore.getInstance()
-                            val todayStr = SimpleDateFormat("dd/M/yyyy", Locale.getDefault()).format(Date())
-
-                            // Update the document
-                            db.collection("internshipPostsData").document(doc.id)
-                                .update(
-                                    mapOf(
-                                        "status" to false,
-                                        "applicationDeadline" to todayStr
-                                    )
-                                )
-                                .addOnSuccessListener {
-                                    Toast.makeText(this, "Internship marked as inactive", Toast.LENGTH_SHORT).show()
-                                    // Optionally remove the view from UI
-                                    TopFiveActiveInternshipPost.removeView(activeInternshipView)
+                            activeInternshipView.findViewById<TextView>(R.id.btnViewApplicants)
+                                .setOnClickListener {
+                                    var intent = Intent(this, ViewAllApplicants::class.java)
+                                    intent.putExtra("postId", doc.id)
+                                    startActivity(intent)
                                 }
-                                .addOnFailureListener { e ->
-                                    Toast.makeText(this, "Failed to update internship: ${e.message}", Toast.LENGTH_LONG).show()
+
+                            activeInternshipView.findViewById<TextView>(R.id.btnEdit)
+                                .setOnClickListener {
+                                    var intent = Intent(this, EditInternship::class.java)
+                                    intent.putExtra("id", doc.id)
+                                    startActivity(intent)
                                 }
+
+                            activeInternshipView.findViewById<TextView>(R.id.btnDelete)
+                                .setOnClickListener {
+                                    val db = FirebaseFirestore.getInstance()
+                                    val todayStr =
+                                        SimpleDateFormat("dd/M/yyyy", Locale.getDefault()).format(
+                                            Date()
+                                        )
+
+                                    // Update the document
+                                    db.collection("internshipPostsData").document(doc.id)
+                                        .update(
+                                            mapOf(
+                                                "status" to false,
+                                                "applicationDeadline" to todayStr
+                                            )
+                                        )
+                                        .addOnSuccessListener {
+                                            Toast.makeText(
+                                                this,
+                                                "Internship marked as inactive",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                            // Optionally remove the view from UI
+                                            TopFiveActiveInternshipPost.removeView(
+                                                activeInternshipView
+                                            )
+                                        }
+                                        .addOnFailureListener { e ->
+                                            Toast.makeText(
+                                                this,
+                                                "Failed to update internship: ${e.message}",
+                                                Toast.LENGTH_LONG
+                                            ).show()
+                                        }
+                                }
+
+
+                            TopFiveActiveInternshipPost.addView(activeInternshipView)
+
+
                         }
-
-
-                        TopFiveActiveInternshipPost.addView(activeInternshipView)
-
-
+                    }else{
+                        topFivePost_container.visibility = View.GONE
                     }
                 } else {
                     Log.d("InternshipDetail", "No active internships found")
@@ -348,6 +389,112 @@ class CompanyHomePage : AppCompatActivity() {
             }
 
     }
+
+
+    private fun getTopFiveUnActiveInternshipPost(userId: String) {
+        val db = FirebaseFirestore.getInstance()
+
+
+        db.collection("internshipPostsData")
+            .whereEqualTo("companyId", userId)
+            .orderBy("postedDate", Query.Direction.DESCENDING)
+            .addSnapshotListener { querySnapshot, error ->
+                if (error != null) {
+                    Log.e("InternshipDetail", "Error fetching internships", error)
+                    return@addSnapshotListener
+                }
+
+                if (querySnapshot != null && !querySnapshot.isEmpty) {
+                    // Sort by deadline if needed, then take top 5
+                    val formatter = SimpleDateFormat("dd/M/yyyy", Locale.getDefault())
+                    val now = Date()
+
+                    val activePosts = querySnapshot.documents
+                        .filter { doc ->
+                            val deadlineStr = doc.getString("applicationDeadline")
+                            val deadlineDate = deadlineStr?.let { formatter.parse(it) }
+                            deadlineDate != null && deadlineDate.before(now)
+                        }
+                        .take(5)
+
+                    TopFiveUnActiveInternshipPost.removeAllViews()
+                    loadedInternshipIds.clear()
+
+                    if (activePosts.isNotEmpty()) {
+                        for (doc in activePosts) {
+                            val title = doc.getString("title")
+                            val internshipType = doc.getString("internshipType")
+                            val internshipTime = doc.getString("internshipTime")
+                            val stipend = doc.getString("stipend")
+                            val deadline = doc.getString("applicationDeadline")
+
+                            Log.d(
+                                "InternshipDetail",
+                                "Title: $title, Type: $internshipType, Time: $internshipTime, Stipend: $stipend, Deadline: $deadline"
+                            )
+
+                            val activeInternshipView = layoutInflater.inflate(
+                                R.layout.job_post_item,
+                                TopFiveUnActiveInternshipPost,
+                                false
+                            )
+
+
+                            activeInternshipView.findViewById<TextView>(R.id.JobTitle).text = title
+                            activeInternshipView.findViewById<TextView>(R.id.internshipType).text =
+                                internshipType
+                            activeInternshipView.findViewById<TextView>(R.id.internshipTime).text =
+                                internshipTime
+                            activeInternshipView.findViewById<TextView>(R.id.Stipend).text = stipend
+                            activeInternshipView.findViewById<TextView>(R.id.Deadline).text =
+                                deadline
+
+
+
+                            activeInternshipView.setOnClickListener {
+                                var intent = Intent(this, InternshipDetails::class.java)
+                                intent.putExtra("id", doc.id)
+                                startActivity(intent)
+                            }
+
+                            var edit_delete_buttons =
+                                activeInternshipView.findViewById<LinearLayout>(R.id.edit_delete_buttons)
+                            edit_delete_buttons.visibility = View.VISIBLE
+
+                            activeInternshipView.findViewById<TextView>(R.id.btnViewApplicants)
+                                .setOnClickListener {
+                                    var intent = Intent(this, ViewAllApplicants::class.java)
+                                    intent.putExtra("postId", doc.id)
+                                    startActivity(intent)
+                                }
+
+
+                            var btnEdit = activeInternshipView.findViewById<TextView>(R.id.btnEdit)
+                            btnEdit.visibility = View.GONE
+
+                            var btnDelete =
+                                activeInternshipView.findViewById<TextView>(R.id.btnDelete)
+                            btnDelete.visibility = View.GONE
+
+
+
+                            TopFiveUnActiveInternshipPost.addView(activeInternshipView)
+
+
+                        }
+                    }
+                    else{
+                        topFiveUnActivePost_container.visibility = View.GONE
+                    }
+                } else {
+                    Log.d("InternshipDetail", "No active internships found")
+                    TopFiveUnActiveInternshipPost.removeAllViews()
+                    loadedInternshipIds.clear()
+                }
+            }
+
+    }
+
     private fun saveFcmToken(userId: String) {
         FirebaseMessaging.getInstance().token
             .addOnCompleteListener { task ->
