@@ -16,6 +16,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.InternHunt">
         <activity
+            android:name=".Setting"
+            android:exported="false" />
+        <activity
             android:name=".ProfileCompany"
             android:exported="false" />
         <activity

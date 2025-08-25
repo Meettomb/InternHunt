@@ -282,13 +282,10 @@ class Home : AppCompatActivity() {
             startActivity(intent)
         }
 
-        findViewById<TextView>(R.id.notification).setOnClickListener {
-            hideKeyboard(search_bar)
-            // Handle navigation to Update Details screen
-        }
-
         findViewById<TextView>(R.id.setting).setOnClickListener {
+            var intent = Intent(this, Setting::class.java)
             hideKeyboard(search_bar)
+            startActivity(intent)
             // Handle navigation to Update Details screen
         }
 

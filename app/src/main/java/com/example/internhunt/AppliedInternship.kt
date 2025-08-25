@@ -131,14 +131,10 @@ class AppliedInternship : AppCompatActivity() {
             startActivity(intent)
         }
 
-        findViewById<TextView>(R.id.notification).setOnClickListener {
-            // Handle navigation to Update Details screen
-            hideKeyboard(search_bar)
-        }
-
         findViewById<TextView>(R.id.setting).setOnClickListener {
-            // Handle navigation to Update Details screen
+            var intent = Intent(this, Setting::class.java)
             hideKeyboard(search_bar)
+            startActivity(intent)
         }
 
         findViewById<TextView>(R.id.help).setOnClickListener {

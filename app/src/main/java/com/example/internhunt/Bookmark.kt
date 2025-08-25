@@ -138,14 +138,12 @@ class Bookmark : AppCompatActivity() {
             startActivity(intent)
         }
 
-        findViewById<TextView>(R.id.notification).setOnClickListener {
-            hideKeyboard(search_bar)
-            // Handle navigation to Update Details screen
-        }
+
 
         findViewById<TextView>(R.id.setting).setOnClickListener {
+            var intent = Intent(this, Setting::class.java)
             hideKeyboard(search_bar)
-            // Handle navigation to Update Details screen
+            startActivity(intent)
         }
 
         findViewById<TextView>(R.id.help).setOnClickListener {
