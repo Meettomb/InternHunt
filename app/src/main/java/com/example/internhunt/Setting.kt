@@ -6,7 +6,6 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
-import android.widget.Switch
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -14,11 +13,13 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.firestore.FirebaseFirestore
+import androidx.appcompat.widget.SwitchCompat
+
 
 class Setting : AppCompatActivity() {
 
     private lateinit var backButton: ImageView
-    private lateinit var notificationSwitch: Switch
+    private lateinit var notificationSwitch: SwitchCompat
     private lateinit var notificationPrefs: android.content.SharedPreferences
     private val db = FirebaseFirestore.getInstance()
 

@@ -64,12 +64,15 @@
             android:layout_weight="1"
             android:text="New Internship Notifications"
             android:textColor="@color/primary_text"
-            android:textSize="16sp"/>
+            android:textSize="18sp"/>
 
-        <Switch
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/notificationSwitch"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            app:thumbTint="@color/primary_color"
+            app:trackTint="@color/background_light" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
