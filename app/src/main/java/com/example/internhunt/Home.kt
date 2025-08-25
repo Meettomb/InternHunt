@@ -349,14 +349,16 @@ class Home : AppCompatActivity() {
             if (doc != null && doc.exists()) {
 
                 val imageUrl = doc.getString("profile_image_url")
-                if (!imageUrl.isNullOrEmpty()) {
-                    Glide.with(this)
-                        .load(imageUrl)
-                        .into(userImageView)
+                if (!isFinishing && !isDestroyed) {
+                    if (!imageUrl.isNullOrEmpty()) {
+                        Glide.with(this)
+                            .load(imageUrl)
+                            .into(userImageView)
 
-                    Glide.with(this)
-                        .load(imageUrl)
-                        .into(userImageView2)
+                        Glide.with(this)
+                            .load(imageUrl)
+                            .into(userImageView2)
+                    }
                 }
                 // Get the education list as a List of Map<String, Any>
                 val educationList = doc.get("education") as? List<Map<String, Any>> ?: emptyList()

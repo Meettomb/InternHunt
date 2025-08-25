@@ -76,6 +76,8 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore-ktx:25.1.4")
     implementation("androidx.recyclerview:recyclerview:1.4.0")
 
+    implementation("de.hdodenhof:circleimageview:3.1.0")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

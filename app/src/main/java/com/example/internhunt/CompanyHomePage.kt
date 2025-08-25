@@ -186,7 +186,8 @@ class CompanyHomePage : AppCompatActivity() {
 
         // Menu item clicks
         popupView.findViewById<View>(R.id.manageProfile).setOnClickListener {
-            // Handle Manage Profile
+            var intent = Intent(this, ProfileCompany::class.java)
+            startActivity(intent)
             popupWindow?.dismiss()
         }
         popupView.findViewById<View>(R.id.home).setOnClickListener {
@@ -197,7 +198,8 @@ class CompanyHomePage : AppCompatActivity() {
         }
 
         popupView.findViewById<View>(R.id.settings).setOnClickListener {
-            // Handle Settings
+            var intent = Intent(this, CompanySetting::class.java)
+            startActivity(intent)
             popupWindow?.dismiss()
         }
 

@@ -152,7 +152,8 @@ class ViewAllExpiredPosts : AppCompatActivity() {
         }
 
         popupView.findViewById<View>(R.id.settings).setOnClickListener {
-            // Handle Settings
+            var intent = Intent(this, CompanySetting::class.java)
+            startActivity(intent)
             popupWindow?.dismiss()
         }
 
